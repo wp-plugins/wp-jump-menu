@@ -38,7 +38,7 @@ Author URI: http://synotac.com/
 function beam_me_up_wpjm() {
 
 	add_action('admin_footer', 'wpjm_custom_footer');
-	add_action('admin_head','wpjm_js');
+	add_action('admin_print_scripts','wpjm_js');
 	add_action('admin_print_styles', 'wpjm_editpost_css');
 }
 
