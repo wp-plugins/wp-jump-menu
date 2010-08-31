@@ -67,10 +67,7 @@ function wpjm_editpost_css() {
 
 // Some javascript to help the edit drop down list work
 function wpjm_js() {
-wp_enqueue_script( 'jquery' );
-?>
-<script type="text/javascript" src="<?php echo get_option('siteurl'); ?>/wp-content/plugins/synotac-editpost-shortcutbar/assets/js/jqueryfunctions.js"></script>
-<?php
+wp_enqueue_script( 'jquery-functions',get_option('siteurl').'/wp-content/plugins/wp-jump-menu/assets/js/jqueryfunctions.js',array('jquery') );
 }
 
 // Put a bar across the bottom of the screen that offers to help...
