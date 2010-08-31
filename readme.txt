@@ -4,7 +4,7 @@ Donate link: http://www.synotac.com
 Tags: posts, pages, admin, jump, menu, quick, links
 Requires at least: 2.8
 Tested up to: 3.0.1
-Stable tag: trunk
+Stable tag: 1.1
 
 Creates a drop-down menu in a bar across the bottom or top of the screen that makes it easy to jump to a page or post in the admin area for editing.
 
