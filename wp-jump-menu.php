@@ -132,7 +132,7 @@ function wpjm_page_dropdown(){
 	$pd_pages = get_pages('sort_column='.get_option('wpjm_sortpagesby').'&sort_order='.get_option('wpjm_sortpages'));
 	$pd_total_pages = count($pd_pages);
 	// Get Posts
-	$pd_posts = get_posts('orderby='.get_option('wpjm_sortpostsby').'&order='.get_option('wpjm_sortposts').'&numberposts=-1');
+	$pd_posts = get_posts('orderby='.get_option('wpjm_sortpostsby').'&order='.get_option('wpjm_sortposts').'&numberposts='.get_option('wpjm_numberposts'));
 	$pd_total_posts = count($pd_posts);
 
 	// Get Custom Post Types settings (will iterate through later)
@@ -230,6 +230,7 @@ function syn_install() {
 		add_option("wpjm_sortpages",'ASC');
 		add_option("wpjm_sortpostsby",'date');
 		add_option("wpjm_sortposts",'DESC');
+		add_option("wpjm_numberposts",'-1');
 		add_option("wpjm_backgroundColor",'333333');
 		add_option("wpjm_fontColor",'ffffff');
 		add_option("wpjm_borderColor",'aaaaaa');
@@ -256,6 +257,7 @@ if (isset($_POST['save_post_page_values'])) {
 	update_option("wpjm_sortpages",$_POST['wpjm_sortpages']);
 	update_option("wpjm_sortpostsby",$_POST['wpjm_sortpostsby']);
 	update_option("wpjm_sortposts",$_POST['wpjm_sortposts']);
+	update_option("wpjm_numberposts",$_POST['wpjm_numberposts']);
 	update_option("wpjm_backgroundColor", $_POST['wpjm_backgroundColor']);
 	update_option("wpjm_fontColor",$_POST['wpjm_fontColor']);
 	update_option("wpjm_borderColor",$_POST['wpjm_borderColor']);
@@ -279,6 +281,7 @@ $wpjm_sortpagesby = get_option("wpjm_sortpagesby");
 $wpjm_sortpages = get_option("wpjm_sortpages");
 $wpjm_sortpostsby = get_option("wpjm_sortpostsby");
 $wpjm_sortposts = get_option("wpjm_sortposts");
+$wpjm_numberposts = get_option("wpjm_numberposts");
 $wpjm_backgroundColor = get_option("wpjm_backgroundColor");
 $wpjm_fontColor = get_option("wpjm_fontColor");
 $wpjm_borderColor = get_option("wpjm_borderColor");
@@ -388,6 +391,13 @@ $wpjm_customPostTypes = get_option("wpjm_customPostTypes");
 						<input type="radio" value="ASC" name="wpjm_sortposts" id="wpjm_sortposts"<?php echo ($wpjm_sortposts=='ASC'?' checked="checked"':''); ?> /> Ascending<br/>
 						<input type="radio" value="DESC" name="wpjm_sortposts" id="wpjm_sortposts"<?php echo ($wpjm_sortposts=='DESC'?' checked="checked"':''); ?> /> Descending
 					</div>
+				</li>
+				<li>
+					<label>Number of Posts to Display:</label>
+					<div>
+						<input type="text" name="wpjm_numberposts" id="wpjm_numberposts" value="<?php echo $wpjm_numberposts; ?>" />
+					</div>
+					<small>Positive number. -1 to display all posts.</small>
 				</li>
 				<li>
 					<label>Background Color:</label>
