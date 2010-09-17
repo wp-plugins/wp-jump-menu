@@ -2,15 +2,15 @@
 /**
  * @package WP_Jump_Menu
  * @author Jim Krill
- * @version 1.0
+ * @version 1.1
  */
 /*
 Plugin Name: WP Jump Menu
-Plugin URI: http://synotac.com/wp-jump-menu
+Plugin URI: http://moseycreations.com/2010/09/wp-jump-menu
 Description: Creates a drop-down menu (jump menu) in a bar across the bottom of the screen that makes it easy to jump to a page or post in the admin area for editing.
 Author: Jim Krill
-Version: 1.0
-Author URI: http://synotac.com/
+Version: 1.2
+Author URI: http://moseycreations.com/
 */
 
 /*  Copyright 2010  Jim Krill  (email : jimkrill@gmail.com)
@@ -42,24 +42,25 @@ function beam_me_up_wpjm() {
 	add_action('admin_print_styles', 'wpjm_editpost_css');
 }
 
-// Can we get some better decals please?  Thank you.
-// Swap the little Wordpress Logo for the Synotac Logo
+// CSS needed for the jump menu
 function wpjm_editpost_css() {
 	echo "
+	<link rel='stylesheet' href='".get_option('siteurl')."/wp-content/plugins/wp-jump-menu/assets/js/colorpicker/css/colorpicker.css' type='text/css' />
+   <!-- <link rel='stylesheet' media='screen' type='text/css' href='".get_option('siteurl')."/wp-content/plugins/wp-jump-menu/assets/js/colorpicker/css/layout.css' /> -->
 	<style type='text/css'>
-	#synotac_footer { position: fixed; ".get_option('wpjm_position').": 0; left: 0; height: 40px; overflow: hidden; background: ".get_option('wpjm_backgroundColor')."; color: ".get_option('wpjm_fontColor')."; width: 100%; z-index: 1500; border-".(get_option('wpjm_position')=='top'?'bottom':'top').": 2px solid ".get_option('wpjm_borderColor')."; }
-	#synotac_footer p { padding: 5px 15px; font-size: 12px; margin: 0; }
-	#synotac_footer p a:link, #synotac_footer p a:visited, #synotac_footer p a:hover { color: ".get_option('wpjm_linkColor')."; text-decoration: none; }
-	#synotac_footer p.syn_need_help { float: right; text-align: right; }
-	#synotac_footer p.syn_credits { font-style: italic; ".(get_option('wpjm_logoIcon')?'background: url('.get_option('wpjm_logoIcon').') no-repeat 15px 10px; padding-left: '.get_option('wpjm_logoWidth').'px;':'')."padding-top: 10px; line-height: 13px; }
-	#synotac_footer_clear { height: 30px; }
+	#jump_menu { position: fixed; ".get_option('wpjm_position').": 0; left: 0; height: 40px; overflow: hidden; background: #".get_option('wpjm_backgroundColor')."; color: #".get_option('wpjm_fontColor')."; width: 100%; z-index: 1500; border-".(get_option('wpjm_position')=='top'?'bottom':'top').": 2px solid #".get_option('wpjm_borderColor')."; }
+	#jump_menu p { padding: 5px 15px; font-size: 12px; margin: 0; }
+	#jump_menu p a:link, #jump_menu p a:visited, #jump_menu p a:hover { color: #".get_option('wpjm_linkColor')."; text-decoration: none; }
+	#jump_menu p.wpjm_need_help { float: right; text-align: right; }
+	#jump_menu p.jm_credits { font-style: italic; ".(get_option('wpjm_logoIcon')?'background: url('.get_option('wpjm_logoIcon').') no-repeat 15px 10px; padding-left: '.get_option('wpjm_logoWidth').'px;':'')."padding-top: 10px; line-height: 13px; }
+	#jump_menu_clear { height: 30px; }
 	body { ".(get_option('wpjm_position')=='top'?'padding-top: 42px !important;':'padding-bottom: 42px !important;')." }
 	#wp-pdd { max-width: 400px;  }
 	</style>
 	<!--[if IE 6]>
 	<style type='text/css'>
-	#synotac_footer { position: relative; }
-	#synotac_footer_clear { display: none; }
+	#jump_menu { position: relative; }
+	#jump_menu_clear { display: none; }
 	</style>
 	<![endif]-->
 	";
@@ -67,23 +68,27 @@ function wpjm_editpost_css() {
 
 // Some javascript to help the edit drop down list work
 function wpjm_js() {
-wp_enqueue_script( 'jquery-functions',get_option('siteurl').'/wp-content/plugins/wp-jump-menu/assets/js/jqueryfunctions.js',array('jquery') );
+	wp_enqueue_script( 'jquery-functions',get_option('siteurl').'/wp-content/plugins/wp-jump-menu/assets/js/jqueryfunctions.js',array('jquery') );
+	wp_enqueue_script( 'jquery-colorpicker', get_option('siteurl').'/wp-content/plugins/wp-jump-menu/assets/js/colorpicker/js/colorpicker.js', array('jquery') );
+	// wp_enqueue_script( 'jquery-colorpicker-eye', get_option('siteurl').'/wp-content/plugins/wp-jump-menu/assets/js/colorpicker/js/eye.js', array('jquery') );
+	// wp_enqueue_script( 'jquery-colorpicker-utils', get_option('siteurl').'/wp-content/plugins/wp-jump-menu/assets/js/colorpicker/js/utils.js', array('jquery') );
+	// wp_enqueue_script( 'jquery-colorpicker-layout', get_option('siteurl').'/wp-content/plugins/wp-jump-menu/assets/js/colorpicker/js/layout.js', array('jquery') );
 }
 
 // Put a bar across the bottom of the screen that offers to help...
 function wpjm_custom_footer() {
 
-	echo '<div id="synotac_footer">';
-	echo '<p class="syn_need_help">';
+	echo '<div id="jump_menu">';
+	echo '<p class="wpjm_need_help">';
 	echo 'Edit an existing page/post: ';
 		// Jump to page edit
 		wpjm_page_dropdown();
 	echo '</p>';
-	echo '<p class="syn_credits">';
+	echo '<p class="jm_credits">';
 	echo get_option('wpjm_message').' Go to your <a href="'.get_bloginfo('url').'">site</a>.';
 	echo '</p>';
 	echo '</div>';
-	// echo '<div id="synotac_footer_clear"></div>';
+	// echo '<div id="jump_menu_clear"></div>';
 
 }
 
@@ -124,10 +129,10 @@ function wpjm_page_dropdown(){
 	}
 	
 	// Get Pages
-	$pd_pages = get_pages('sort_column=menu_order');
+	$pd_pages = get_pages('sort_column='.get_option('wpjm_sortpagesby').'&sort_order='.get_option('wpjm_sortpages'));
 	$pd_total_pages = count($pd_pages);
 	// Get Posts
-	$pd_posts = get_posts('orderby=menu_order&order=ASC&numberposts=-1');
+	$pd_posts = get_posts('orderby='.get_option('wpjm_sortpostsby').'&order='.get_option('wpjm_sortposts').'&numberposts=-1');
 	$pd_total_posts = count($pd_posts);
 
 	// Get Custom Post Types settings (will iterate through later)
@@ -220,15 +225,19 @@ beam_me_up_wpjm();
 
 /* Admin Area */
 function syn_install() {
-		add_option("wpjm_position",'bottom');
-		add_option("wpjm_backgroundColor",'#333');
-		add_option("wpjm_fontColor",'#fff');
-		add_option("wpjm_borderColor",'#ff9933');
+		add_option("wpjm_position",'top');
+		add_option("wpjm_sortpagesby",'menu_order');
+		add_option("wpjm_sortpages",'ASC');
+		add_option("wpjm_sortpostsby",'date');
+		add_option("wpjm_sortposts",'DESC');
+		add_option("wpjm_backgroundColor",'333333');
+		add_option("wpjm_fontColor",'ffffff');
+		add_option("wpjm_borderColor",'aaaaaa');
 		add_option("wpjm_customPostTypes",'');
-		add_option("wpjm_logoIcon",'../wp-content/plugins/wp-jump-menu/assets/images/syn-logo-icon.png');
-		add_option("wpjm_logoWidth",'35');
-		add_option("wpjm_linkColor",'#ff9933');
-		add_option("wpjm_message","Brought to you by <a href='http://www.synotac.com/' target='_blank'>Synotac Web Design</a>.");
+		add_option("wpjm_logoIcon",'');
+		add_option("wpjm_logoWidth",'0');
+		add_option("wpjm_linkColor",'aaaaaa');
+		add_option("wpjm_message","Brought to you by <a href='http://www.moseycreations.com/' target='_blank'>Mosey Creations</a>.");
 }
 
 
@@ -243,6 +252,10 @@ function wpjm_menu() {
 // Update Options on Save
 if (isset($_POST['save_post_page_values'])) {
 	update_option("wpjm_position", $_POST['wpjm_position']);
+	update_option("wpjm_sortpagesby",$_POST['wpjm_sortpagesby']);
+	update_option("wpjm_sortpages",$_POST['wpjm_sortpages']);
+	update_option("wpjm_sortpostsby",$_POST['wpjm_sortpostsby']);
+	update_option("wpjm_sortposts",$_POST['wpjm_sortposts']);
 	update_option("wpjm_backgroundColor", $_POST['wpjm_backgroundColor']);
 	update_option("wpjm_fontColor",$_POST['wpjm_fontColor']);
 	update_option("wpjm_borderColor",$_POST['wpjm_borderColor']);
@@ -262,6 +275,10 @@ if (isset($_POST['save_post_page_values'])) {
 
 // Get Options
 $wpjm_position = get_option("wpjm_position");
+$wpjm_sortpagesby = get_option("wpjm_sortpagesby");
+$wpjm_sortpages = get_option("wpjm_sortpages");
+$wpjm_sortpostsby = get_option("wpjm_sortpostsby");
+$wpjm_sortposts = get_option("wpjm_sortposts");
 $wpjm_backgroundColor = get_option("wpjm_backgroundColor");
 $wpjm_fontColor = get_option("wpjm_fontColor");
 $wpjm_borderColor = get_option("wpjm_borderColor");
@@ -321,32 +338,84 @@ $wpjm_customPostTypes = get_option("wpjm_customPostTypes");
 					<small>This determines where the bar will be placed.</small>
 				</li>
 				<li>
+					<label>Sort Pages By:</label>
+					<div>
+						<select name="wpjm_sortpagesby" id="wpjm_sortpagesby">
+							<option value="menu_order"<?php echo ($wpjm_sortpagesby=='menu_order'?' selected="selected"':''); ?>>Menu Order</option>
+							<option value="post_author"<?php echo ($wpjm_sortpagesby=='post_author'?' selected="selected"':''); ?>>Author</option>
+							<option value="post_date"<?php echo ($wpjm_sortpagesby=='post_date'?' selected="selected"':''); ?>>Date</option>
+							<option value="ID"<?php echo ($wpjm_sortpagesby=='ID'?' selected="selected"':''); ?>>ID</option>
+							<option value="post_modified"<?php echo ($wpjm_sortpagesby=='post_modified'?' selected="selected"':''); ?>>Modified</option>
+							<option value="post_name"<?php echo ($wpjm_sortpagesby=='post_name'?' selected="selected"':''); ?>>Name</option>
+							<option value="post_parent"<?php echo ($wpjm_sortpagesby=='post_parent'?' selected="selected"':''); ?>>Parent</option>
+							<option value="post_title"<?php echo ($wpjm_sortpagesby=='post_title'?' selected="selected"':''); ?>>Title</option>
+							
+						</select>
+					</div>
+				</li>
+				<li>
+					<label>Sort Pages Order:</label>
+					<div>
+						<input type="radio" value="ASC" name="wpjm_sortpages" id="wpjm_sortpages"<?php echo ($wpjm_sortpages=='ASC'?' checked="checked"':''); ?> /> Ascending<br/>
+						<input type="radio" value="DESC" name="wpjm_sortpages" id="wpjm_sortpages"<?php echo ($wpjm_sortpages=='DESC'?' checked="checked"':''); ?> /> Descending
+					</div>
+				</li>
+				<li>
+					<label>Sort Posts By:</label>
+					<div>
+						<select name="wpjm_sortpostsby" id="wpjm_sortpostsby">
+							<option value="menu_order"<?php echo ($wpjm_sortpostsby=='menu_order'?' selected="selected"':''); ?>>Menu Order</option>
+							<option value="author"<?php echo ($wpjm_sortpostsby=='author'?' selected="selected"':''); ?>>Author</option>
+							<option value="category"<?php echo ($wpjm_sortpostsby=='category'?' selected="selected"':''); ?>>Category</option>
+							<option value="content"<?php echo ($wpjm_sortpostsby=='content'?' selected="selected"':''); ?>>Content</option>
+							<option value="date"<?php echo ($wpjm_sortpostsby=='date'?' selected="selected"':''); ?>>Date</option>
+							<option value="ID"<?php echo ($wpjm_sortpostsby=='ID'?' selected="selected"':''); ?>>ID</option>
+							<option value="mime_type"<?php echo ($wpjm_sortpostsby=='mime_type'?' selected="selected"':''); ?>>Mime Type</option>
+							<option value="modified"<?php echo ($wpjm_sortpostsby=='modified'?' selected="selected"':''); ?>>Modified</option>
+							<option value="name"<?php echo ($wpjm_sortpostsby=='name'?' selected="selected"':''); ?>>Name</option>
+							<option value="parent"<?php echo ($wpjm_sortpostsby=='parent'?' selected="selected"':''); ?>>Parent</option>
+							<option value="password"<?php echo ($wpjm_sortpostsby=='password'?' selected="selected"':''); ?>>Password</option>
+							<option value="rand"<?php echo ($wpjm_sortpostsby=='rand'?' selected="selected"':''); ?>>Random</option>
+							<option value="status"<?php echo ($wpjm_sortpostsby=='status'?' selected="selected"':''); ?>>Status</option>
+							<option value="title"<?php echo ($wpjm_sortpostsby=='title'?' selected="selected"':''); ?>>Title</option>
+							<option value="type"<?php echo ($wpjm_sortpostsby=='type'?' selected="selected"':''); ?>>Type</option>
+						</select>
+					</div>
+				</li>
+				<li>
+					<label>Sort Posts Order:</label>
+					<div>
+						<input type="radio" value="ASC" name="wpjm_sortposts" id="wpjm_sortposts"<?php echo ($wpjm_sortposts=='ASC'?' checked="checked"':''); ?> /> Ascending<br/>
+						<input type="radio" value="DESC" name="wpjm_sortposts" id="wpjm_sortposts"<?php echo ($wpjm_sortposts=='DESC'?' checked="checked"':''); ?> /> Descending
+					</div>
+				</li>
+				<li>
 					<label>Background Color:</label>
 					<div>
-						<input type="text" name="wpjm_backgroundColor" id="wpjm_backgroundColor" value="<?php echo $wpjm_backgroundColor; ?>" />
+						<input class="colorPicker" type="text" name="wpjm_backgroundColor" id="wpjm_backgroundColor" value="<?php echo $wpjm_backgroundColor; ?>" />
 					</div>
-					<small>Hex color (i.e. #333 or #333333 would be dark grey)</small>
+					<small>Click to select hex value</small>
 				</li>
 				<li>
 					<label>Font Color:</label>
 					<div>
-						<input type="text" name="wpjm_fontColor" id="wpjm_fontColor" value="<?php echo $wpjm_fontColor; ?>" />
+						<input class="colorPicker" type="text" name="wpjm_fontColor" id="wpjm_fontColor" value="<?php echo $wpjm_fontColor; ?>" />
 					</div>
-					<small>Hex color</small>
+					<small>Click to select hex value</small>
 				</li>
 				<li>
 					<label>Border Color:</label>
 					<div>
-						<input type="text" name="wpjm_borderColor" id="wpjm_borderColor" value="<?php echo $wpjm_borderColor; ?>" />
+						<input class="colorPicker" type="text" name="wpjm_borderColor" id="wpjm_borderColor" value="<?php echo $wpjm_borderColor; ?>" />
 					</div>
-					<small>Hex color</small>
+					<small>Click to select hex value</small>
 				</li>
 				<li>
 					<label>Link Color:</label>
 					<div>
-						<input type="text" name="wpjm_linkColor" id="wpjm_linkColor" value="<?php echo $wpjm_linkColor; ?>" />
+						<input class="colorPicker" type="text" name="wpjm_linkColor" id="wpjm_linkColor" value="<?php echo $wpjm_linkColor; ?>" />
 					</div>
-					<small>Hex color</small>
+					<small>Click to select hex value</small>
 				</li>
 				<li>
 					<label>Logo Icon URL:</label>

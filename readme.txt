@@ -1,12 +1,12 @@
 === Plugin Name ===
 Contributors: jkrill
-Donate link: http://www.synotac.com
+Donate link: http://www.moseycreations.com
 Tags: posts, pages, admin, jump, menu, quick, links
 Requires at least: 2.8
 Tested up to: 3.0.1
-Stable tag: 1.1
+Stable tag: 1.2
 
-Creates a drop-down menu in a bar across the bottom or top of the screen that makes it easy to jump to a page or post in the admin area for editing.
+Creates a drop-dwn menu in a bar across the bottom or top of the screen that makes it easy to jump to a page or post in the admin area for editing.
 
 == Description ==
 
@@ -51,10 +51,25 @@ You'll also need to specify the width of the icon, so that proper padding is giv
 
 == Changelog ==
 
+= 1.2 =
+* Added color picker to hex inputs
+* Added sort order options for pages and posts
+* Added number of posts to display option
+
+= 1.1 =
+* Fixed minor js bug
+* Included a screenshot
+
 = 1.0 =
 * Initial Release
 
 == Upgrade Notice ==
+
+= 1.2 =
+* Updates to options in admin area
+
+= 1.1 =
+Stable working version.
 
 = 1.0 = 
 * Initial Release
