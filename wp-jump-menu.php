@@ -52,7 +52,8 @@ function wpjm_editpost_css() {
 	#jump_menu p { padding: 5px 15px; font-size: 12px; margin: 0; }
 	#jump_menu p a:link, #jump_menu p a:visited, #jump_menu p a:hover { color: #".get_option('wpjm_linkColor')."; text-decoration: none; }
 	#jump_menu p.wpjm_need_help { float: right; text-align: right; }
-	#jump_menu p.jm_credits { font-style: italic; ".(get_option('wpjm_logoIcon')?'background: url('.get_option('wpjm_logoIcon').') no-repeat 15px 10px; padding-left: '.get_option('wpjm_logoWidth').'px;':'')."padding-top: 10px; line-height: 13px; }
+	#jump_menu p.jm_credits { font-style: italic; padding-top: 10px; line-height: 13px; }
+	#jump_menu p.jm_credits img.wpjm_logo { ".(get_option('wpjm_logoWidth')?'width: '.get_option('wpjm_logoWidth').'px;':'width: 35px;')." height: auto; max-height: 30px; vertical-align: middle; margin-right: 10px; }
 	#jump_menu_clear { height: 30px; }
 	body { ".(get_option('wpjm_position')=='top'?'padding-top: 42px !important;':'padding-bottom: 42px !important;')." }
 	#wp-pdd { max-width: 400px;  }
@@ -85,6 +86,7 @@ function wpjm_custom_footer() {
 		wpjm_page_dropdown();
 	echo '</p>';
 	echo '<p class="jm_credits">';
+	echo (get_option('wpjm_logoIcon') ? '<a href="'.get_bloginfo('url').'"><img class="wpjm_logo" src="'.get_option('wpjm_logoIcon').'" alt="" /></a>' : '');
 	echo get_option('wpjm_message').' Go to your <a href="'.get_bloginfo('url').'">site</a>.';
 	echo '</p>';
 	echo '</div>';

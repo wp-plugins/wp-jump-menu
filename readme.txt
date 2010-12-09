@@ -3,10 +3,10 @@ Contributors: jkrill
 Donate link: http://www.moseycreations.com
 Tags: posts, pages, admin, jump, menu, quick, links
 Requires at least: 2.8
-Tested up to: 3.0.1
-Stable tag: 1.2
+Tested up to: 3.0.3
+Stable tag: 1.3
 
-Creates a drop-dwn menu in a bar across the bottom or top of the screen that makes it easy to jump to a page or post in the admin area for editing.
+Creates a drop-down menu in a bar across the bottom or top of the screen that makes it easy to jump to a page or post in the admin area for editing.
 
 == Description ==
 
@@ -51,6 +51,9 @@ You'll also need to specify the width of the icon, so that proper padding is giv
 
 == Changelog ==
 
+= 1.3 =
+* Changed how the optional logo is displayed (from background css to <img> tag)
+
 = 1.2 =
 * Added color picker to hex inputs
 * Added sort order options for pages and posts
@@ -64,6 +67,9 @@ You'll also need to specify the width of the icon, so that proper padding is giv
 * Initial Release
 
 == Upgrade Notice ==
+
+= 1.3 =
+* Updated logo option
 
 = 1.2 =
 * Updates to options in admin area
