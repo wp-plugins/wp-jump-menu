@@ -3,18 +3,22 @@ Contributors: jkrill
 Donate link: http://www.moseycreations.com
 Tags: posts, pages, admin, jump, menu, quick, links
 Requires at least: 2.8
-Tested up to: 3.0.3
-Stable tag: 1.3
+Tested up to: 3.1.2
+Stable tag: 1.4
 
 Creates a drop-down menu in a bar across the bottom or top of the screen that makes it easy to jump to a page or post in the admin area for editing.
 
 == Description ==
 
-The WP Jump Menu plugin is a useful plugin that adds a drop-down "jump" menu to the bottom or top of the WordPress admin area filled with pages, posts, and custom post types.  When a page or post is selected, it jumps to edit that page.
+THIS PLUGIN IS A MUST HAVE FOR WORDPRESS DEVELOPERS!
+
+Sick of having to go to your Posts list or Pages list to edit an entry?  Me too.
+
+The WP Jump Menu plugin is a useful plugin that adds a drop-down "jump" menu to the bottom or top of the WordPress admin area which allows you to select from a list of pages, posts or custom post types and jump right into editing that page.
 
 Why is this needed?
 
-By adding this ability, you can save loads of time when editing a bunch of posts or pages.  No more do you have to click on Pages, and then search for the right page in the list, and then click on the title or on edit.   Simply find the page or post in the drop-down (which is neatly organized and indented) and it will jump to edit that page or post.
+By adding this ability, you can save TONS OF TIME when editing a bunch of posts or pages.  No more do you have to click on Pages, and then search for the right page in the list, and then click on the title or on edit.   Simply find the page or post in the drop-down (which is neatly organized and indented) and it will jump to edit that page or post.
 
 Customizable
 
@@ -32,6 +36,9 @@ e.g.
 
 1. Upload the `wp-jump-menu` folder to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
+3. You'll find the options under Settings->WP Jump Menu
+4. In the settings, you can customize the jump menu's location, colors, sort order, and enter in custom post types (comma seperated) to list in the jump menu.
+5. Make sure you click save to save your settings.
 
 == Frequently Asked Questions ==
 
@@ -47,9 +54,12 @@ You'll also need to specify the width of the icon, so that proper padding is giv
 
 == Screenshots ==
 
-1. The Jump Menu
+1. The Jump Menu - Just a drop down, but one POWERFUL drop down!
 
 == Changelog ==
+
+= 1.4 = 
+* Cleaned up a little bit, and updated the readme.txt
 
 = 1.3 =
 * Changed how the optional logo is displayed (from background css to <img> tag)

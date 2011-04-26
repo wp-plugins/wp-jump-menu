@@ -2,18 +2,18 @@
 /**
  * @package WP_Jump_Menu
  * @author Jim Krill
- * @version 1.3
+ * @version 1.4
  */
 /*
 Plugin Name: WP Jump Menu
 Plugin URI: http://moseycreations.com/2010/09/wp-jump-menu
-Description: Creates a drop-down menu (jump menu) in a bar across the bottom of the screen that makes it easy to jump to a page or post in the admin area for editing.
+Description: Creates a drop-down menu (jump menu) in a bar across the top or bottom of the screen that makes it easy to jump right to a page, post, or custom post type in the admin area to edit.
 Author: Jim Krill
-Version: 1.3
-Author URI: http://moseycreations.com/
+Version: 1.4
+Author URI: http://krillwebdesign.com
 */
 
-/*  Copyright 2010  Jim Krill  (email : jimkrill@gmail.com)
+/*  Copyright 2011  Jim Krill  (email : jimkrill@gmail.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License, version 2, as 
@@ -71,9 +71,6 @@ function wpjm_editpost_css() {
 function wpjm_js() {
 	wp_enqueue_script( 'jquery-functions',get_option('siteurl').'/wp-content/plugins/wp-jump-menu/assets/js/jqueryfunctions.js',array('jquery') );
 	wp_enqueue_script( 'jquery-colorpicker', get_option('siteurl').'/wp-content/plugins/wp-jump-menu/assets/js/colorpicker/js/colorpicker.js', array('jquery') );
-	// wp_enqueue_script( 'jquery-colorpicker-eye', get_option('siteurl').'/wp-content/plugins/wp-jump-menu/assets/js/colorpicker/js/eye.js', array('jquery') );
-	// wp_enqueue_script( 'jquery-colorpicker-utils', get_option('siteurl').'/wp-content/plugins/wp-jump-menu/assets/js/colorpicker/js/utils.js', array('jquery') );
-	// wp_enqueue_script( 'jquery-colorpicker-layout', get_option('siteurl').'/wp-content/plugins/wp-jump-menu/assets/js/colorpicker/js/layout.js', array('jquery') );
 }
 
 // Put a bar across the bottom of the screen that offers to help...
@@ -142,7 +139,9 @@ function wpjm_page_dropdown(){
 
 	// Start echoing the select menu
 	echo '<select id="wp-pdd">';
-	echo '<option>-- Choose a Page/Post --</option>';
+	echo '<option>-- Choose an Entry to Edit --</option>';
+	echo '<option>-- Page Name (ID) --</option>';
+	echo '<option>-- Post Name (Date | ID) --</option>';
 	
 	// Loop through pages
 	$pd_i = 0;
@@ -174,7 +173,7 @@ function wpjm_page_dropdown(){
 						echo ' selected="selected"';
 		echo '>';
 		echo wpjm_get_page_title($pd_post->post_title);
-		echo ' ('.$pd_post->ID.') ';
+		echo ' ('.$pd_post->post_date.' | '.$pd_post->ID.') ';
 		echo '</option>';
 	}
 	echo '</optgroup>';
