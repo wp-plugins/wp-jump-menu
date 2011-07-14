@@ -2,14 +2,14 @@
 /**
  * @package WP_Jump_Menu
  * @author Jim Krill
- * @version 1.4
+ * @version 2.0
  */
 /*
 Plugin Name: WP Jump Menu
-Plugin URI: http://moseycreations.com/2010/09/wp-jump-menu
+Plugin URI: http://www.synotac.com/wp-jump-menu/
 Description: Creates a drop-down menu (jump menu) in a bar across the top or bottom of the screen that makes it easy to jump right to a page, post, or custom post type in the admin area to edit.
 Author: Jim Krill
-Version: 1.4
+Version: 2.0
 Author URI: http://krillwebdesign.com
 */
 
@@ -239,7 +239,7 @@ function syn_install() {
 		add_option("wpjm_logoIcon",'');
 		add_option("wpjm_logoWidth",'0');
 		add_option("wpjm_linkColor",'aaaaaa');
-		add_option("wpjm_message","Brought to you by <a href='http://www.moseycreations.com/' target='_blank'>Mosey Creations</a>.");
+		add_option("wpjm_message","Brought to you by <a href='http://www.krillwebdesign.com/' target='_blank'>Krill Web Design</a>.");
 }
 
 
@@ -262,9 +262,18 @@ if (isset($_POST['save_post_page_values'])) {
 	update_option("wpjm_backgroundColor", $_POST['wpjm_backgroundColor']);
 	update_option("wpjm_fontColor",$_POST['wpjm_fontColor']);
 	update_option("wpjm_borderColor",$_POST['wpjm_borderColor']);
-	update_option("wpjm_customPostTypes", $_POST['wpjm_customPostTypes']);
+	$custom_post_types = (is_array($_POST['wpjm_customPostTypes'])?implode(",",$_POST['wpjm_customPostTypes']):$_POST['wpjm_customPostTypes']);
+	update_option("wpjm_customPostTypes", $custom_post_types);
 	update_option("wpjm_logoIcon", $_POST['wpjm_logoIcon']);
-	update_option("wpjm_logoWidth", $_POST['wpjm_logoWidth']);
+	if (!function_exists('file_exists')) {
+		if ($_POST['wpjm_logoIcon'] && file_exists($_POST['wpjm_logoIcon'])) {
+			$logo_width_obj = getimagesize($_POST['wpjm_logoIcon']);
+			$logo_width = $logo_width_obj[0];
+			update_option("wpjm_logoWidth", $logo_width);
+		}
+	} else {
+		update_option("wpjm_logoWidth", $_POST['wpjm_logoWidth']);
+	}
 	update_option("wpjm_linkColor", $_POST['wpjm_linkColor']);
 	update_option("wpjm_message", stripslashes($_POST['wpjm_message']));
 	$message = "Options updated successfully!";
@@ -294,55 +303,36 @@ $wpjm_customPostTypes = get_option("wpjm_customPostTypes");
 
 ?>
 
-<style type="text/css">
-	#wpjm-options-form {
-		width: 600px;
-	}
-	#wpjm-options-form fieldset {
-		border: 1px solid #aaa;
-		padding: 10px;
-	}
-	#wpjm-options-form fieldset legend {
-		font: bold italic 14px Georgia;
-		padding: 0px 10px;
-	}
-	#wpjm-options-form label {
-		font-weight: bold;
-		display: block;
-	}
-	#wpjm-options-form small {
-		font-style: italic;
-	}
-	#wpjm-options-form ol li {
-		list-style: none;
-		margin-bottom: 15px;
-	}
-	#wpjm-options-form ol {
-		margin-bottom: 20px;
-	}
-	
-</style>
 
 <?php if ($message) : ?>
 <div id="message" class="updated"><p><?php echo $message; ?></p></div>
 <?php endif; ?>
 	<div class="wrap">
+		<div id="icon-options-general" class="icon32">
+			<br/>
+		</div>
 		<h2>WP Jump Menu Options</h2>		
 
 			<form method="post" id="wpjm-options-form">
-			<fieldset>
-			<legend>Options</legend>
-			<ol>
-				<li>
+
+			<table class="form-table">
+			<tr>
+				<th>
 					<label>Position of Jump Menu Bar:</label> 
+				</th>
+				<td>
 					<div>
-						<input type="radio" value="bottom" name="wpjm_position" id="wpjm_position"<?php echo ($wpjm_position=='bottom'?' checked="checked"':''); ?> /> Bottom<br/>
-						<input type="radio" value="top" name="wpjm_position" id="wpjm_position"<?php echo ($wpjm_position=='top'?' checked="checked"':''); ?> /> Top
+						<input type="radio" value="bottom" name="wpjm_position" id="wpjm_position"<?php echo ($wpjm_position=='bottom'?' checked="checked"':''); ?> /> Bottom of screen<br/>
+						<input type="radio" value="top" name="wpjm_position" id="wpjm_position"<?php echo ($wpjm_position=='top'?' checked="checked"':''); ?> /> Top of screen
 					</div>
-					<small>This determines where the bar will be placed.</small>
-				</li>
-				<li>
+					
+				</td>
+			</tr>
+			<tr>
+				<th>
 					<label>Sort Pages By:</label>
+				</th>
+				<td>
 					<div>
 						<select name="wpjm_sortpagesby" id="wpjm_sortpagesby">
 							<option value="menu_order"<?php echo ($wpjm_sortpagesby=='menu_order'?' selected="selected"':''); ?>>Menu Order</option>
@@ -355,17 +345,26 @@ $wpjm_customPostTypes = get_option("wpjm_customPostTypes");
 							<option value="post_title"<?php echo ($wpjm_sortpagesby=='post_title'?' selected="selected"':''); ?>>Title</option>
 							
 						</select>
+						<span class="description">Pages default is "Menu Order" which maintains hierachy.</span>
 					</div>
-				</li>
-				<li>
+				</td>
+			</tr>
+			<tr>
+				<th>
 					<label>Sort Pages Order:</label>
+				</th>
+				<td>
 					<div>
 						<input type="radio" value="ASC" name="wpjm_sortpages" id="wpjm_sortpages"<?php echo ($wpjm_sortpages=='ASC'?' checked="checked"':''); ?> /> Ascending<br/>
 						<input type="radio" value="DESC" name="wpjm_sortpages" id="wpjm_sortpages"<?php echo ($wpjm_sortpages=='DESC'?' checked="checked"':''); ?> /> Descending
 					</div>
-				</li>
-				<li>
+				</td>
+			</tr>
+			<tr>
+				<th>
 					<label>Sort Posts By:</label>
+				</th>
+				<td>
 					<div>
 						<select name="wpjm_sortpostsby" id="wpjm_sortpostsby">
 							<option value="menu_order"<?php echo ($wpjm_sortpostsby=='menu_order'?' selected="selected"':''); ?>>Menu Order</option>
@@ -384,87 +383,151 @@ $wpjm_customPostTypes = get_option("wpjm_customPostTypes");
 							<option value="title"<?php echo ($wpjm_sortpostsby=='title'?' selected="selected"':''); ?>>Title</option>
 							<option value="type"<?php echo ($wpjm_sortpostsby=='type'?' selected="selected"':''); ?>>Type</option>
 						</select>
+						<span class="description">Posts default is "Date" which orders by post date.</span>
 					</div>
-				</li>
-				<li>
+				</td>
+			</tr>
+			<tr>
+				<th>
 					<label>Sort Posts Order:</label>
+				</th>
+				<td>
 					<div>
 						<input type="radio" value="ASC" name="wpjm_sortposts" id="wpjm_sortposts"<?php echo ($wpjm_sortposts=='ASC'?' checked="checked"':''); ?> /> Ascending<br/>
 						<input type="radio" value="DESC" name="wpjm_sortposts" id="wpjm_sortposts"<?php echo ($wpjm_sortposts=='DESC'?' checked="checked"':''); ?> /> Descending
 					</div>
-				</li>
-				<li>
+				</td>
+			</tr>
+			<tr>
+				<th>
 					<label>Number of Posts to Display:</label>
+				</th>
+				<td>
 					<div>
 						<input type="text" name="wpjm_numberposts" id="wpjm_numberposts" value="<?php echo $wpjm_numberposts; ?>" />
+						<span class="description">-1 to display all posts.</span>
 					</div>
-					<small>Positive number. -1 to display all posts.</small>
-				</li>
-				<li>
+					
+				</td>
+			</tr>
+			<tr>
+				<th>
 					<label>Background Color:</label>
+				</th>
+				<td>
 					<div>
-						<input class="colorPicker" type="text" name="wpjm_backgroundColor" id="wpjm_backgroundColor" value="<?php echo $wpjm_backgroundColor; ?>" />
+						<input class="colorPicker" type="text" name="wpjm_backgroundColor" id="wpjm_backgroundColor" value="<?php echo $wpjm_backgroundColor; ?>" rel="#jump_menu|backgroundColor" />
+						<span class="description">Click to select hex value</span>
 					</div>
-					<small>Click to select hex value</small>
-				</li>
-				<li>
+					
+				</td>
+			</tr>
+			<tr>
+				<th>
 					<label>Font Color:</label>
+				</th>
+				<td>
 					<div>
-						<input class="colorPicker" type="text" name="wpjm_fontColor" id="wpjm_fontColor" value="<?php echo $wpjm_fontColor; ?>" />
+						<input class="colorPicker" type="text" name="wpjm_fontColor" id="wpjm_fontColor" value="<?php echo $wpjm_fontColor; ?>" rel="#jump_menu|color" />
+					<span class="description">Click to select hex value</span>
 					</div>
-					<small>Click to select hex value</small>
-				</li>
-				<li>
+					
+				</td>
+			</tr>
+			<tr>
+				<th>
 					<label>Border Color:</label>
+				</th>
+				<td>
 					<div>
-						<input class="colorPicker" type="text" name="wpjm_borderColor" id="wpjm_borderColor" value="<?php echo $wpjm_borderColor; ?>" />
+						<input class="colorPicker" type="text" name="wpjm_borderColor" id="wpjm_borderColor" value="<?php echo $wpjm_borderColor; ?>" rel="#jump_menu|borderColor" />
+					<span class="description">Click to select hex value</span>
 					</div>
-					<small>Click to select hex value</small>
-				</li>
-				<li>
+					
+				</td>
+			</tr>
+			<tr>
+				<th>
 					<label>Link Color:</label>
+				</th>
+				<td>
 					<div>
-						<input class="colorPicker" type="text" name="wpjm_linkColor" id="wpjm_linkColor" value="<?php echo $wpjm_linkColor; ?>" />
+						<input class="colorPicker" type="text" name="wpjm_linkColor" id="wpjm_linkColor" value="<?php echo $wpjm_linkColor; ?>" rel="#jump_menu p a:link, #jump_menu p a:visited, #jump_menu p a:hover|color" />
+					<span class="description">Click to select hex value</span>
 					</div>
-					<small>Click to select hex value</small>
-				</li>
-				<li>
+					
+				</td>
+			</tr>
+			<tr>
+				<th>
 					<label>Logo Icon URL:</label>
+				</th>
+				<td>
 					<div>
 						<input type="text" name="wpjm_logoIcon" id="wpjm_logoIcon" value="<?php echo $wpjm_logoIcon; ?>" size="100" />
 					</div>
-					<small>*Optional: The URL to the icon displayed next to the message in the jump bar.</small>
-				</li>
-				<li>
+					<span class="description">*Optional: The URL to the icon displayed next to the message in the jump bar.</span>
+				</td>
+			</tr>
+			<?php
+			if (!function_exists('file_exists')) { ?>
+			<tr>
+				<th>
 					<label>Logo Width:</label>
+				</th>
+				<td>
 					<div>
 						<input type="text" name="wpjm_logoWidth" id="wpjm_logoWidth" value="<?php echo $wpjm_logoWidth; ?>" />
+					<span class="description">*Optional: The width of the icon, used as padding on the left of the message.</span>
 					</div>
-					<small>*Optional: The width of the icon, used as padding on the left of the message.</small>
-				</li>
-				<li>
+					
+				</td>
+			</tr>
+			<?php
+		}
+		?>
+			<tr>
+				<th>
 					<label>Message:</label>
+				</th>
+				<td>
 					<div>
-						<textarea name="wpjm_message" id="wpjm_message" cols="40" rows="3" ><?php echo $wpjm_message; ?></textarea>
+						<textarea name="wpjm_message" id="wpjm_message" cols="60" rows="3" ><?php echo $wpjm_message; ?></textarea>
 					</div>
-					<small>Short message to include on left side of Jump bar.  HTML is ok.</small>
-				</li>
-				<li>
+					<span class="description">Short message to include on left side of Jump bar.  HTML is ok.</span>
+				</td>
+			</tr>
+			<tr>
+				<th>
 					<label>Custom Post Types:</label>
+				</th>
+				<td>
+					
 					<div>
-						<input type="text" name="wpjm_customPostTypes" id="wpjm_customPostTypes" value="<?php echo $wpjm_customPostTypes; ?>" size="50" />
+						<?php 
+							$post_types = get_post_types(array('_builtin'=>false),'objects'); 
+							$selected_post_types_arr = explode(",",$wpjm_customPostTypes);
+						?>
+
+							<?php foreach ($post_types as $pt) { ?>
+							<input type="checkbox" name="wpjm_customPostTypes[]" id="wpjm_customPostTypes" value="<?php echo $pt->name; ?>" <?php echo (in_array($pt->name,$selected_post_types_arr)?"checked='checked'":''); ?> /> <?php echo $pt->labels->name; ?><br/>
+							<?php } ?>
+						
+
+						<!--<input type="text" name="wpjm_customPostTypes" id="wpjm_customPostTypes" value="<?php echo $wpjm_customPostTypes; ?>" size="50" />-->
 					</div>
-					<small>Comma separated list of custom post type names to display in the Jump Menu. (i.e. news,reviews,authors)</small>
-				</li>
-			</ol>
-			<p class="sb">
+					<span class="description">Select the Custom Post Types you want to show in the jump menu.</span>
+				</td>
+			</tr>
+		</table>
+			<p class="submit">
 				<input type="submit" name="save_post_page_values" value="Save Options" class="button button-primary">
 			</p>
-			</fieldset>
 			
 		</form>
 			
 	</div>
+
 <?php
 }
 
