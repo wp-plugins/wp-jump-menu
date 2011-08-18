@@ -3,6 +3,16 @@ jQuery(document).ready(function() {
 	jQuery('#wp-pdd').change(function() {
 		window.location = jQuery(this).val();
 	});
+
+	jQuery('table#wpjm-post-types-table tbody th, table#wpjm-post-types-table td').css('cursor','move');
+
+	jQuery('#wpjm-post-types-table tbody').sortable({
+		items: 'tr',
+		cursor: 'move',
+		axis: 'y',
+		containment: 'table#wpjm-post-types-table',
+		scrollSensitivity: 40
+	});
 	
 	if (jQuery('#wpjm-options-form').length > 0) {
 		jQuery('input.colorPicker').ColorPicker({

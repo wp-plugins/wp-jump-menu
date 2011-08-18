@@ -109,11 +109,11 @@ function wpjm_admin_init() {
 
 
 function wpjm_section_text() {
-	// echo '<p>Main description of this section here.</p>';
+	echo '<p class="description">These settings will change the position and colors of the Jump Menu.</p>';
 }
 
 function wpjm_post_type_section_text() {
-	echo '<p class="description">Choose the post types you want to include in the Jump Menu.</p>';
+	echo '<p class="description">Choose the post types you want to include in the Jump Menu.<br/>Click and drag the rows to change the order in which they appear in the Jump Menu.</p>';
 }
 
 // --------------------------------

@@ -2,14 +2,14 @@
 /**
  * @package WP_Jump_Menu
  * @author Jim Krill
- * @version 2.1.2
+ * @version 2.1.3
  */
 /*
 Plugin Name: WP Jump Menu
 Plugin URI: http://www.synotac.com/wp-jump-menu/
 Description: Creates a drop-down menu (jump menu) in a bar across the top or bottom of the screen that makes it easy to jump right to a page, post, or custom post type in the admin area to edit.
 Author: Jim Krill
-Version: 2.1.2
+Version: 2.1.3
 Author URI: http://krillwebdesign.com
 */
 
@@ -35,7 +35,7 @@ Author URI: http://krillwebdesign.com
 
 require_once( WP_PLUGIN_DIR . '/wp-jump-menu/settings.php' );
 
-define('WPJM_VERSION','2.1.2');
+define('WPJM_VERSION','2.1.3');
 
 // Call the plugin's main functions
 function beam_me_up_wpjm() {
@@ -111,10 +111,13 @@ function wpjm_editpost_css() {
 // Some javascript to help the edit drop down list work
 function wpjm_js() {
 
+	// jquery ui - sortable
+	wp_enqueue_script( 'jquery-ui-sortable' );
 	// jqueryfunctions.js (general jquery scripts) & jquery
 	wp_enqueue_script( 'jquery-functions', get_option( 'siteurl' ).'/wp-content/plugins/wp-jump-menu/assets/js/jqueryfunctions.js', array( 'jquery' ) );
 	// colorpicker.js - used for the color picker
 	wp_enqueue_script( 'jquery-colorpicker', get_option( 'siteurl' ).'/wp-content/plugins/wp-jump-menu/assets/js/colorpicker/js/colorpicker.js', array( 'jquery' ) );
+
 
 }
 
@@ -387,7 +390,7 @@ function wpjm_install() {
 
 	}
 	update_option('wpjm_options',$arr);
-	update_option('wpjm_version','2.1.2');
+	update_option('wpjm_version','2.1.3');
 
 }
 
