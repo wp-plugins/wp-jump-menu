@@ -10,6 +10,8 @@ Creates a drop-down menu in a bar across the top or bottom of the admin area whi
 
 == Description ==
 
+Creates a drop-down menu in a bar across the top or bottom of the admin area which makes it easy to jump to a page, post, custom post type or media file for editing. One click and you're editing!  New options page for easy customization.
+
 THIS PLUGIN IS A MUST HAVE FOR WORDPRESS DEVELOPERS!
 
 Sick of having to go to your Posts list or Pages list to edit an entry?  Me too.
