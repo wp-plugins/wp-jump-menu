@@ -337,7 +337,7 @@ function wpjm_postTypes_checkbox() {
 			</tfoot>
 			<tbody>
 		<?php 
-			$post_types = get_post_types(array('_builtin'=>true),'objects'); 
+			$post_types = get_post_types('','objects'); 
 			// $selected_post_types_arr = explode(",",$options['postTypes']);
 			$selected_post_types_arr = $options['postTypes'];
 		?>

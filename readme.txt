@@ -4,7 +4,7 @@ Donate link: http://www.krillwebdesign.com
 Tags: posts, pages, admin, jump, menu, quick, links, custom post types
 Requires at least: 3.0
 Tested up to: 3.2.1
-Stable tag: 2.1.4
+Stable tag: 2.1.5
 
 Creates a drop-down menu in a bar across the top or bottom of the admin area which makes it easy to jump to a page, post, custom post type or media file for editing. One click and you're editing!  New options page for easy customization.
 
