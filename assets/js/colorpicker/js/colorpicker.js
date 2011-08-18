@@ -222,9 +222,11 @@
 				return false;
 			},
 			hide = function (ev) {
+				
 				if (!isChildOf(ev.data.cal.get(0), ev.target, ev.data.cal.get(0))) {
 					if (ev.data.cal.data('colorpicker').onHide.apply(this, [ev.data.cal.get(0)]) != false) {
 						ev.data.cal.hide();
+
 					}
 					$(document).unbind('mousedown', hide);
 				}

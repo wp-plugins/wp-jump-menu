@@ -2,9 +2,9 @@
 Contributors: jkrill
 Donate link: http://www.krillwebdesign.com
 Tags: posts, pages, admin, jump, menu, quick, links, custom post types
-Requires at least: 2.8
+Requires at least: 3.0
 Tested up to: 3.2.1
-Stable tag: 2.0
+Stable tag: 2.1
 
 Creates a drop-down menu in a bar across the bottom or top of the screen that makes it easy to jump to a page or post in the admin area for editing.
 
@@ -55,6 +55,12 @@ You need to upload your logo icon, through WordPress maybe, and get the full URL
 1. The Jump Menu - Just a drop down, but one POWERFUL drop down!
 
 == Changelog ==
+
+= 2.1 =
+* Fixed bug: Can be displayed at the top of the screen WITH the WP Admin Bar, whereas before it was being hidden when both were activated and on the top.
+* Totally redid the Post Types and the way you select them.  You can now select (or deselect) any post type.  Not just custom post types.  So you can totally turn off pages, or posts - or now you can add attachments!
+* Redid the options page using wp_settings.  Much better!
+* Added the title "WP Jump Menu" next to the drop-down
 
 = 2.0 =
 * Totally redid the form layout to match native WP admin styles
