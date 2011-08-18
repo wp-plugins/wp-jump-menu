@@ -6,7 +6,7 @@ Requires at least: 3.0
 Tested up to: 3.2.1
 Stable tag: 2.1.3
 
-Creates a drop-down menu in a bar across the bottom or top of the screen that makes it easy to jump to a page or post in the admin area for editing.
+Creates a drop-down menu in a bar across the top or bottom of the admin area which makes it easy to jump to a page, post, custom post type or media file for editing. One click and you're editing!  New options page for easy customization.
 
 == Description ==
 
