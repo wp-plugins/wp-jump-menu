@@ -265,7 +265,8 @@ function wpjm_page_dropdown(){
 				echo '<optgroup label="--'.$cpt_labels->name.'--">';
 				foreach ($pd_posts as $pd_post) {
 					$pd_i++;
-					echo '<option value="';
+					$admin_url = ADMIN_COOKIE_PATH;
+					echo '<option value="./';
 					switch ($wpjm_cpt) {
 						case 'attachment':
 						echo 'media.php?attachment_id='.$pd_post->ID.'&action=edit';
