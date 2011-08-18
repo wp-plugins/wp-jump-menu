@@ -349,6 +349,8 @@ function wpjm_install() {
 			'message' => get_option('wpjm_message') 
 		);
 
+		update_option('wpjm_options',$arr);
+
 		delete_option('wpjm_position');
 		delete_option('wpjm_sortpagesby');
 		delete_option('wpjm_sortpages');
@@ -366,31 +368,34 @@ function wpjm_install() {
 	
 	} else {
 		
-		$arr = array(
-			'position' => 'top',
-			'backgroundColor' => 'e0e0e0',
-			'fontColor' => '787878',
-			'borderColor' => '666666',
-			'postTypes' => array(
-				'page' => array(
-					'show' => '1',
-					'sortby' => 'menu_order',
-					'sort' => 'ASC'
+		if (empty(get_options('wpjm_options'))) {
+			$arr = array(
+				'position' => 'top',
+				'backgroundColor' => 'e0e0e0',
+				'fontColor' => '787878',
+				'borderColor' => '666666',
+				'postTypes' => array(
+					'page' => array(
+						'show' => '1',
+						'sortby' => 'menu_order',
+						'sort' => 'ASC'
+					),
+					'post' => array(
+						'show' => '1',
+						'sortby' => 'date',
+						'sort' => 'DESC'
+					)
 				),
-				'post' => array(
-					'show' => '1',
-					'sortby' => 'date',
-					'sort' => 'DESC'
-				)
-			),
-			'logoIcon' => 'http://www.krillwebdesign.com/wp-content/uploads/2011/06/logo-small-no-tag1.png',
-			'logoWidth' => '0',
-			'linkColor' => '1cd0d6',
-			'message' => "Brought to you by <a href='http://www.krillwebdesign.com/' target='_blank'>Krill Web Design</a>." 
-		);
+				'logoIcon' => 'http://www.krillwebdesign.com/wp-content/uploads/2011/06/logo-small-no-tag1.png',
+				'logoWidth' => '0',
+				'linkColor' => '1cd0d6',
+				'message' => "Brought to you by <a href='http://www.krillwebdesign.com/' target='_blank'>Krill Web Design</a>." 
+			);
+			update_option('wpjm_options',$arr);
+		}
 
 	}
-	update_option('wpjm_options',$arr);
+
 	update_option('wpjm_version','2.1.4');
 
 }
