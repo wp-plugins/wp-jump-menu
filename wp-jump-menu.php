@@ -2,14 +2,14 @@
 /**
  * @package WP_Jump_Menu
  * @author Jim Krill
- * @version 2.1
+ * @version 2.1.1
  */
 /*
 Plugin Name: WP Jump Menu
 Plugin URI: http://www.synotac.com/wp-jump-menu/
 Description: Creates a drop-down menu (jump menu) in a bar across the top or bottom of the screen that makes it easy to jump right to a page, post, or custom post type in the admin area to edit.
 Author: Jim Krill
-Version: 2.1
+Version: 2.1.1
 Author URI: http://krillwebdesign.com
 */
 
@@ -35,10 +35,17 @@ Author URI: http://krillwebdesign.com
 
 require_once( WP_PLUGIN_DIR . '/wp-jump-menu/settings.php' );
 
+define('WPJM_VERSION','2.1.1');
+
 // Call the plugin's main functions
 function beam_me_up_wpjm() {
 
 	register_activation_hook( __FILE__, 'wpjm_install' );
+
+	$current_version = get_option('wpjm_version');
+	if (empty($current_version) || $current_version < WPJM_VERSION) {
+		wpjm_install();
+	}
 
 	// Needs uninstall hook to delete files
 	
@@ -48,7 +55,7 @@ function beam_me_up_wpjm() {
 	add_filter( 'plugin_action_links', 'wpjm_add_settings_link', 10, 2);
 	add_action( 'admin_menu', 'wpjm_menu' );
 
-	// Optiosn page settings form
+	// Options page settings form
 	add_action( 'admin_init', 'wpjm_admin_init' );
 
 	register_deactivation_hook( __FILE__, 'wpjm_uninstall' );
@@ -290,28 +297,100 @@ function wpjm_page_dropdown(){
 function wpjm_install() {
 
 	// Populate with default values
-	$arr = array(
-		'position' => 'top',
-		'sortpagesby' => 'menu_order',
-		'sortpages' => 'ASC',
-		'sortpostsby' => 'date',
-		'sortposts' => 'DESC',
-		'numberposts' => '-1',
-		'backgroundColor' => 'e0e0e0',
-		'fontColor' => '787878',
-		'borderColor' => '666666',
-		'postTypes' => array(
-			'post',
-			'page'
+	if (get_option('wpjm_position')) {
+
+		$newPostTypes = array(
+				'post' => array(
+					'show' => '1',
+					'sortby' => 'menu_order',
+					'sort' => 'ASC'
+				),
+				'page' => array(
+					'show' => '1',
+					'sortby' => 'date',
+					'sort' => 'DESC'
+				)
+			);
+
+		// Get old custom post types option, append to new variable
+		$customPostTypes = get_option('wpjm_customPostTypes');
+		$cpt_arr = explode(',',$customPostTypes);
+		if (!empty($cpt_arr)) {
+			if (is_array($cpt_arr)) {
+				foreach($customPostTypes as $cpt) {
+					$newPostTypes[$cpt] = array(
+						'show' => '1',
+						'sortby' => 'menu_order',
+						'sort' => 'ASC'
+						);
+				}
+			} else {
+				$newPostTypes[$cpt_arr] = array(
+					'show' => '1',
+					'sortby' => 'menu_order',
+					'sort' => 'ASC'
+				);
+			}
+		}
+		
+		$arr = array(
+			'position' => get_option('wpjm_position'),
+			'backgroundColor' => get_option('wpjm_backgroundColor'),
+			'fontColor' => get_option('wpjm_fontColor'),
+			'borderColor' => get_option('wpjm_borderColor'),
+			'postTypes' => $newPostTypes,
+			'logoIcon' => get_option('wpjm_logoIcon'),
+			'logoWidth' => get_option('wpjm_logoWidth'),
+			'linkColor' => get_option('wpjm_linkColor'),
+			'message' => get_option('wpjm_message') 
+		);
+
+		delete_option('wpjm_position');
+		delete_option('wpjm_sortpagesby');
+		delete_option('wpjm_sortpages');
+		delete_option('wpjm_sortpostsby');
+		delete_option('wpjm_sortposts');
+		delete_option('wpjm_numberposts');
+		delete_option('wpjm_backgroundColor');
+		delete_option('wpjm_fontColor');
+		delete_option('wpjm_borderColor');
+		delete_option('wpjm_customPostTypes');
+		delete_option('wpjm_logoIcon');
+		delete_option('wpjm_logoWidth');
+		delete_option('wpjm_linkColor');
+		delete_option('wpjm_message');
+	
+	} else {
+		
+		$arr = array(
+			'position' => 'top',
+			'backgroundColor' => 'e0e0e0',
+			'fontColor' => '787878',
+			'borderColor' => '666666',
+			'postTypes' => array(
+				'post' => array(
+					'show' => '1',
+					'sortby' => 'menu_order',
+					'sort' => 'ASC'
+				),
+				'page' => array(
+					'show' => '1',
+					'sortby' => 'date',
+					'sort' => 'DESC'
+				)
 			),
-		'logoIcon' => 'http://www.krillwebdesign.com/wp-content/uploads/2011/06/logo-small-no-tag1.png',
-		'logoWidth' => '0',
-		'linkColor' => '1cd0d6',
-		'message' => "Brought to you by <a href='http://www.krillwebdesign.com/' target='_blank'>Krill Web Design</a>." 
-	);
+			'logoIcon' => 'http://www.krillwebdesign.com/wp-content/uploads/2011/06/logo-small-no-tag1.png',
+			'logoWidth' => '0',
+			'linkColor' => '1cd0d6',
+			'message' => "Brought to you by <a href='http://www.krillwebdesign.com/' target='_blank'>Krill Web Design</a>." 
+		);
+
+	}
 	update_option('wpjm_options',$arr);
+	update_option('wpjm_version','2.1.1');
 
 }
+
 
 // Uninstall
 function wpjm_uninstall() {

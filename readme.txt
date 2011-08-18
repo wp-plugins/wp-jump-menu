@@ -56,6 +56,9 @@ You need to upload your logo icon, through WordPress maybe, and get the full URL
 
 == Changelog ==
 
+= 2.1.1 =
+* Fixed Update issue: When updated, WP Jump Menu would stop working because it uses new option values.  New default values should be set when updated.
+
 = 2.1 =
 * Fixed bug: Can be displayed at the top of the screen WITH the WP Admin Bar, whereas before it was being hidden when both were activated and on the top.
 * Totally redid the Post Types and the way you select them.  You can now select (or deselect) any post type.  Not just custom post types.  So you can totally turn off pages, or posts - or now you can add attachments!
