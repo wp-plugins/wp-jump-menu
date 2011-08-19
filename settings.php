@@ -307,13 +307,18 @@ function wpjm_message_textarea() {
 // Post Types
 //
 function wpjm_postTypes_checkbox() {
+
+	// Get the current options array
 	$options = get_option('wpjm_options');
+
 ?>
 	<script>
+	// Hide the left TH column next to the table of post types
 	jQuery(function($){
 		$('#wpjm-post-types-table').parent().parent().prev().hide();
 	});
 	</script>
+
 	<div>
 		
 		<table id="wpjm-post-types-table" class="wp-list-table widefat fixed">
@@ -337,12 +342,36 @@ function wpjm_postTypes_checkbox() {
 			</tfoot>
 			<tbody>
 		<?php 
+			
+			// Get the array of registered post types (array of objects)
 			$post_types = get_post_types('','objects'); 
-			// $selected_post_types_arr = explode(",",$options['postTypes']);
+
+			// Get the array of selected post types
 			$selected_post_types_arr = $options['postTypes'];
+				
+				// Make an array of only the keys from the selected post types
+				$array2 = array_keys($selected_post_types_arr);
+
+				// A function to sort the $post_type array by the $selected array
+				function sortArrayByArray($array,$orderArray) {
+				    $ordered = array();
+				    foreach($orderArray as $key) {
+				        if(array_key_exists($key,$array)) {
+				                $ordered[$key] = $array[$key];
+				                unset($array[$key]);
+				        }
+				    }
+				    return $ordered + $array;
+				}
+
+				// And... sort it, returning an organized array;
+				// with the unselected post types at the end
+				$custom_array_order = sortArrayByArray($post_types, $array2);
+
+				 
 		?>
 		
-			<?php foreach ($post_types as $pt) { 
+			<?php foreach ($custom_array_order as $pt) { 
 				if ( ($pt->name == 'nav_menu_item') || ($pt->name == 'revision') ) continue;
 				?>
 			<tr>

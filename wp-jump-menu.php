@@ -2,14 +2,14 @@
 /**
  * @package WP_Jump_Menu
  * @author Jim Krill
- * @version 2.1.5
+ * @version 2.2
  */
 /*
 Plugin Name: WP Jump Menu
 Plugin URI: http://www.synotac.com/wp-jump-menu/
 Description: Creates a drop-down menu (jump menu) in a bar across the top or bottom of the screen that makes it easy to jump right to a page, post, or custom post type in the admin area to edit.
 Author: Jim Krill
-Version: 2.1.5
+Version: 2.2
 Author URI: http://krillwebdesign.com
 */
 
@@ -35,7 +35,7 @@ Author URI: http://krillwebdesign.com
 
 require_once( WP_PLUGIN_DIR . '/wp-jump-menu/settings.php' );
 
-define('WPJM_VERSION','2.1.5');
+define('WPJM_VERSION','2.2');
 
 // Call the plugin's main functions
 function beam_me_up_wpjm() {
@@ -254,7 +254,15 @@ function wpjm_page_dropdown(){
 				$numberposts = $value['numberposts'];
 				
 				// Get Posts
-				$pd_posts = get_posts('orderby='.$sortby.'&order='.$sort.'&numberposts='.$numberposts.'&post_type='.$wpjm_cpt);
+				// Attempting to use wp_cache
+				$cache_name = "wpjm_{$wpjm_cpt}_post";
+				$pd_posts = wp_cache_get( $cache_name, "wpjm_cache" );
+				if ( false == $pd_posts ) {
+					$pd_posts = get_posts('orderby='.$sortby.'&order='.$sort.'&numberposts='.$numberposts.'&post_type='.$wpjm_cpt);
+					wp_cache_set( $cache_name, $pd_posts, "wpjm_cache" );
+				}
+
+				// $pd_posts = get_posts('orderby='.$sortby.'&order='.$sort.'&numberposts='.$numberposts.'&post_type='.$wpjm_cpt);
 				$pd_total_posts = count($pd_posts);
 				
 				$cpt_obj = get_post_type_object($wpjm_cpt);
@@ -396,7 +404,7 @@ function wpjm_install() {
 
 	}
 
-	update_option('wpjm_version','2.1.5');
+	update_option('wpjm_version','2.2');
 
 }
 
