@@ -2,14 +2,14 @@
 /**
  * @package WP_Jump_Menu
  * @author Jim Krill
- * @version 2.2
+ * @version 2.2.1
  */
 /*
 Plugin Name: WP Jump Menu
 Plugin URI: http://www.synotac.com/wp-jump-menu/
 Description: Creates a drop-down menu (jump menu) in a bar across the top or bottom of the screen that makes it easy to jump right to a page, post, or custom post type in the admin area to edit.
 Author: Jim Krill
-Version: 2.2
+Version: 2.2.1
 Author URI: http://krillwebdesign.com
 */
 
@@ -35,7 +35,7 @@ Author URI: http://krillwebdesign.com
 
 require_once( WP_PLUGIN_DIR . '/wp-jump-menu/settings.php' );
 
-define('WPJM_VERSION','2.2');
+define('WPJM_VERSION','2.2.1');
 
 // Call the plugin's main functions
 function beam_me_up_wpjm() {
@@ -333,14 +333,16 @@ function wpjm_install() {
 					$newPostTypes[$cpt] = array(
 						'show' => '1',
 						'sortby' => 'menu_order',
-						'sort' => 'ASC'
+						'sort' => 'ASC',
+						'numberposts' => '-1'
 						);
 				}
 			} else {
 				$newPostTypes[$cpt_arr] = array(
 					'show' => '1',
 					'sortby' => 'menu_order',
-					'sort' => 'ASC'
+					'sort' => 'ASC',
+					'numberposts' => '-1'
 				);
 			}
 		}
@@ -386,12 +388,14 @@ function wpjm_install() {
 					'page' => array(
 						'show' => '1',
 						'sortby' => 'menu_order',
-						'sort' => 'ASC'
+						'sort' => 'ASC',
+						'numberposts' => '-1'
 					),
 					'post' => array(
 						'show' => '1',
 						'sortby' => 'date',
-						'sort' => 'DESC'
+						'sort' => 'DESC',
+						'numberposts' => '-1'
 					)
 				),
 				'logoIcon' => 'http://www.krillwebdesign.com/wp-content/uploads/2011/06/logo-small-no-tag1.png',
@@ -404,7 +408,7 @@ function wpjm_install() {
 
 	}
 
-	update_option('wpjm_version','2.2');
+	update_option('wpjm_version','2.2.1');
 
 }
 
