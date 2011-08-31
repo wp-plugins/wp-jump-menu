@@ -2,14 +2,14 @@
 /**
  * @package WP_Jump_Menu
  * @author Jim Krill
- * @version 2.2.2
+ * @version 2.2.3
  */
 /*
 Plugin Name: WP Jump Menu
 Plugin URI: http://www.synotac.com/wp-jump-menu/
 Description: Creates a drop-down menu (jump menu) in a bar across the top or bottom of the screen that makes it easy to jump right to a page, post, or custom post type in the admin area to edit.
 Author: Jim Krill
-Version: 2.2.2
+Version: 2.2.3
 Author URI: http://krillwebdesign.com
 */
 
@@ -35,7 +35,7 @@ Author URI: http://krillwebdesign.com
 
 require_once( WP_PLUGIN_DIR . '/wp-jump-menu/settings.php' );
 
-define('WPJM_VERSION','2.2.2');
+define('WPJM_VERSION','2.2.3');
 
 // Call the plugin's main functions
 function beam_me_up_wpjm() {
@@ -408,7 +408,7 @@ function wpjm_install() {
 
 	}
 
-	update_option('wpjm_version','2.2.2');
+	update_option('wpjm_version','2.2.3');
 
 }
 
@@ -507,6 +507,11 @@ function wpjm_options() {
 		<form action="options.php" method="post" id="wpjm-options-form">
 		<?php settings_fields('wpjm_options'); ?>
 		<?php do_settings_sections('wpjm'); ?>
+
+		<?php
+		// Clear the cache when viewing the options page //
+		wp_cache_delete('','wpjm_cache');
+		?>
 
 		<p class="submit">
 			<input type="Submit" type="submit" value="<?php esc_attr_e('Save Changes'); ?>" class="button button-primary" />

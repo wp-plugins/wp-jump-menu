@@ -384,13 +384,13 @@ function wpjm_postTypes_checkbox() {
 				<td>
 					<select name="wpjm_options[postTypes][<?php echo $pt->name; ?>][sortby]" id="wpjm_sort<?php echo $pt->name; ?>by">
 						<option value="menu_order" <?php selected( $options['postTypes'][$pt->name]['sortby'], 'menu_order'); ?>>Menu Order</option>
-						<option value="post_author" <?php selected( $options['postTypes'][$pt->name]['sortby'], 'post_author'); ?>>Author</option>
-						<option value="post_date" <?php selected( $options['postTypes'][$pt->name]['sortby'], 'post_date'); ?>>Date</option>
+						<option value="author" <?php selected( $options['postTypes'][$pt->name]['sortby'], 'author'); ?>>Author</option>
+						<option value="date" <?php selected( $options['postTypes'][$pt->name]['sortby'], 'date'); ?>>Date</option>
 						<option value="ID" <?php selected( $options['postTypes'][$pt->name]['sortby'], 'ID'); ?>>ID</option>
-						<option value="post_modified" <?php selected( $options['postTypes'][$pt->name]['sortby'], 'post_modified'); ?>>Modified</option>
-						<option value="post_name" <?php selected( $options['postTypes'][$pt->name]['sortby'], 'post_name'); ?>>Name</option>
-						<option value="post_parent" <?php selected( $options['postTypes'][$pt->name]['sortby'], 'post_parent'); ?>>Parent</option>
-						<option value="post_title" <?php selected( $options['postTypes'][$pt->name]['sortby'], 'post_title'); ?>>Title</option>
+						<option value="modified" <?php selected( $options['postTypes'][$pt->name]['sortby'], 'modified'); ?>>Modified</option>
+						<option value="comment_count" <?php selected( $options['postTypes'][$pt->name]['sortby'], 'comment_count'); ?>>Comment Count</option>
+						<option value="parent" <?php selected( $options['postTypes'][$pt->name]['sortby'], 'parent'); ?>>Parent</option>
+						<option value="title" <?php selected( $options['postTypes'][$pt->name]['sortby'], 'title'); ?>>Title</option>
 					</select>
 				</td>
 				<td>
