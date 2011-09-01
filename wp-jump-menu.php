@@ -2,14 +2,14 @@
 /**
  * @package WP_Jump_Menu
  * @author Jim Krill
- * @version 2.2.3
+ * @version 2.2.4
  */
 /*
 Plugin Name: WP Jump Menu
 Plugin URI: http://www.synotac.com/wp-jump-menu/
 Description: Creates a drop-down menu (jump menu) in a bar across the top or bottom of the screen that makes it easy to jump right to a page, post, or custom post type in the admin area to edit.
 Author: Jim Krill
-Version: 2.2.3
+Version: 2.2.4
 Author URI: http://krillwebdesign.com
 */
 
@@ -35,7 +35,7 @@ Author URI: http://krillwebdesign.com
 
 require_once( WP_PLUGIN_DIR . '/wp-jump-menu/settings.php' );
 
-define('WPJM_VERSION','2.2.3');
+define('WPJM_VERSION','2.2.4');
 
 // Call the plugin's main functions
 function beam_me_up_wpjm() {
@@ -153,26 +153,6 @@ function wpjm_page_dropdown(){
 	// Get the options
 	$options = get_option( 'wpjm_options' );
 
-	// Drop Down Function
-	if ( ! function_exists( 'wpjm_pdd_get_page_level' ) ) {
-		function wpjm_pdd_get_page_level( $pd_page ) {	
-			if ( $pd_page->post_parent == 0 )
-				return 0;
-			else {
-				$pd_i = 0;
-				$pd_parent = get_post( $pd_page->post_parent ); // Get initial page's parent
-				$pd_loop = 1;
-				while ( $pd_i < 10 ) {
-					$pd_i++;
-					if ( $pd_parent->post_parent == 0 ) // If this post parent is a root, then end the loop
-						return $pd_i;
-					else // Otherwise, get the parent to the parent and try again
-						$pd_parent = get_post( $pd_parent->post_parent );
-				}
-			}
-		}
-	}
-
 	// Page Title Function
 	if ( ! function_exists( 'wpjm_get_page_title' ) ) {
 		function wpjm_get_page_title ($pd_title) {
@@ -183,62 +163,13 @@ function wpjm_page_dropdown(){
 			}
 		}
 	}
-	
-	// Get Pages
-	/*
-	$pd_pages = get_pages('sort_column='.$options['sortpagesby'].'&sort_order='.$options['sortpages']);
-	$pd_total_pages = count($pd_pages);
-	// Get Posts
-	$pd_posts = get_posts('orderby='.$options['sortpostsby'].'&order='.$options['sortposts'].'&numberposts='.$options['numberposts']);
-	$pd_total_posts = count($pd_posts);
-	*/
 
 	// Get Custom Post Types settings (will iterate through later)
 	$custom_post_types = $options['postTypes'];
 
 	// Start echoing the select menu
 	echo '<select id="wp-pdd">';
-	echo '<option>-- Choose an Entry to Edit --</option>';
-	//echo '<option>-- Page Name (ID) --</option>';
-	//echo '<option>-- Post Name (Date | ID) --</option>';
-	
-	// Loop through pages
-	/*
-	$pd_i = 0;
-	echo '<optgroup label="--Pages--">';
-	foreach ($pd_pages as $pd_post) {
-		$pd_i++;
-		echo '<option value="';
-		echo $pd_post->ID;
-		echo '"';
-		if (isset($_GET['post']) && ($pd_post->ID == $_GET['post']))
-			echo ' selected="selected"';
-		echo '>';
-		echo str_repeat('--', wpjm_pdd_get_page_level($pd_post));
-		echo wpjm_get_page_title($pd_post->post_title);
-		echo ' ('.$pd_post->ID.') ';
-		echo '</option>';
-	}
-	echo '</optgroup>';
-
-	// Loop through Posts
-	echo '<optgroup label="--Posts--">';
-	$pd_i = 0;
-	foreach ($pd_posts as $pd_post) {
-		$pd_i++;
-		echo '<option value="';
-		echo $pd_post->ID;
-		echo '"';
-		if (isset($_GET['post']) && ($pd_post->ID == $_GET['post']))
-						echo ' selected="selected"';
-		echo '>';
-		echo wpjm_get_page_title($pd_post->post_title);
-		echo ' ('.$pd_post->post_date.' | '.$pd_post->ID.') ';
-		echo '</option>';
-	}
-	echo '</optgroup>';
-	*/
-
+	echo '<option>-- Select a post/page to edit it --</option>';
 
 	// Loop through custom posts types, and echo them out
 	if ($custom_post_types) {
@@ -247,11 +178,45 @@ function wpjm_page_dropdown(){
 		$wpjm_cpts = $custom_post_types; // should be array
 		if ($wpjm_cpts) {
 			// foreach($wpjm_cpts as $wpjm_cpt) {
+
+				// Custom Walker Class to walk through the page/custom post type hierarchy tree
+				class WPJM_Walker_PageDropDown extends Walker_PageDropDown {
+
+					var $tree_type = "page";
+
+					function start_el(&$output, $page, $depth, $args) {
+						
+						// Get options to determine whether or not to show ID
+						$options = get_option( 'wpjm_options' );
+
+						$pad = str_repeat('-', $depth * 2);
+
+						$output .= "\t<option class=\"level-$depth\" value=\"".get_edit_post_link($page->ID)."\"";
+						if (isset($_GET['post']) && ($page->ID == $_GET['post']))
+							$output .= ' selected="selected"';
+						$output .= '>';
+						$title = apply_filters( 'list_pages', $page->post_title . ( $options['showID'] == true ? " (" .$page->ID . ") " : '' ) );
+						$output .= $pad . esc_html( $title );
+						$output .= "</option>\n";
+					}
+				}
+				// end WPJM_Walker_PageDropDown class
+
+			// Loop through each post type as $key, $value
+			// --------------------------------------------------------------------------------------
+			// The $key is the name of the post type: i.e. 'page', 'post', or 'custom_post_type_name'
+			// The $value is an array of options
+			//		$value['sortby']
+			//		$value['sort']
+			//		$value['numberposts']
+			// --------------------------------------------------------------------------------------
 			foreach($wpjm_cpts as $key => $value ) {
-				$wpjm_cpt = $key;
-				$sortby = $value['sortby'];
-				$sort = $value['sort'];
-				$numberposts = $value['numberposts'];
+				
+				// Set variables
+				$wpjm_cpt = $key;						// name of the post type
+				$sortby = $value['sortby'];				// orderby value
+				$sort = $value['sort'];					// order value
+				$numberposts = $value['numberposts'];	// number of posts to display
 				
 				// Get Posts
 				// Attempting to use wp_cache
@@ -262,47 +227,77 @@ function wpjm_page_dropdown(){
 					wp_cache_set( $cache_name, $pd_posts, "wpjm_cache" );
 				}
 
-				// $pd_posts = get_posts('orderby='.$sortby.'&order='.$sort.'&numberposts='.$numberposts.'&post_type='.$wpjm_cpt);
+				// Count the posts
 				$pd_total_posts = count($pd_posts);
 				
+				// Get the labels for this post type
 				$cpt_obj = get_post_type_object($wpjm_cpt);
 				$cpt_labels = $cpt_obj->labels;
 				
-				// Loop through custom posts
+				// Set the iterator to zero
 				$pd_i = 0;
-				echo '<optgroup label="--'.$cpt_labels->name.'--">';
-				foreach ($pd_posts as $pd_post) {
-					$pd_i++;
-					$admin_url = ADMIN_COOKIE_PATH;
-					echo '<option value="./';
-					switch ($wpjm_cpt) {
-						case 'attachment':
-						echo 'media.php?attachment_id='.$pd_post->ID.'&action=edit';
-						break;
-						default:
-						echo 'post.php?action=edit&post='.$pd_post->ID;
-					}
-					echo '"';
-					if (isset($_GET['post']) && ($pd_post->ID == $_GET['post']))
-						echo ' selected="selected"';
-					echo '>';
-					if (is_post_type_hierarchical($wpjm_cpt)) {
-						echo str_repeat('--', wpjm_pdd_get_page_level($pd_post));
-					}
-					echo wpjm_get_page_title($pd_post->post_title);
-					echo ' ('.$pd_post->ID.') ';
-					echo '</option>';
-				}
-				echo '</optgroup>';
-			}
-		}
+
+				// If this is not hierarchical, get list of posts and display the <option>s
+				if (!is_post_type_hierarchical($wpjm_cpt)) {
+					
+					echo '<optgroup label="--'.$cpt_labels->name.'--">';
+
+					// Loop through posts
+					foreach ($pd_posts as $pd_post) {
+						
+						// Increase the interator by 1
+						$pd_i++;
+
+						// Open the <option> tag
+						echo '<option value="';
+							// echo the edit link based on post ID
+							echo get_edit_post_link($pd_post->ID);
+						echo '"';
+
+						// Check to see if you are currently editing this post
+						// If so, make it the selected value
+						if (isset($_GET['post']) && ($pd_post->ID == $_GET['post']))
+							echo ' selected="selected"';
+						echo '>';
+
+						// Print the post title
+						echo wpjm_get_page_title($pd_post->post_title);
+						
+						// If the setting to show ID's is true, show the ID in ()
+						if ($options['showID'] == true) 
+							echo ' ('.$pd_post->ID.') ';
+						
+						// close the <option> tag
+						echo '</option>';
+					} // foreach ($pd_posts as $pd_post)
+
+					echo '</optgroup>';
+
+				} else {
+										
+					// If this a hierarchical post type, use the custom Walker class to create the page tree
+					$orderedListWalker = new WPJM_Walker_PageDropDown();
+
+					echo '<optgroup label="--'.$cpt_labels->name.'--">';
+					wp_list_pages(array('walker' => $orderedListWalker, 'post_type' => $wpjm_cpt));
+					echo '</optgroup>';
+				} // end if (is_hierarchical)
+			
+			} // end foreach($wpjm_cpts)
+
+		} // end if ($wpjm_cpts)
 	
-	}
+	} // end if ($custom_post_types)
 	
-	
+	// Print the options page link
+	echo '<optgroup label="-- WP Jump Menu Options --">';
+	echo '<option value="options-general.php?page=wpjm-options">Jump Menu Options Page</option>';
+	echo '</optgroup>';
+
 	// Close the select drop down
 	echo '</select>';
-} 
+
+} // end wpjm_page_dropdown() 
 
 
 /* Plugin Installation Function */
@@ -349,6 +344,7 @@ function wpjm_install() {
 		
 		$arr = array(
 			'position' => get_option('wpjm_position'),
+			'showID' => 'true',
 			'backgroundColor' => get_option('wpjm_backgroundColor'),
 			'fontColor' => get_option('wpjm_fontColor'),
 			'borderColor' => get_option('wpjm_borderColor'),
@@ -381,6 +377,7 @@ function wpjm_install() {
 		if (empty($options)) {
 			$arr = array(
 				'position' => 'top',
+				'showID' => 'true',
 				'backgroundColor' => 'e0e0e0',
 				'fontColor' => '787878',
 				'borderColor' => '666666',
@@ -408,7 +405,7 @@ function wpjm_install() {
 
 	}
 
-	update_option('wpjm_version','2.2.3');
+	update_option('wpjm_version','2.2.4');
 
 }
 
@@ -425,43 +422,6 @@ function wpjm_menu() {
 
 }
 
-// Update Options on Save
-/*
-if (isset($_POST['save_post_page_values'])) {
-	
-	// Update Options
-	update_option("wpjm_position", $_POST['wpjm_position']);
-	update_option("wpjm_sortpagesby",$_POST['wpjm_sortpagesby']);
-	update_option("wpjm_sortpages",$_POST['wpjm_sortpages']);
-	update_option("wpjm_sortpostsby",$_POST['wpjm_sortpostsby']);
-	update_option("wpjm_sortposts",$_POST['wpjm_sortposts']);
-	update_option("wpjm_numberposts",$_POST['wpjm_numberposts']);
-	update_option("wpjm_backgroundColor", $_POST['wpjm_backgroundColor']);
-	update_option("wpjm_fontColor",$_POST['wpjm_fontColor']);
-	update_option("wpjm_borderColor",$_POST['wpjm_borderColor']);
-	
-	$custom_post_types = (is_array($_POST['wpjm_customPostTypes'])?implode(",",$_POST['wpjm_customPostTypes']):$_POST['wpjm_customPostTypes']);
-	update_option("wpjm_customPostTypes", $custom_post_types);
-	update_option("wpjm_logoIcon", $_POST['wpjm_logoIcon']);
-	
-	if (!function_exists('file_exists')) {
-		
-		if ($_POST['wpjm_logoIcon'] && file_exists($_POST['wpjm_logoIcon'])) {
-			$logo_width_obj = getimagesize($_POST['wpjm_logoIcon']);
-			$logo_width = $logo_width_obj[0];
-			update_option("wpjm_logoWidth", $logo_width);
-		}
-
-	} else {
-		update_option("wpjm_logoWidth", $_POST['wpjm_logoWidth']);
-	}
-
-	update_option("wpjm_linkColor", $_POST['wpjm_linkColor']);
-	update_option("wpjm_message", stripslashes($_POST['wpjm_message']));
-	$message = "Options updated successfully!";
-
-}
-*/
 
 /**
  * The options page
@@ -472,24 +432,6 @@ function wpjm_options() {
 	if ( isset( $_POST['save_post_page_values'] ) ) {
 		$message = "Options updated successfully!";
 	}
-
-	// Get Options
-	/*
-	$wpjm_position 			= get_option("wpjm_position");
-	$wpjm_sortpagesby 		= get_option("wpjm_sortpagesby");
-	$wpjm_sortpages 		= get_option("wpjm_sortpages");
-	$wpjm_sortpostsby 		= get_option("wpjm_sortpostsby");
-	$wpjm_sortposts 		= get_option("wpjm_sortposts");
-	$wpjm_numberposts 		= get_option("wpjm_numberposts");
-	$wpjm_backgroundColor 	= get_option("wpjm_backgroundColor");
-	$wpjm_fontColor 		= get_option("wpjm_fontColor");
-	$wpjm_borderColor 		= get_option("wpjm_borderColor");
-	$wpjm_logoIcon 			= get_option("wpjm_logoIcon");
-	$wpjm_logoWidth 		= get_option("wpjm_logoWidth");
-	$wpjm_message 			= get_option("wpjm_message");
-	$wpjm_linkColor 		= get_option("wpjm_linkColor");
-	$wpjm_customPostTypes 	= get_option("wpjm_customPostTypes");
-	*/
 
 ?>
 

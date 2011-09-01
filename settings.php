@@ -23,6 +23,12 @@ function wpjm_admin_init() {
 			'wpjm', 
 			'wpjm_main' );
 
+	add_settings_field( 'wpjm_showID',
+			'Show ID next to post/page title',
+			'wpjm_showID_checkbox',
+			'wpjm',
+			'wpjm_main' );
+
 	/*add_settings_field( 'wpjm_sortpagesby',
 			'Sort Pages By',
 			'wpjm_sortpagesby_select',
@@ -131,6 +137,16 @@ function wpjm_position_radio() {
 	<input type="radio" value="bottom" name="wpjm_options[position]" id="wpjm_position" <?php checked($options['position'], 'bottom'); ?> />
 		 Bottom of screen
 	
+</div>
+<?php
+}
+
+// Show ID
+function wpjm_showID_checkbox() {
+	$options = get_option('wpjm_options');
+?>
+<div>
+	<input type="checkbox" value="true" name="wpjm_options[showID]" id="wpjm_showID" <?php checked($options['showID'], 'true'); ?> />
 </div>
 <?php
 }

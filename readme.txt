@@ -4,7 +4,7 @@ Donate link: http://www.krillwebdesign.com
 Tags: posts, pages, admin, jump, menu, quick, links, custom post types
 Requires at least: 3.0
 Tested up to: 3.2.1
-Stable tag: 2.2.3
+Stable tag: 2.2.4
 
 Creates a drop-down menu in a bar across the top or bottom of the admin area which makes it easy to jump to a page, post, custom post type or media file for editing. One click and you're editing!  New options page for easy customization.
 
@@ -59,6 +59,12 @@ You need to upload your logo icon, through WordPress maybe, and get the full URL
 2. The Options Page - Here you can edit the drop-down list of custom post types (as well as built in post types) and their order, change the colors of the WP Jump Menu, and specify a few other options!
 
 == Changelog ==
+
+= 2.2.4 =
+* Replaced the listing of heirarchical pages/post types with WP native Walker functionality. Should improve listing of parent / child pages in drop-down.
+* Cleaned up the code, added comments
+* Used get_edit_post_link() instead of hard coding link to edit post page (yay!)
+* Added the option to show or hide the ID next to the post/page name in the drop-down
 
 = 2.2.3 =
 * Bug fixed: Order By was not working because the orderby value names had not been updated to exclude "post-".  Thanks Tim for the bug report.
