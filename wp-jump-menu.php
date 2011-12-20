@@ -96,6 +96,8 @@ function wpjm_editpost_css() {
 	#jump_menu p.jm_credits img.wpjm_logo { ".($options['logoWidth']?'width: '.$options['logoWidth'].'px;':'width: 35px;')." height: auto; max-height: 30px; vertical-align: middle; margin-right: 10px; }
 	#jump_menu_clear { height: 30px; }
 	body { ".($options['position']=='top'?'padding-top: 42px !important;':'padding-bottom: 42px !important;')." }
+	".($options['position']=='bottom'?'#footer { bottom: 42px !important; }':'')
+	."
 	#wp-pdd { max-width: 400px;  }
 	</style>
 	<!--[if IE 6]>
