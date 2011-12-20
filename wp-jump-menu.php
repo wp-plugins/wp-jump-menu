@@ -2,14 +2,14 @@
 /**
  * @package WP_Jump_Menu
  * @author Jim Krill
- * @version 2.2.4
+ * @version 2.2.5
  */
 /*
 Plugin Name: WP Jump Menu
 Plugin URI: http://www.synotac.com/wp-jump-menu/
 Description: Creates a drop-down menu (jump menu) in a bar across the top or bottom of the screen that makes it easy to jump right to a page, post, or custom post type in the admin area to edit.
 Author: Jim Krill
-Version: 2.2.4
+Version: 2.2.5
 Author URI: http://krillwebdesign.com
 */
 
@@ -35,7 +35,7 @@ Author URI: http://krillwebdesign.com
 
 require_once( WP_PLUGIN_DIR . '/wp-jump-menu/settings.php' );
 
-define('WPJM_VERSION','2.2.4');
+define('WPJM_VERSION','2.2.5');
 
 // Call the plugin's main functions
 function beam_me_up_wpjm() {
@@ -87,7 +87,7 @@ function wpjm_editpost_css() {
 	<link rel='stylesheet' href='".get_option('siteurl')."/wp-content/plugins/wp-jump-menu/assets/js/colorpicker/css/colorpicker.css' type='text/css' />
    <!-- <link rel='stylesheet' media='screen' type='text/css' href='".get_option('siteurl')."/wp-content/plugins/wp-jump-menu/assets/js/colorpicker/css/layout.css' /> -->
 	<style type='text/css'>
-	#jump_menu { position: fixed; ".$options['position'].": ".(is_admin_bar_showing()?"28px":"0")."; left: 0; height: 40px; overflow: hidden; background: #".$options['backgroundColor']."; color: #".$options['fontColor']."; width: 100%; z-index: 1500; border-".($options['position']=='top'?'bottom':'top').": 2px solid #".$options['borderColor']."; }
+	#jump_menu { position: fixed; ".$options['position'].": ".($options['position']=='top'?(is_admin_bar_showing()?"28px":"0"):"0")."; left: 0; height: 40px; overflow: hidden; background: #".$options['backgroundColor']."; color: #".$options['fontColor']."; width: 100%; z-index: 1500; border-".($options['position']=='top'?'bottom':'top').": 2px solid #".$options['borderColor']."; }
 	#jump_menu p { padding: 5px 15px; font-size: 12px; margin: 0; }
 	#jump_menu p a:link, #jump_menu p a:visited, #jump_menu p a:hover { color: #".$options['linkColor']."; text-decoration: none; }
 	#jump_menu p.wpjm_need_help { float: right; text-align: right; }
@@ -405,7 +405,7 @@ function wpjm_install() {
 
 	}
 
-	update_option('wpjm_version','2.2.4');
+	update_option('wpjm_version','2.2.5');
 
 }
 
