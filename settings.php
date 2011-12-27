@@ -135,7 +135,9 @@ function wpjm_position_radio() {
 	<input type="radio" value='top' name="wpjm_options[position]" id="wpjm_position" <?php checked($options['position'], 'top'); ?> />
 		 Top of screen<br/>
 	<input type="radio" value="bottom" name="wpjm_options[position]" id="wpjm_position" <?php checked($options['position'], 'bottom'); ?> />
-		 Bottom of screen
+		 Bottom of screen<br/>
+	<input type="radio" value="wpAdminBar" name="wpjm_options[position]" id="wpjm_position" <?php checked($options['position'], 'wpAdminBar'); ?> />
+		WP Admin Bar (BETA)
 	
 </div>
 <?php

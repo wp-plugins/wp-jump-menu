@@ -1,6 +1,6 @@
 jQuery(document).ready(function() {
 
-	jQuery('#wp-pdd').change(function() {
+	jQuery('#wp-pdd').live('change',function() {
 		window.location = jQuery(this).val();
 	});
 		

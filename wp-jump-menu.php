@@ -2,14 +2,14 @@
 /**
  * @package WP_Jump_Menu
  * @author Jim Krill
- * @version 2.2.5
+ * @version 2.2.6
  */
 /*
 Plugin Name: WP Jump Menu
 Plugin URI: http://www.synotac.com/wp-jump-menu/
 Description: Creates a drop-down menu (jump menu) in a bar across the top or bottom of the screen that makes it easy to jump right to a page, post, or custom post type in the admin area to edit.
 Author: Jim Krill
-Version: 2.2.5
+Version: 2.2.6
 Author URI: http://krillwebdesign.com
 */
 
@@ -35,7 +35,7 @@ Author URI: http://krillwebdesign.com
 
 require_once( WP_PLUGIN_DIR . '/wp-jump-menu/settings.php' );
 
-define('WPJM_VERSION','2.2.5');
+define('WPJM_VERSION','2.2.6');
 
 // Call the plugin's main functions
 function beam_me_up_wpjm() {
@@ -99,6 +99,9 @@ function wpjm_editpost_css() {
 	".($options['position']=='bottom'?'#footer { bottom: 42px !important; }':'')
 	."
 	#wp-pdd { max-width: 400px;  }
+	#wpadminbar #wp-pdd, #wpadminbar #wp-pdd * { color: #333 !important; text-shadow: none;}
+	#wpadminbar span.wpjm-logo-title { padding-right: 10px; }
+	#wpadminbar #wp-jump-menu { padding: 0px 10px; }
 	</style>
 	<!--[if IE 6]>
 	<style type='text/css'>
@@ -144,6 +147,24 @@ function wpjm_custom_footer() {
 			//echo ' Go to your <a href="'.get_bloginfo( 'url' ).'">site</a>.';
 		echo '</p>';
 	echo '</div>';
+
+	if (is_admin_bar_showing() && ($options['position'] == 'wpAdminBar') ) {
+		
+		?>
+
+		<script>
+		jQuery(function($){
+			$('#jump_menu').hide();
+			$('#wp-admin-bar-top-secondary').append('<li id="wp-jump-menu">'+$('.wpjm_need_help').html()+'</li>');
+			$('#wp-pdd').css({
+				color: '#333333'
+			})
+		})
+		</script>
+
+		<?php
+			
+	} 
 
 }
 
@@ -407,7 +428,7 @@ function wpjm_install() {
 
 	}
 
-	update_option('wpjm_version','2.2.5');
+	update_option('wpjm_version','2.2.6');
 
 }
 
