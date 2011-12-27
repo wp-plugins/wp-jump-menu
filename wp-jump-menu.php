@@ -2,14 +2,14 @@
 /**
  * @package WP_Jump_Menu
  * @author Jim Krill
- * @version 2.2.6
+ * @version 2.2.7
  */
 /*
 Plugin Name: WP Jump Menu
 Plugin URI: http://www.synotac.com/wp-jump-menu/
 Description: Creates a drop-down menu (jump menu) in a bar across the top or bottom of the screen that makes it easy to jump right to a page, post, or custom post type in the admin area to edit.
 Author: Jim Krill
-Version: 2.2.6
+Version: 2.2.7
 Author URI: http://krillwebdesign.com
 */
 
@@ -35,12 +35,14 @@ Author URI: http://krillwebdesign.com
 
 require_once( WP_PLUGIN_DIR . '/wp-jump-menu/settings.php' );
 
-define('WPJM_VERSION','2.2.6');
+define('WPJM_VERSION','2.2.7');
 
 // Call the plugin's main functions
 function beam_me_up_wpjm() {
 
 	register_activation_hook( __FILE__, 'wpjm_install' );
+
+	$options = get_option( 'wpjm_options' );
 
 	$current_version = get_option('wpjm_version');
 	if (empty($current_version) || $current_version < WPJM_VERSION) {
@@ -48,8 +50,15 @@ function beam_me_up_wpjm() {
 	}
 
 	// Needs uninstall hook to delete files
-	
-	add_action( 'admin_footer', 'wpjm_custom_footer' );
+	if ( ($options['position'] == 'wpAdminBar') ) { 
+		add_action('admin_bar_menu', 'wpjm_add_admin_bar',25);
+		add_action( 'wp_print_scripts','wpjm_js' );
+		add_action( 'wp_print_scripts', 'wpjm_editpost_css' );
+
+	} else {
+		add_action( 'admin_footer', 'wpjm_custom_footer' );
+	}
+
 	add_action( 'admin_print_scripts','wpjm_js' );
 	add_action( 'admin_print_styles', 'wpjm_editpost_css' );
 	add_filter( 'plugin_action_links', 'wpjm_add_settings_link', 10, 2);
@@ -133,12 +142,14 @@ function wpjm_custom_footer() {
 	// Get the options
 	$options = get_option( 'wpjm_options' );
 
+	
+
 	echo '<div id="jump_menu">';
 		echo '<p class="wpjm_need_help">';
 		
 			echo '<span class="wpjm-logo-title">WP Jump Menu &raquo;</span>';
 			// Jump to page edit
-			wpjm_page_dropdown();
+			echo wpjm_page_dropdown();
 
 		echo '</p>';
 		echo '<p class="jm_credits">';
@@ -148,24 +159,25 @@ function wpjm_custom_footer() {
 		echo '</p>';
 	echo '</div>';
 
-	if (is_admin_bar_showing() && ($options['position'] == 'wpAdminBar') ) {
-		
-		?>
+	
 
-		<script>
-		jQuery(function($){
-			$('#jump_menu').hide();
-			$('#wp-admin-bar-top-secondary').append('<li id="wp-jump-menu">'+$('.wpjm_need_help').html()+'</li>');
-			$('#wp-pdd').css({
-				color: '#333333'
-			})
-		})
-		</script>
+}
 
-		<?php
-			
-	} 
+function wpjm_add_admin_bar() {
+		global $wp_admin_bar;
 
+		if (is_admin_bar_showing()) {
+
+		$html = '<span class="wpjm-logo-title">WP Jump Menu &raquo;</span>';
+		$html .= wpjm_page_dropdown();
+
+		 $wp_admin_bar->add_menu( array(
+	                'id'    => 'wp-jump-menu',
+	                'parent'    => 'top-secondary',
+	                'title' => $html
+	        ) );
+
+	    }
 }
 
 
@@ -190,9 +202,11 @@ function wpjm_page_dropdown(){
 	// Get Custom Post Types settings (will iterate through later)
 	$custom_post_types = $options['postTypes'];
 
+	$wpjm_string = '';
+
 	// Start echoing the select menu
-	echo '<select id="wp-pdd">';
-	echo '<option>-- Select a post/page to edit it --</option>';
+	$wpjm_string .= '<select id="wp-pdd">';
+	$wpjm_string .= '<option>-- Select a post/page to edit it --</option>';
 
 	// Loop through custom posts types, and echo them out
 	if ($custom_post_types) {
@@ -263,7 +277,7 @@ function wpjm_page_dropdown(){
 				// If this is not hierarchical, get list of posts and display the <option>s
 				if (!is_post_type_hierarchical($wpjm_cpt)) {
 					
-					echo '<optgroup label="--'.$cpt_labels->name.'--">';
+					$wpjm_string .= '<optgroup label="--'.$cpt_labels->name.'--">';
 
 					// Loop through posts
 					foreach ($pd_posts as $pd_post) {
@@ -272,38 +286,38 @@ function wpjm_page_dropdown(){
 						$pd_i++;
 
 						// Open the <option> tag
-						echo '<option value="';
+						$wpjm_string .= '<option value="';
 							// echo the edit link based on post ID
-							echo get_edit_post_link($pd_post->ID);
-						echo '"';
+							$wpjm_string .= get_edit_post_link($pd_post->ID);
+						$wpjm_string .= '"';
 
 						// Check to see if you are currently editing this post
 						// If so, make it the selected value
 						if (isset($_GET['post']) && ($pd_post->ID == $_GET['post']))
-							echo ' selected="selected"';
-						echo '>';
+							$wpjm_string .= ' selected="selected"';
+						$wpjm_string .= '>';
 
 						// Print the post title
-						echo wpjm_get_page_title($pd_post->post_title);
+						$wpjm_string .= wpjm_get_page_title($pd_post->post_title);
 						
 						// If the setting to show ID's is true, show the ID in ()
 						if ($options['showID'] == true) 
-							echo ' ('.$pd_post->ID.') ';
+							$wpjm_string .= ' ('.$pd_post->ID.') ';
 						
 						// close the <option> tag
-						echo '</option>';
+						$wpjm_string .= '</option>';
 					} // foreach ($pd_posts as $pd_post)
 
-					echo '</optgroup>';
+					$wpjm_string .= '</optgroup>';
 
 				} else {
 										
 					// If this a hierarchical post type, use the custom Walker class to create the page tree
 					$orderedListWalker = new WPJM_Walker_PageDropDown();
 
-					echo '<optgroup label="--'.$cpt_labels->name.'--">';
-					wp_list_pages(array('walker' => $orderedListWalker, 'post_type' => $wpjm_cpt));
-					echo '</optgroup>';
+					$wpjm_string .= '<optgroup label="--'.$cpt_labels->name.'--">';
+					$wpjm_string .= wp_list_pages(array('walker' => $orderedListWalker, 'post_type' => $wpjm_cpt, 'echo' => 0));
+					$wpjm_string .= '</optgroup>';
 				} // end if (is_hierarchical)
 			
 			} // end foreach($wpjm_cpts)
@@ -313,12 +327,14 @@ function wpjm_page_dropdown(){
 	} // end if ($custom_post_types)
 	
 	// Print the options page link
-	echo '<optgroup label="-- WP Jump Menu Options --">';
-	echo '<option value="options-general.php?page=wpjm-options">Jump Menu Options Page</option>';
-	echo '</optgroup>';
+	$wpjm_string .= '<optgroup label="-- WP Jump Menu Options --">';
+	$wpjm_string .= '<option value="options-general.php?page=wpjm-options">Jump Menu Options Page</option>';
+	$wpjm_string .= '</optgroup>';
 
 	// Close the select drop down
-	echo '</select>';
+	$wpjm_string .= '</select>';
+
+	return $wpjm_string;
 
 } // end wpjm_page_dropdown() 
 
@@ -428,7 +444,7 @@ function wpjm_install() {
 
 	}
 
-	update_option('wpjm_version','2.2.6');
+	update_option('wpjm_version','2.2.7');
 
 }
 
