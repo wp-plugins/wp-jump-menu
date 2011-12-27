@@ -60,6 +60,8 @@ You need to upload your logo icon, through WordPress maybe, and get the full URL
 
 2. The Options Page - Here you can edit the drop-down list of custom post types (as well as built in post types) and their order, change the colors of the WP Jump Menu, and specify a few other options!
 
+3. The Jump Menu in the WordPress Admin Bar
+
 == Changelog ==
 
 = 2.2.6 =
