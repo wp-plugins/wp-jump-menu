@@ -2,14 +2,14 @@
 /**
  * @package WP_Jump_Menu
  * @author Jim Krill
- * @version 2.2.7
+ * @version 2.2.8
  */
 /*
 Plugin Name: WP Jump Menu
 Plugin URI: http://www.synotac.com/wp-jump-menu/
 Description: Creates a drop-down menu (jump menu) in a bar across the top or bottom of the screen that makes it easy to jump right to a page, post, or custom post type in the admin area to edit.
 Author: Jim Krill
-Version: 2.2.7
+Version: 2.2.8
 Author URI: http://krillwebdesign.com
 */
 
@@ -35,7 +35,7 @@ Author URI: http://krillwebdesign.com
 
 require_once( WP_PLUGIN_DIR . '/wp-jump-menu/settings.php' );
 
-define('WPJM_VERSION','2.2.7');
+define('WPJM_VERSION','2.2.8');
 
 // Call the plugin's main functions
 function beam_me_up_wpjm() {
@@ -254,6 +254,7 @@ function wpjm_page_dropdown(){
 				$sortby = $value['sortby'];				// orderby value
 				$sort = $value['sort'];					// order value
 				$numberposts = $value['numberposts'];	// number of posts to display
+				$showdrafts = $value['showdrafts'];		// show drafts, true or false
 				
 				// Get Posts
 				// Attempting to use wp_cache
@@ -261,6 +262,12 @@ function wpjm_page_dropdown(){
 				$pd_posts = wp_cache_get( $cache_name, "wpjm_cache" );
 				if ( false == $pd_posts ) {
 					$pd_posts = get_posts('orderby='.$sortby.'&order='.$sort.'&numberposts='.$numberposts.'&post_type='.$wpjm_cpt);
+
+					if ($showdrafts == 'true') {
+						$pd_posts_drafts = get_posts('orderby='.$sortby.'&order='.$sort.'&numberposts='.$numberposts.'&post_type='.$wpjm_cpt.'&post_status=draft');
+						$pd_posts = $pd_posts_drafts+$pd_posts;
+					}
+
 					wp_cache_set( $cache_name, $pd_posts, "wpjm_cache" );
 				}
 
@@ -295,11 +302,18 @@ function wpjm_page_dropdown(){
 						// If so, make it the selected value
 						if (isset($_GET['post']) && ($pd_post->ID == $_GET['post']))
 							$wpjm_string .= ' selected="selected"';
+
+						if ($pd_post->post_status == 'draft')
+								$wpjm_string .= ' style="color: #999999 !important;"';
+								
 						$wpjm_string .= '>';
 
 						// Print the post title
 						$wpjm_string .= wpjm_get_page_title($pd_post->post_title);
 						
+						if ($pd_post->post_status == 'draft')
+							$wpjm_string .= ' - DRAFT';
+
 						// If the setting to show ID's is true, show the ID in ()
 						if ($options['showID'] == true) 
 							$wpjm_string .= ' ('.$pd_post->ID.') ';
@@ -316,7 +330,52 @@ function wpjm_page_dropdown(){
 					$orderedListWalker = new WPJM_Walker_PageDropDown();
 
 					$wpjm_string .= '<optgroup label="--'.$cpt_labels->name.'--">';
+					
+					if ($showdrafts == 'true') {
+						
+						
+						// Loop through posts
+						foreach ($pd_posts_drafts as $pd_post) {
+							
+							// Increase the interator by 1
+							$pd_i++;
+
+							// Open the <option> tag
+							$wpjm_string .= '<option value="';
+								// echo the edit link based on post ID
+								$wpjm_string .= get_edit_post_link($pd_post->ID);
+							$wpjm_string .= '"';
+
+							// Check to see if you are currently editing this post
+							// If so, make it the selected value
+							if (isset($_GET['post']) && ($pd_post->ID == $_GET['post']))
+								$wpjm_string .= ' selected="selected"';
+
+							if ($pd_post->post_status == 'draft')
+								$wpjm_string .= ' style="color: #999999 !important;"';
+
+							$wpjm_string .= '>';
+
+							// Print the post title
+							$wpjm_string .= wpjm_get_page_title($pd_post->post_title);
+							
+							if ($pd_post->post_status == 'draft')
+								$wpjm_string .= ' - DRAFT';
+
+							// If the setting to show ID's is true, show the ID in ()
+							if ($options['showID'] == true) 
+								$wpjm_string .= ' ('.$pd_post->ID.') ';
+							
+							// close the <option> tag
+							$wpjm_string .= '</option>';
+						} // foreach ($pd_posts as $pd_post)
+
+						
+					} 
+					
 					$wpjm_string .= wp_list_pages(array('walker' => $orderedListWalker, 'post_type' => $wpjm_cpt, 'echo' => 0));
+					
+
 					$wpjm_string .= '</optgroup>';
 				} // end if (is_hierarchical)
 			
@@ -349,12 +408,14 @@ function wpjm_install() {
 				'page' => array(
 					'show' => '1',
 					'sortby' => 'menu_order',
-					'sort' => 'ASC'
+					'sort' => 'ASC',
+					'showdrafts' => 'true'
 				),
 				'post' => array(
 					'show' => '1',
 					'sortby' => 'date',
-					'sort' => 'DESC'
+					'sort' => 'DESC',
+					'showdrafts' => 'true'
 				)
 			);
 
@@ -425,13 +486,15 @@ function wpjm_install() {
 						'show' => '1',
 						'sortby' => 'menu_order',
 						'sort' => 'ASC',
-						'numberposts' => '-1'
+						'numberposts' => '-1',
+						'showdrafts' => 'true'
 					),
 					'post' => array(
 						'show' => '1',
 						'sortby' => 'date',
 						'sort' => 'DESC',
-						'numberposts' => '-1'
+						'numberposts' => '-1',
+						'showdrafts' => 'true'
 					)
 				),
 				'logoIcon' => 'http://www.krillwebdesign.com/wp-content/uploads/2011/06/logo-small-no-tag1.png',
@@ -444,7 +507,7 @@ function wpjm_install() {
 
 	}
 
-	update_option('wpjm_version','2.2.7');
+	update_option('wpjm_version','2.2.8');
 
 }
 

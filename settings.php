@@ -137,7 +137,7 @@ function wpjm_position_radio() {
 	<input type="radio" value="bottom" name="wpjm_options[position]" id="wpjm_position" <?php checked($options['position'], 'bottom'); ?> />
 		 Bottom of screen<br/>
 	<input type="radio" value="wpAdminBar" name="wpjm_options[position]" id="wpjm_position" <?php checked($options['position'], 'wpAdminBar'); ?> />
-		WP Admin Bar (BETA)
+		WP Admin Bar
 	
 </div>
 <?php
@@ -347,6 +347,7 @@ function wpjm_postTypes_checkbox() {
 				<th scope="col" class="wpjm-order-by-col">Order By</th>
 				<th scope="col" class="wpjm-order-col">Order</th>
 				<th scope="col" class="wpjm-numberposts-col">Show</th>
+				<th scope="col" class="wpjm-showdrafts-col">Show Drafts</th>
 			</tr>
 			</thead>
 			<tfoot>
@@ -356,6 +357,7 @@ function wpjm_postTypes_checkbox() {
 				<th scope="col" class="wpjm-order-by-col">Order By</th>
 				<th scope="col" class="wpjm-order-col">Order</th>
 				<th scope="col" class="wpjm-numberposts-col">Show</th>
+				<th scope="col" class="wpjm-showdrafts-col">Show Drafts</th>
 			</tr>
 			</tfoot>
 			<tbody>
@@ -424,6 +426,11 @@ function wpjm_postTypes_checkbox() {
 						<span class="description">-1 to display all</span>
 					</div>
 				</td>
+				<td>
+					<div>
+						<input type="checkbox" value="true" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][showdrafts]" id="wpjm_showdrafts<?php echo $pt->name; ?>" <?php checked($options['postTypes'][$pt->name]['showdrafts'], 'true' ); ?> />
+					</div>
+				</td>
 			</tr>
 			<?php } ?>
 			</tbody>
@@ -450,6 +457,9 @@ function wpjm_options_validate( $input ) {
 			}
 			if (empty($newinput['postTypes'][$key]['numberposts'])) {
 				$newinput['postTypes'][$key]['numberposts'] = '-1';
+			}
+			if (!isset($newinput['postTypes'][$key]['showdrafts'])) {
+				$newinput['postTypes'][$key]['showdrafts'] = 'false';
 			}
 		}
 		
