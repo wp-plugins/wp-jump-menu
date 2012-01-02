@@ -65,7 +65,7 @@ You need to upload your logo icon, through WordPress maybe, and get the full URL
 == Changelog ==
 
 = 2.2.8 =
-* Added the ability to shows Drafts.
+* Added the ability to show Drafts.
 
 = 2.2.7 =
 * Updated the code for insertion into the WP Admin Bar. WP compliant now.
