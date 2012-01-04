@@ -2,14 +2,14 @@
 /**
  * @package WP_Jump_Menu
  * @author Jim Krill
- * @version 2.3.1
+ * @version 2.3.2
  */
 /*
 Plugin Name: WP Jump Menu
 Plugin URI: http://www.synotac.com/wp-jump-menu/
 Description: Creates a drop-down menu (jump menu) in a bar across the top or bottom of the screen that makes it easy to jump right to a page, post, or custom post type in the admin area to edit.
 Author: Jim Krill
-Version: 2.3.1
+Version: 2.3.2
 Author URI: http://krillwebdesign.com
 */
 
@@ -30,12 +30,20 @@ Author URI: http://krillwebdesign.com
 */
 
 
+/*
+ TODO:
+ * perhaps add an option to sort posts in the drop down by status and date e.g. all Published grouped together, all Future grouped etc
+ * perhaps include date of publication (whether past or future) with posts in dropdown. Or, might be better to show dates for Scheduled posts only? (just a thought).
+ * Allow the user to select the color to use for the different post status'
+ */
+
+
 /** CUSTOM FUNCTIONS **/
 /**********************/
 
 require_once( WP_PLUGIN_DIR . '/wp-jump-menu/settings.php' );
 
-define('WPJM_VERSION','2.3.1');
+define('WPJM_VERSION','2.3.2');
 
 global $wp_version;
 
@@ -615,6 +623,13 @@ function wpjm_install() {
 				'message' => "Brought to you by <a href='http://www.krillwebdesign.com/' target='_blank'>Krill Web Design</a>." 
 			);
 			update_option('wpjm_options',$arr);
+		} else {
+			if (!isset($options['postTypes']['post']['poststatus'])) {
+				foreach($options['postTypes'] as $key => $value) {
+					$options['postTypes'][$key]['poststatus'] = array('publish','draft');
+				}
+				update_option('wpjm_options',$options);
+			}
 		}
 
 	}
