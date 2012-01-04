@@ -368,7 +368,7 @@ function wpjm_page_dropdown(){
 					'pending' => '#999999',
 					'draft' => '#999999',
 					'auto-draft' => '#999999',
-					'future' => '#00ff00',
+					'future' => '#1c360f',
 					'private' => '#999999',
 					'inherit' => '#333333',
 					'trash' => '#ff0000'
