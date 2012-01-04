@@ -2,14 +2,14 @@
 /**
  * @package WP_Jump_Menu
  * @author Jim Krill
- * @version 2.2.9
+ * @version 2.3
  */
 /*
 Plugin Name: WP Jump Menu
 Plugin URI: http://www.synotac.com/wp-jump-menu/
 Description: Creates a drop-down menu (jump menu) in a bar across the top or bottom of the screen that makes it easy to jump right to a page, post, or custom post type in the admin area to edit.
 Author: Jim Krill
-Version: 2.2.9
+Version: 2.3
 Author URI: http://krillwebdesign.com
 */
 
@@ -35,21 +35,40 @@ Author URI: http://krillwebdesign.com
 
 require_once( WP_PLUGIN_DIR . '/wp-jump-menu/settings.php' );
 
-define('WPJM_VERSION','2.2.9');
+define('WPJM_VERSION','2.3');
+
+global $wp_version;
+
+register_activation_hook( __FILE__, 'wpjm_install' );
+
+// Needs uninstall hook to delete files
+	
+
+	add_action( 'admin_print_scripts','wpjm_js' );
+	add_action( 'admin_print_styles', 'wpjm_editpost_css' );
+	add_filter( 'plugin_action_links', 'wpjm_add_settings_link', 10, 2);
+	add_action( 'admin_menu', 'wpjm_menu' );
+
+	// Testing tooltip
+	function wpjm_enqueue_tooltips() {
+		$dismissed_tooltips = explode( ',', (string) get_user_meta( get_current_user_id(), 'dismissed_wp_pointers', true ) );
+		if ( !in_array('wpjm_tooltip',$dismissed_tooltips) )
+			add_action( 'admin_print_footer_scripts', 'wpjm_tooltip' );
+
+	}
+	add_action('admin_enqueue_scripts','wpjm_enqueue_tooltips');
+
+	// Options page settings form
+	add_action( 'admin_init', 'wpjm_admin_init' );
+
+	register_deactivation_hook( __FILE__, 'wpjm_uninstall' );
+
 
 // Call the plugin's main functions
 function beam_me_up_wpjm() {
 
-	register_activation_hook( __FILE__, 'wpjm_install' );
-
 	$options = get_option( 'wpjm_options' );
 
-	$current_version = get_option('wpjm_version');
-	if (empty($current_version) || $current_version < WPJM_VERSION) {
-		wpjm_install();
-	}
-
-	// Needs uninstall hook to delete files
 	if ( ($options['position'] == 'wpAdminBar') ) { 
 		add_action('admin_bar_menu', 'wpjm_add_admin_bar',25);
 		add_action( 'wp_print_scripts','wpjm_js' );
@@ -59,15 +78,26 @@ function beam_me_up_wpjm() {
 		add_action( 'admin_footer', 'wpjm_custom_footer' );
 	}
 
-	add_action( 'admin_print_scripts','wpjm_js' );
-	add_action( 'admin_print_styles', 'wpjm_editpost_css' );
-	add_filter( 'plugin_action_links', 'wpjm_add_settings_link', 10, 2);
-	add_action( 'admin_menu', 'wpjm_menu' );
 
-	// Options page settings form
-	add_action( 'admin_init', 'wpjm_admin_init' );
+	$current_version = get_option('wpjm_version');
+	if (empty($current_version) || $current_version < WPJM_VERSION) {
+		wpjm_install();
+		add_action( 'admin_print_footer_scripts', 'wpjm_tooltip' );
 
-	register_deactivation_hook( __FILE__, 'wpjm_uninstall' );
+		$dismissed_tooltips = explode( ',', (string) get_user_meta( get_current_user_id(), 'dismissed_wp_pointers', true ) );
+		if ( in_array( 'wpjm_tooltip', $dismissed_tooltips)) {
+			foreach($dismissed_tooltips as $key => $value) {
+				if ($value == 'wpjm_tooltip') unset($dismissed_tooltips[$key]);
+			}
+			if (is_array($dismissed_tooltips))
+				$dismissed_tooltips = implode( ',', $dismissed_tooltips );
+			update_user_meta( get_current_user_id(), 'dismissed_wp_pointers', $dismissed_tooltips );
+		}
+		
+	}
+
+
+	
 
 }
 
@@ -133,6 +163,51 @@ function wpjm_js() {
 	wp_enqueue_script( 'jquery-colorpicker', get_option( 'siteurl' ).'/wp-content/plugins/wp-jump-menu/assets/js/colorpicker/js/colorpicker.js', array( 'jquery' ) );
 
 
+	// Testing tooltip
+	wp_enqueue_style('wp-pointer');
+	wp_enqueue_script('wp-pointer');
+
+}
+
+// Testing Tooltip
+function wpjm_tooltip(){
+
+	// Get the options
+	$options = get_option( 'wpjm_options' );
+
+	$pointer_content = '<h3>New in Wp Jump Menu 2.3</h3>';
+	$pointer_content .= '<p>Now you can attach the jump menu to the WordPress admin bar! Goto <a href="options-general.php?page=wpjm-options">WPJM settings</a> and change location to WP Admin Bar</p>';
+	// $pointer_content .= '<p><a href="#" id="wpjm-tooltip-close">Dismiss</a></p>';
+	?>
+	<script>
+	jQuery(document).ready(function($){
+		$('<?php echo ($options["position"] == "wpAdminBar"?"#wp-admin-bar-wp-jump-menu":"#jump_menu"); ?>').pointer({
+			content: '<?php echo addslashes( $pointer_content ); ?>',
+			<?php if ($options['position'] == 'top') { ?>
+			position: {
+				offset: '0 0',
+				edge: 'top',
+				align: 'center'
+			},
+			<?php } else if ($options['position'] == 'bottom') { ?>
+			position: {
+				offset: '0 -15',
+				edge: 'bottom',
+				align: 'center'
+			},
+			<?php } ?>
+			close: function() {
+				// Once the close button is hit
+				$.post(ajaxurl, {
+					pointer: 'wpjm_tooltip',
+					action: 'dismiss-wp-pointer'
+				});
+			}
+		}).pointer('open');
+	});
+	</script>
+	<?php
+
 }
 
 // Put a bar across the bottom of the screen that offers to help...
@@ -141,7 +216,6 @@ function wpjm_custom_footer() {
 
 	// Get the options
 	$options = get_option( 'wpjm_options' );
-
 	
 
 	echo '<div id="jump_menu">';
@@ -158,8 +232,6 @@ function wpjm_custom_footer() {
 			//echo ' Go to your <a href="'.get_bloginfo( 'url' ).'">site</a>.';
 		echo '</p>';
 	echo '</div>';
-
-	
 
 }
 
@@ -255,19 +327,28 @@ function wpjm_page_dropdown(){
 				$sort = $value['sort'];					// order value
 				$numberposts = $value['numberposts'];	// number of posts to display
 				$showdrafts = $value['showdrafts'];		// show drafts, true or false
+				$post_status = $value['poststatus'];
+
 				
 				// Get Posts
 				// Attempting to use wp_cache
 				$cache_name = "wpjm_{$wpjm_cpt}_post";
 				$pd_posts = wp_cache_get( $cache_name, "wpjm_cache" );
 				if ( false == $pd_posts ) {
-					$pd_posts = get_posts('orderby='.$sortby.'&order='.$sort.'&numberposts='.$numberposts.'&post_type='.$wpjm_cpt);
+					$args = array(
+						'orderby' => $sortby,
+						'order' => $sort,
+						'numberposts' => $numberposts,
+						'post_type' => $wpjm_cpt,
+						'post_status' => (in_array('any',$post_status)?'any':$post_status)
+						);
+					$pd_posts = get_posts($args);
 
-					if ($showdrafts == 'true') {
+					/*if ($showdrafts == 'true') {
 						$pd_posts_drafts = get_posts('orderby='.$sortby.'&order='.$sort.'&numberposts='.$numberposts.'&post_type='.$wpjm_cpt.'&post_status=draft');
 						//$pd_posts = $pd_posts_drafts+$pd_posts;
 						$pd_posts = array_merge($pd_posts_drafts,$pd_posts);
-					}
+					}*/
 
 					wp_cache_set( $cache_name, $pd_posts, "wpjm_cache" );
 				}
@@ -281,6 +362,17 @@ function wpjm_page_dropdown(){
 				
 				// Set the iterator to zero
 				$pd_i = 0;
+
+				// Set post status colors
+				$status_color = array(
+					'pending' => '#999999',
+					'draft' => '#999999',
+					'auto-draft' => '#999999',
+					'future' => '#00ff00',
+					'private' => '#999999',
+					'inherit' => '#333333',
+					'trash' => '#ff0000'
+					);
 
 				// If this is not hierarchical, get list of posts and display the <option>s
 				if (!is_post_type_hierarchical($wpjm_cpt)) {
@@ -304,16 +396,16 @@ function wpjm_page_dropdown(){
 						if (isset($_GET['post']) && ($pd_post->ID == $_GET['post']))
 							$wpjm_string .= ' selected="selected"';
 
-						if ($pd_post->post_status == 'draft')
-								$wpjm_string .= ' style="color: #999999 !important;"';
+						if ($pd_post->post_status != 'publish')
+								$wpjm_string .= ' style="color: '.$status_color[$pd_post->post_status].' !important;"';
 
 						$wpjm_string .= '>';
 
 						// Print the post title
 						$wpjm_string .= wpjm_get_page_title($pd_post->post_title);
 						
-						if ($pd_post->post_status == 'draft')
-							$wpjm_string .= ' - DRAFT';
+						if ($pd_post->post_status != 'publish')
+							$wpjm_string .= ' - '.$pd_post->post_status;
 
 						// If the setting to show ID's is true, show the ID in ()
 						if ($options['showID'] == true) 
@@ -332,7 +424,14 @@ function wpjm_page_dropdown(){
 
 					$wpjm_string .= '<optgroup label="--'.$cpt_labels->name.'--">';
 					
-					if ($showdrafts == 'true') {
+					// Go through the non-published pages
+					foreach ($post_status as $status) {
+
+						if ($status == 'publish')
+							continue;
+
+						// Get pages
+						$pd_posts_drafts = get_posts('orderby='.$sortby.'&order='.$sort.'&numberposts='.$numberposts.'&post_type='.$wpjm_cpt.'&post_status='.$status);
 						
 						
 						// Loop through posts
@@ -352,16 +451,16 @@ function wpjm_page_dropdown(){
 							if (isset($_GET['post']) && ($pd_post->ID == $_GET['post']))
 								$wpjm_string .= ' selected="selected"';
 
-							if ($pd_post->post_status == 'draft')
-								$wpjm_string .= ' style="color: #999999 !important;"';
+							if ($pd_post->post_status != 'publish')
+								$wpjm_string .= ' style="color: '.$status_color[$pd_post->post_status].' !important;"';
 
 							$wpjm_string .= '>';
 
 							// Print the post title
 							$wpjm_string .= wpjm_get_page_title($pd_post->post_title);
 							
-							if ($pd_post->post_status == 'draft')
-								$wpjm_string .= ' - DRAFT';
+							if ($pd_post->post_status != 'publish')
+								$wpjm_string .= ' - '.$status;
 
 							// If the setting to show ID's is true, show the ID in ()
 							if ($options['showID'] == true) 
@@ -373,8 +472,18 @@ function wpjm_page_dropdown(){
 
 						
 					} 
-					
-					$wpjm_string .= wp_list_pages(array('walker' => $orderedListWalker, 'post_type' => $wpjm_cpt, 'echo' => 0));
+					// Done with non-published pages
+					if (is_array($post_status)) {
+
+						if (in_array('publish',$post_status)) {
+						
+							$wpjm_string .= wp_list_pages(array('walker' => $orderedListWalker, 'post_type' => $wpjm_cpt, 'echo' => 0));
+
+						}
+
+					} else if ($post_status == 'publish') {
+						$wpjm_string .= wp_list_pages(array('walker' => $orderedListWalker, 'post_type' => $wpjm_cpt, 'echo' => 0));
+					}
 					
 
 					$wpjm_string .= '</optgroup>';
@@ -410,13 +519,13 @@ function wpjm_install() {
 					'show' => '1',
 					'sortby' => 'menu_order',
 					'sort' => 'ASC',
-					'showdrafts' => 'true'
+					'poststatus' => array('publish','draft')
 				),
 				'post' => array(
 					'show' => '1',
 					'sortby' => 'date',
 					'sort' => 'DESC',
-					'showdrafts' => 'true'
+					'poststatus' => array('publish','draft')
 				)
 			);
 
@@ -430,7 +539,8 @@ function wpjm_install() {
 						'show' => '1',
 						'sortby' => 'menu_order',
 						'sort' => 'ASC',
-						'numberposts' => '-1'
+						'numberposts' => '-1',
+						'poststatus' => array('publish','draft')
 						);
 				}
 			} else {
@@ -438,7 +548,8 @@ function wpjm_install() {
 					'show' => '1',
 					'sortby' => 'menu_order',
 					'sort' => 'ASC',
-					'numberposts' => '-1'
+					'numberposts' => '-1',
+					'poststatus' => array('publish','draft')
 				);
 			}
 		}
@@ -477,7 +588,7 @@ function wpjm_install() {
 		$options = get_option('wpjm_options');
 		if (empty($options)) {
 			$arr = array(
-				'position' => 'top',
+				'position' => 'bottom',
 				'showID' => 'true',
 				'backgroundColor' => 'e0e0e0',
 				'fontColor' => '787878',
@@ -488,14 +599,14 @@ function wpjm_install() {
 						'sortby' => 'menu_order',
 						'sort' => 'ASC',
 						'numberposts' => '-1',
-						'showdrafts' => 'true'
+						'poststatus' => array('publish','draft')
 					),
 					'post' => array(
 						'show' => '1',
 						'sortby' => 'date',
 						'sort' => 'DESC',
 						'numberposts' => '-1',
-						'showdrafts' => 'true'
+						'poststatus' => array('publish','draft')
 					)
 				),
 				'logoIcon' => 'http://www.krillwebdesign.com/wp-content/uploads/2011/06/logo-small-no-tag1.png',
@@ -508,7 +619,7 @@ function wpjm_install() {
 
 	}
 
-	update_option('wpjm_version','2.2.9');
+	update_option('wpjm_version',WPJM_VERSION);
 
 }
 
@@ -547,11 +658,15 @@ function wpjm_options() {
 		<div id="icon-options-general" class="icon32">
 			<br/>
 		</div>
-		<h2>WP Jump Menu Options</h2>	
+		<h2>WP Jump Menu <?php echo WPJM_VERSION; ?></h2>	
 
 		<form action="options.php" method="post" id="wpjm-options-form">
 		<?php settings_fields('wpjm_options'); ?>
 		<?php do_settings_sections('wpjm'); ?>
+		<p class="submit">
+			<input type="Submit" type="submit" value="<?php esc_attr_e('Save Changes'); ?>" class="button button-primary" />
+		</p>
+		<?php do_settings_sections('wpjm-2'); ?>
 
 		<?php
 		// Clear the cache when viewing the options page //
@@ -568,5 +683,5 @@ function wpjm_options() {
 }
 
 // Launch in 5... 4... 3... 2... 1...
-beam_me_up_wpjm();
+add_action('admin_init', 'beam_me_up_wpjm');
 ?>

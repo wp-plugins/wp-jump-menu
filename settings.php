@@ -13,20 +13,20 @@ function wpjm_admin_init() {
 
 	// Add the main section
 	add_settings_section( 'wpjm_post_types', 'Post Types', 'wpjm_post_type_section_text', 'wpjm' );
-	add_settings_section( 'wpjm_main', 'Styling Options', 'wpjm_section_text', 'wpjm' );
+	add_settings_section( 'wpjm_main', 'Styling Options', 'wpjm_section_text', 'wpjm-2' );
 	
 
 	// Add the fields
 	add_settings_field( 'wpjm_position', 
 			'Position of Jump Menu Bar', 
 			'wpjm_position_radio', 
-			'wpjm', 
+			'wpjm-2', 
 			'wpjm_main' );
 
 	add_settings_field( 'wpjm_showID',
 			'Show ID next to post/page title',
 			'wpjm_showID_checkbox',
-			'wpjm',
+			'wpjm-2',
 			'wpjm_main' );
 
 	/*add_settings_field( 'wpjm_sortpagesby',
@@ -63,37 +63,37 @@ function wpjm_admin_init() {
 	add_settings_field( 'wpjm_backgroundColor',
 			'Background Color',
 			'wpjm_backgroundColor_text',
-			'wpjm',
+			'wpjm-2',
 			'wpjm_main' );
 
 	add_settings_field( 'wpjm_fontColor',
 			'Font Color',
 			'wpjm_fontColor_text',
-			'wpjm',
+			'wpjm-2',
 			'wpjm_main' );
 
 	add_settings_field( 'wpjm_borderColor',
 			'Border Color',
 			'wpjm_borderColor_text',
-			'wpjm',
+			'wpjm-2',
 			'wpjm_main' );
 
 	add_settings_field( 'wpjm_linkColor',
 			'Link Color',
 			'wpjm_linkColor_text',
-			'wpjm',
+			'wpjm-2',
 			'wpjm_main' );
 
 	add_settings_field( 'wpjm_logoIcon',
 			'Logo Icon URL',
 			'wpjm_logoIcon_text',
-			'wpjm',
+			'wpjm-2',
 			'wpjm_main' );
 
 	add_settings_field( 'wpjm_message',
 			'Message',
 			'wpjm_message_textarea',
-			'wpjm',
+			'wpjm-2',
 			'wpjm_main' );
 
 	add_settings_field( 'wpjm_postTypes',
@@ -339,15 +339,15 @@ function wpjm_postTypes_checkbox() {
 
 	<div>
 		
-		<table id="wpjm-post-types-table" class="wp-list-table widefat fixed">
+		<table id="wpjm-post-types-table" class="wp-list-table widefat ">
 			<thead>
 			<tr>
 				<th scope="col" id="cb" class="manage-column column-cb check-column"><input type="checkbox" /></th>
 				<th scope="col" class="wpjm-post-types-title-col">Post Types</th>
 				<th scope="col" class="wpjm-order-by-col">Order By</th>
 				<th scope="col" class="wpjm-order-col">Order</th>
-				<th scope="col" class="wpjm-numberposts-col">Show</th>
-				<th scope="col" class="wpjm-showdrafts-col">Show Drafts</th>
+				<th scope="col" class="wpjm-numberposts-col">Show<br/><span class="description">How many posts/pages to show.<br/>-1 to display all.</span></th>
+				<th scope="col" class="wpjm-showdrafts-col">Post Status<br/><span class="description">NOTE: Trash items will only display if Any is NOT selected.</span></th>
 			</tr>
 			</thead>
 			<tfoot>
@@ -357,7 +357,7 @@ function wpjm_postTypes_checkbox() {
 				<th scope="col" class="wpjm-order-by-col">Order By</th>
 				<th scope="col" class="wpjm-order-col">Order</th>
 				<th scope="col" class="wpjm-numberposts-col">Show</th>
-				<th scope="col" class="wpjm-showdrafts-col">Show Drafts</th>
+				<th scope="col" class="wpjm-showdrafts-col">Post Status</th>
 			</tr>
 			</tfoot>
 			<tbody>
@@ -427,9 +427,30 @@ function wpjm_postTypes_checkbox() {
 					</div>
 				</td>
 				<td>
-					<div>
-						<input type="checkbox" value="true" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][showdrafts]" id="wpjm_showdrafts<?php echo $pt->name; ?>" <?php checked($options['postTypes'][$pt->name]['showdrafts'], 'true' ); ?> />
+					<div style="float: left; margin-right: 20px;">
+						<input type="checkbox" value="publish" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][poststatus][]" id="wpjm_poststatus<?php echo $pt->name; ?>" <?php if (is_array($options['postTypes'][$pt->name]['poststatus'])) echo (in_array('publish',$options['postTypes'][$pt->name]['poststatus'])?' checked="checked"':''); ?> /> Publish<br/>
+
+						<input type="checkbox" value="pending" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][poststatus][]" id="wpjm_poststatus<?php echo $pt->name; ?>" <?php if (is_array($options['postTypes'][$pt->name]['poststatus'])) echo (in_array('pending',$options['postTypes'][$pt->name]['poststatus'])?' checked="checked"':''); ?> /> Pending<br/>
+
+						<input type="checkbox" value="draft" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][poststatus][]" id="wpjm_poststatus<?php echo $pt->name; ?>" <?php if (is_array($options['postTypes'][$pt->name]['poststatus']))  echo (in_array('draft',$options['postTypes'][$pt->name]['poststatus'])?' checked="checked"':''); ?> /> Draft<br/>
+
+						<input type="checkbox" value="auto-draft" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][poststatus][]" id="wpjm_poststatus<?php echo $pt->name; ?>" <?php if (is_array($options['postTypes'][$pt->name]['poststatus'])) echo (in_array('auto-draft',$options['postTypes'][$pt->name]['poststatus'])?' checked="checked"':''); ?> /> Auto-Draft<br/>
+
+						<input type="checkbox" value="future" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][poststatus][]" id="wpjm_poststatus<?php echo $pt->name; ?>" <?php if (is_array($options['postTypes'][$pt->name]['poststatus'])) echo (in_array('future',$options['postTypes'][$pt->name]['poststatus'])?' checked="checked"':''); ?> /> Future<br/>
+
+						
+						
 					</div>
+					<div style="float: left;">
+					<input type="checkbox" value="private" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][poststatus][]" id="wpjm_poststatus<?php echo $pt->name; ?>" <?php if (is_array($options['postTypes'][$pt->name]['poststatus'])) echo (in_array('private',$options['postTypes'][$pt->name]['poststatus'])?' checked="checked"':''); ?> /> Private<br/>
+
+						<input type="checkbox" value="inherit" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][poststatus][]" id="wpjm_poststatus<?php echo $pt->name; ?>" <?php if (is_array($options['postTypes'][$pt->name]['poststatus'])) echo (in_array('inherit',$options['postTypes'][$pt->name]['poststatus'])?' checked="checked"':''); ?> /> Inherit<br/>
+
+						<input type="checkbox" value="trash" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][poststatus][]" id="wpjm_poststatus<?php echo $pt->name; ?>" <?php if (is_array($options['postTypes'][$pt->name]['poststatus'])) echo (in_array('trash',$options['postTypes'][$pt->name]['poststatus'])?' checked="checked"':''); ?> /> Trash<br/>
+
+						<input type="checkbox" value="any" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][poststatus][]" id="wpjm_poststatus<?php echo $pt->name; ?>" <?php if (is_array($options['postTypes'][$pt->name]['poststatus'])) echo (in_array('any',$options['postTypes'][$pt->name]['poststatus'])?' checked="checked"':''); ?> /> Any<br/>
+						</div>
+						<div style="clear: both;"></div>
 				</td>
 			</tr>
 			<?php } ?>
@@ -458,9 +479,10 @@ function wpjm_options_validate( $input ) {
 			if (empty($newinput['postTypes'][$key]['numberposts'])) {
 				$newinput['postTypes'][$key]['numberposts'] = '-1';
 			}
-			if (!isset($newinput['postTypes'][$key]['showdrafts'])) {
-				$newinput['postTypes'][$key]['showdrafts'] = 'false';
+			if (!isset($newinput['postTypes'][$key]['poststatus'])) {
+				$newinput['postTypes'][$key]['poststatus'] = array('publish');
 			}
+			
 		}
 		
 	}
