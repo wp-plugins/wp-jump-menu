@@ -2,14 +2,14 @@
 /**
  * @package WP_Jump_Menu
  * @author Jim Krill
- * @version 2.3.2
+ * @version 2.3.3
  */
 /*
 Plugin Name: WP Jump Menu
 Plugin URI: http://www.synotac.com/wp-jump-menu/
 Description: Creates a drop-down menu (jump menu) in a bar across the top or bottom of the screen that makes it easy to jump right to a page, post, or custom post type in the admin area to edit.
 Author: Jim Krill
-Version: 2.3.2
+Version: 2.3.3
 Author URI: http://krillwebdesign.com
 */
 
@@ -43,7 +43,7 @@ Author URI: http://krillwebdesign.com
 
 require_once( WP_PLUGIN_DIR . '/wp-jump-menu/settings.php' );
 
-define('WPJM_VERSION','2.3.2');
+define('WPJM_VERSION','2.3.3');
 
 global $wp_version;
 
@@ -183,7 +183,7 @@ function wpjm_tooltip(){
 	// Get the options
 	$options = get_option( 'wpjm_options' );
 
-	$pointer_content = '<h3>New in Wp Jump Menu 2.3</h3>';
+	$pointer_content = '<h3>New in Wp Jump Menu '.WPJM_VERSION.'</h3>';
 	$pointer_content .= '<p>Now you can attach the jump menu to the WordPress admin bar! Goto <a href="options-general.php?page=wpjm-options">WPJM settings</a> and change location to WP Admin Bar</p>';
 	// $pointer_content .= '<p><a href="#" id="wpjm-tooltip-close">Dismiss</a></p>';
 	?>
@@ -282,6 +282,18 @@ function wpjm_page_dropdown(){
 	// Get Custom Post Types settings (will iterate through later)
 	$custom_post_types = $options['postTypes'];
 
+	// Set post status colors
+	$status_color = array(
+		'publish' => (!empty($options['statusColors']['publish'])?'#'.$options['statusColors']['publish']:'#000000'),
+		'pending' => (!empty($options['statusColors']['pending'])?'#'.$options['statusColors']['pending']:'#999999'),
+		'draft' => (!empty($options['statusColors']['draft'])?'#'.$options['statusColors']['draft']:'#999999'),
+		'auto-draft' => (!empty($options['statusColors']['auto-draft'])?'#'.$options['statusColors']['auto-draft']:'#999999'),
+		'future' => (!empty($options['statusColors']['future'])?'#'.$options['statusColors']['future']:'#398f2c'),
+		'private' => (!empty($options['statusColors']['private'])?'#'.$options['statusColors']['private']:'#999999'),
+		'inherit' => (!empty($options['statusColors']['inherit'])?'#'.$options['statusColors']['inherit']:'#333333'),
+		'trash' => (!empty($options['statusColors']['trash'])?'#'.$options['statusColors']['trash']:'#ff0000')
+		);
+
 	$wpjm_string = '';
 
 	// Start echoing the select menu
@@ -306,11 +318,24 @@ function wpjm_page_dropdown(){
 						// Get options to determine whether or not to show ID
 						$options = get_option( 'wpjm_options' );
 
+						$status_color = array(
+						'publish' => (!empty($options['statusColors']['publish'])?'#'.$options['statusColors']['publish']:'#000000'),
+						'pending' => (!empty($options['statusColors']['pending'])?'#'.$options['statusColors']['pending']:'#999999'),
+						'draft' => (!empty($options['statusColors']['draft'])?'#'.$options['statusColors']['draft']:'#999999'),
+						'auto-draft' => (!empty($options['statusColors']['auto-draft'])?'#'.$options['statusColors']['auto-draft']:'#999999'),
+						'future' => (!empty($options['statusColors']['future'])?'#'.$options['statusColors']['future']:'#398f2c'),
+						'private' => (!empty($options['statusColors']['private'])?'#'.$options['statusColors']['private']:'#999999'),
+						'inherit' => (!empty($options['statusColors']['inherit'])?'#'.$options['statusColors']['inherit']:'#333333'),
+						'trash' => (!empty($options['statusColors']['trash'])?'#'.$options['statusColors']['trash']:'#ff0000')
+						);
+
 						$pad = str_repeat('-', $depth * 2);
 
 						$output .= "\t<option class=\"level-$depth\" value=\"".get_edit_post_link($page->ID)."\"";
 						if (isset($_GET['post']) && ($page->ID == $_GET['post']))
 							$output .= ' selected="selected"';
+
+							$output .= ' style="color: '.$status_color['publish'].' !important;"';
 						$output .= '>';
 						$title = apply_filters( 'list_pages', $page->post_title . ( $options['showID'] == true ? " (" .$page->ID . ") " : '' ) );
 						$output .= $pad . esc_html( $title );
@@ -352,12 +377,6 @@ function wpjm_page_dropdown(){
 						);
 					$pd_posts = get_posts($args);
 
-					/*if ($showdrafts == 'true') {
-						$pd_posts_drafts = get_posts('orderby='.$sortby.'&order='.$sort.'&numberposts='.$numberposts.'&post_type='.$wpjm_cpt.'&post_status=draft');
-						//$pd_posts = $pd_posts_drafts+$pd_posts;
-						$pd_posts = array_merge($pd_posts_drafts,$pd_posts);
-					}*/
-
 					wp_cache_set( $cache_name, $pd_posts, "wpjm_cache" );
 				}
 
@@ -371,16 +390,7 @@ function wpjm_page_dropdown(){
 				// Set the iterator to zero
 				$pd_i = 0;
 
-				// Set post status colors
-				$status_color = array(
-					'pending' => '#999999',
-					'draft' => '#999999',
-					'auto-draft' => '#999999',
-					'future' => '#1c360f',
-					'private' => '#999999',
-					'inherit' => '#333333',
-					'trash' => '#ff0000'
-					);
+				
 
 				// If this is not hierarchical, get list of posts and display the <option>s
 				if (!is_post_type_hierarchical($wpjm_cpt)) {
@@ -404,8 +414,8 @@ function wpjm_page_dropdown(){
 						if (isset($_GET['post']) && ($pd_post->ID == $_GET['post']))
 							$wpjm_string .= ' selected="selected"';
 
-						if ($pd_post->post_status != 'publish')
-								$wpjm_string .= ' style="color: '.$status_color[$pd_post->post_status].' !important;"';
+						// Set the color
+						$wpjm_string .= ' style="color: '.$status_color[$pd_post->post_status].' !important;"';
 
 						$wpjm_string .= '>';
 
@@ -414,6 +424,9 @@ function wpjm_page_dropdown(){
 						
 						if ($pd_post->post_status != 'publish')
 							$wpjm_string .= ' - '.$pd_post->post_status;
+
+						if ($pd_post->post_status == 'future')
+							$wpjm_string .= ' - '.$pd_post->post_date;
 
 						// If the setting to show ID's is true, show the ID in ()
 						if ($options['showID'] == true) 
@@ -459,8 +472,8 @@ function wpjm_page_dropdown(){
 							if (isset($_GET['post']) && ($pd_post->ID == $_GET['post']))
 								$wpjm_string .= ' selected="selected"';
 
-							if ($pd_post->post_status != 'publish')
-								$wpjm_string .= ' style="color: '.$status_color[$pd_post->post_status].' !important;"';
+							// Set the color
+							$wpjm_string .= ' style="color: '.$status_color[$pd_post->post_status].' !important;"';
 
 							$wpjm_string .= '>';
 
@@ -469,6 +482,9 @@ function wpjm_page_dropdown(){
 							
 							if ($pd_post->post_status != 'publish')
 								$wpjm_string .= ' - '.$status;
+
+							if ($pd_post->post_status == 'future')
+								$wpjm_string .= ' - '.$pd_post->post_date;
 
 							// If the setting to show ID's is true, show the ID in ()
 							if ($options['showID'] == true) 

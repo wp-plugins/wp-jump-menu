@@ -29,37 +29,13 @@ function wpjm_admin_init() {
 			'wpjm-2',
 			'wpjm_main' );
 
-	/*add_settings_field( 'wpjm_sortpagesby',
-			'Sort Pages By',
-			'wpjm_sortpagesby_select',
-			'wpjm',
+	add_settings_field( 'wpjm_barColors',
+			'Jump Menu Bar Colors',
+			'wpjm_barColors_checkbox',
+			'wpjm-2',
 			'wpjm_main' );
 
-	add_settings_field( 'wpjm_sortpages',
-			'Sort Pages Order',
-			'wpjm_sortpages_radio',
-			'wpjm',
-			'wpjm_main' );
-
-	add_settings_field( 'wpjm_sortpostsby',
-			'Sort Posts By',
-			'wpjm_sortpostsby_select',
-			'wpjm',
-			'wpjm_main' );
-
-	add_settings_field( 'wpjm_sortposts',
-				'Sort Posts Order',
-			'wpjm_sortposts_radio',
-			'wpjm',
-			'wpjm_main' );
-
-	add_settings_field( 'wpjm_numberposts',
-			'Number of Posts to Display',
-			'wpjm_numberposts_text',
-			'wpjm',
-			'wpjm_main' );
-	*/
-
+	/*
 	add_settings_field( 'wpjm_backgroundColor',
 			'Background Color',
 			'wpjm_backgroundColor_text',
@@ -81,6 +57,13 @@ function wpjm_admin_init() {
 	add_settings_field( 'wpjm_linkColor',
 			'Link Color',
 			'wpjm_linkColor_text',
+			'wpjm-2',
+			'wpjm_main' );
+	*/
+
+	add_settings_field( 'wpjm_statusColors',
+			'Status Colors',
+			'wpjm_statusColors_checkbox',
 			'wpjm-2',
 			'wpjm_main' );
 
@@ -244,6 +227,76 @@ function wpjm_numberposts_text() {
 <?php
 }
 
+// Jump Menu Bar Colors
+//
+function wpjm_barColors_checkbox() {
+	$options = get_option('wpjm_options');
+?>
+<div>
+	<span class="description">Click on the input to select a color, or enter the hex value.<br/>When you are choosing a color, the jump menu (if top or bottom is selected) will give you a live preview of your color changes.<br/>Changes are NOT saved until you click the "Save Changes" button.</span>
+</div>
+<div>
+	<input class="colorPicker" type="text" name="wpjm_options[backgroundColor]" id="wpjm_backgroundColor" value="<?php echo $options['backgroundColor']; ?>" rel="#jump_menu|backgroundColor" size="6" />
+	<span class="description">Background Color</span>
+</div>
+<div>
+	<input class="colorPicker" type="text" name="wpjm_options[borderColor]" id="wpjm_borderColor" value="<?php echo $options['borderColor']; ?>" rel="#jump_menu|borderColor" size="6" />
+	<span class="description">Border Color</span>
+</div>
+<div>
+	<input class="colorPicker" type="text" name="wpjm_options[fontColor]" id="wpjm_fontColor" value="<?php echo $options['fontColor']; ?>" rel="#jump_menu|color" size="6" />
+	<span class="description">Font Color</span>
+</div>
+<div>
+	<input class="colorPicker" type="text" name="wpjm_options[linkColor]" id="wpjm_linkColor" value="<?php echo $options['linkColor']; ?>" rel="#jump_menu p a:link, #jump_menu p a:visited, #jump_menu p a:hover|color" size="6" />
+	<span class="description">Link Color</span>
+<div>
+<?php
+}
+
+// Status Colors
+//
+function wpjm_statusColors_checkbox() {
+	$options = get_option('wpjm_options');
+?>
+<div>
+	<span class="description">Click on the input to select a color, or enter the hex value.</span>
+</div>
+<div>
+	<input class="colorPicker" type="text" name="wpjm_options[statusColors][publish]" id="wpjm_statusColors_publish" value="<?php echo $options['statusColors']['publish']; ?>" size="6" />
+	<span class="description">Publish</span>
+</div>
+<div>
+	<input class="colorPicker" type="text" name="wpjm_options[statusColors][pending]" id="wpjm_statusColors_pending" value="<?php echo $options['statusColors']['pending']; ?>" size="6" />
+	<span class="description">Pending</span>
+</div>
+<div>
+	<input class="colorPicker" type="text" name="wpjm_options[statusColors][draft]" id="wpjm_statusColors_draft" value="<?php echo $options['statusColors']['draft']; ?>" size="6" />
+	<span class="description">Draft</span>
+</div>
+<div>
+	<input class="colorPicker" type="text" name="wpjm_options[statusColors][auto-draft]" id="wpjm_statusColors_auto-draft" value="<?php echo $options['statusColors']['auto-draft']; ?>" size="6" />
+	<span class="description">Auto-Draft</span>
+</div>
+<div>
+	<input class="colorPicker" type="text" name="wpjm_options[statusColors][future]" id="wpjm_statusColors_future" value="<?php echo $options['statusColors']['future']; ?>" size="6" />
+	<span class="description">Future</span>
+</div>
+<div>
+	<input class="colorPicker" type="text" name="wpjm_options[statusColors][private]" id="wpjm_statusColors_private" value="<?php echo $options['statusColors']['private']; ?>" size="6" />
+	<span class="description">Private</span>
+</div>
+<div>
+	<input class="colorPicker" type="text" name="wpjm_options[statusColors][inherit]" id="wpjm_statusColors_inherit" value="<?php echo $options['statusColors']['inherit']; ?>" size="6" />
+	<span class="description">Inherit</span>
+</div>
+<div>
+	<input class="colorPicker" type="text" name="wpjm_options[statusColors][trash]" id="wpjm_statusColors_trash" value="<?php echo $options['statusColors']['trash']; ?>" size="6" />
+	<span class="description">Trash</span>
+</div>
+<?php
+}
+
 // Background Color
 //
 function wpjm_backgroundColor_text() {
@@ -317,7 +370,7 @@ function wpjm_message_textarea() {
 <div>
 	<textarea name="wpjm_options[message]" id="wpjm_message" cols="60" rows="3" ><?php echo $options['message']; ?></textarea>
 </div>
-<span class="description">Short message to include on left side of Jump bar.  HTML is ok.</span>
+<span class="description">*Optional: Short message to include on left side of Jump bar.  HTML is ok.</span>
 <?php
 }
 
@@ -346,8 +399,8 @@ function wpjm_postTypes_checkbox() {
 				<th scope="col" class="wpjm-post-types-title-col">Post Types</th>
 				<th scope="col" class="wpjm-order-by-col">Order By</th>
 				<th scope="col" class="wpjm-order-col">Order</th>
-				<th scope="col" class="wpjm-numberposts-col">Show<br/><span class="description">How many posts/pages to show.<br/>-1 to display all.</span></th>
-				<th scope="col" class="wpjm-showdrafts-col">Post Status<br/><span class="description">NOTE: Trash items will only display if Any is NOT selected.</span></th>
+				<th scope="col" class="wpjm-numberposts-col">Show</th>
+				<th scope="col" class="wpjm-showdrafts-col">Post Status</th>
 			</tr>
 			</thead>
 			<tfoot>
@@ -412,6 +465,7 @@ function wpjm_postTypes_checkbox() {
 						<option value="parent" <?php selected( $options['postTypes'][$pt->name]['sortby'], 'parent'); ?>>Parent</option>
 						<option value="title" <?php selected( $options['postTypes'][$pt->name]['sortby'], 'title'); ?>>Title</option>
 					</select>
+					<br/><span class="description"><a href="http://codex.wordpress.org/Class_Reference/WP_Query#Order_.26_Orderby_Parameters" target="_blank">Documentation</a></span>
 				</td>
 				<td>
 					<div>
@@ -422,8 +476,8 @@ function wpjm_postTypes_checkbox() {
 				</td>
 				<td>
 					<div>
-						<input type="text" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][numberposts]" id="wpjm_number<?php echo $pt->name; ?>" value="<?php echo $options['postTypes'][$pt->name]['numberposts']; ?>" size="3" /><br/>
-						<span class="description">-1 to display all</span>
+						<input type="text" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][numberposts]" id="wpjm_number<?php echo $pt->name; ?>" value="<?php echo $options['postTypes'][$pt->name]['numberposts']; ?>" size="3" />
+						<br/><span class="description">How many posts/pages to show.<br/>-1 to display all.</span>
 					</div>
 				</td>
 				<td>
@@ -450,7 +504,7 @@ function wpjm_postTypes_checkbox() {
 
 						<input type="checkbox" value="any" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][poststatus][]" id="wpjm_poststatus<?php echo $pt->name; ?>" <?php if (is_array($options['postTypes'][$pt->name]['poststatus'])) echo (in_array('any',$options['postTypes'][$pt->name]['poststatus'])?' checked="checked"':''); ?> /> Any<br/>
 						</div>
-						<div style="clear: both;"></div>
+						<div style="clear: both;"><span class="description">NOTE: Trash items will only display if Any is NOT selected.<br/>NOTE: If your items are not showing up, try choosing "Inherit" or "Any".</span></div>
 				</td>
 			</tr>
 			<?php } ?>

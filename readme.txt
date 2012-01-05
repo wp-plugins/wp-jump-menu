@@ -61,6 +61,10 @@ You need to upload your logo icon, through WordPress maybe, and get the full URL
 
 == Changelog ==
 
+= 2.3.3 =
+* Added the ability to choose what color each post status will appear as in the jump menu.
+* Added the date to show on future/scheduled posts/pages.
+
 = 2.3.2 =
 * Fixed another small bug.
 
