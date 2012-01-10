@@ -4,7 +4,7 @@ Donate link: http://www.krillwebdesign.com
 Tags: posts, pages, admin, jump, menu, quick, links, custom post types
 Requires at least: 3.0
 Tested up to: 3.3
-Stable tag: 2.3.3
+Stable tag: 2.3.4
 
 Creates a drop-down menu in the admin area which makes it easy to jump to a page, post, custom post type or media file for editing. 
 
@@ -60,6 +60,9 @@ You need to upload your logo icon, through WordPress maybe, and get the full URL
 3. The Jump Menu in the WordPress Admin Bar
 
 == Changelog ==
+
+= 2.3.4 =
+* Fixed a bug that was causing a javascript error in WP versions 3.2.1 and lower.
 
 = 2.3.3 =
 * Added the ability to choose what color each post status will appear as in the jump menu.
