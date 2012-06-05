@@ -29,6 +29,12 @@ function wpjm_admin_init() {
 			'wpjm-2',
 			'wpjm_main' );
 
+	add_settings_field( 'wpjm_showaddnew',
+			'Show "Add New" link under each post type',
+			'wpjm_showaddnew_checkbox',
+			'wpjm-2',
+			'wpjm_main' );
+
 	add_settings_field( 'wpjm_barColors',
 			'Jump Menu Bar Colors',
 			'wpjm_barColors_checkbox',
@@ -132,6 +138,16 @@ function wpjm_showID_checkbox() {
 ?>
 <div>
 	<input type="checkbox" value="true" name="wpjm_options[showID]" id="wpjm_showID" <?php checked($options['showID'], 'true'); ?> />
+</div>
+<?php
+}
+
+// Show Add New
+function wpjm_showAddNew_checkbox() {
+	$options = get_option('wpjm_options');
+?>
+<div>
+	<input type="checkbox" value="true" name="wpjm_options[showaddnew]" id="wpjm_showaddnew" <?php checked($options['showaddnew'], 'true'); ?> />
 </div>
 <?php
 }

@@ -2,14 +2,14 @@
 /**
  * @package WP_Jump_Menu
  * @author Jim Krill
- * @version 2.3.4
+ * @version 2.4
  */
 /*
 Plugin Name: WP Jump Menu
 Plugin URI: http://www.synotac.com/wp-jump-menu/
 Description: Creates a drop-down menu (jump menu) in a bar across the top or bottom of the screen that makes it easy to jump right to a page, post, or custom post type in the admin area to edit.
 Author: Jim Krill
-Version: 2.3.4
+Version: 2.4
 Author URI: http://krillwebdesign.com
 */
 
@@ -43,7 +43,7 @@ Author URI: http://krillwebdesign.com
 
 require_once( WP_PLUGIN_DIR . '/wp-jump-menu/settings.php' );
 
-define('WPJM_VERSION','2.3.4');
+define('WPJM_VERSION','2.4');
 
 global $wp_version;
 
@@ -166,6 +166,7 @@ function wpjm_js() {
 
 	// jquery ui - sortable
 	wp_enqueue_script( 'jquery-ui-sortable' );
+	wp_enqueue_script( 'jquery-ui-position', get_option( 'siteurl' ).'/wp-content/plugins/wp-jump-menu/assets/js/jquery.ui.position.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-widget' ) );
 	// jqueryfunctions.js (general jquery scripts) & jquery
 	wp_enqueue_script( 'jquery-functions', get_option( 'siteurl' ).'/wp-content/plugins/wp-jump-menu/assets/js/jqueryfunctions.js', array( 'jquery' ) );
 	// colorpicker.js - used for the color picker
@@ -398,6 +399,16 @@ function wpjm_page_dropdown(){
 					
 					$wpjm_string .= '<optgroup label="--'.$cpt_labels->name.'--">';
 
+					if ($cpt_labels->name != 'Media') {
+
+						if ($options['showaddnew']) {
+							$wpjm_string .= '<option value="post-new.php?post_type=';
+							$wpjm_string .= $cpt_obj->name;
+							$wpjm_string .= '">--And New '.$cpt_labels->singular_name.'--</option>';
+						}
+
+					}
+
 					// Loop through posts
 					foreach ($pd_posts as $pd_post) {
 						
@@ -445,6 +456,12 @@ function wpjm_page_dropdown(){
 					$orderedListWalker = new WPJM_Walker_PageDropDown();
 
 					$wpjm_string .= '<optgroup label="--'.$cpt_labels->name.'--">';
+
+					if ($options['showaddnew']) {
+						$wpjm_string .= '<option value="post-new.php?post_type=';
+						$wpjm_string .= $cpt_obj->name;
+						$wpjm_string .= '">--And New '.$cpt_labels->singular_name.'--</option>';
+					}
 					
 					// Go through the non-published pages
 					foreach ($post_status as $status) {
@@ -502,12 +519,12 @@ function wpjm_page_dropdown(){
 
 						if (in_array('publish',$post_status)) {
 						
-							$wpjm_string .= wp_list_pages(array('walker' => $orderedListWalker, 'post_type' => $wpjm_cpt, 'echo' => 0));
+							$wpjm_string .= wp_list_pages(array('walker' => $orderedListWalker, 'post_type' => $wpjm_cpt, 'echo' => 0, 'depth' => 0));
 
 						}
 
 					} else if ($post_status == 'publish') {
-						$wpjm_string .= wp_list_pages(array('walker' => $orderedListWalker, 'post_type' => $wpjm_cpt, 'echo' => 0));
+						$wpjm_string .= wp_list_pages(array('walker' => $orderedListWalker, 'post_type' => $wpjm_cpt, 'echo' => 0, 'depth' => 0));
 					}
 					
 
@@ -581,7 +598,8 @@ function wpjm_install() {
 		
 		$arr = array(
 			'position' => get_option('wpjm_position'),
-			'showID' => 'true',
+			'showID' => 'false',
+			'showaddnew' => 'true',
 			'backgroundColor' => get_option('wpjm_backgroundColor'),
 			'fontColor' => get_option('wpjm_fontColor'),
 			'borderColor' => get_option('wpjm_borderColor'),
@@ -613,8 +631,9 @@ function wpjm_install() {
 		$options = get_option('wpjm_options');
 		if (empty($options)) {
 			$arr = array(
-				'position' => 'bottom',
-				'showID' => 'true',
+				'position' => 'wpAdminBar',
+				'showID' => 'false',
+				'showaddnew' => 'true',
 				'backgroundColor' => 'e0e0e0',
 				'fontColor' => '787878',
 				'borderColor' => '666666',
