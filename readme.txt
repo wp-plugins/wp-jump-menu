@@ -67,6 +67,7 @@ You need to upload your logo icon, through WordPress maybe, and get the full URL
 
 = 2.4 =
 * Added new option to show "Add New" link under each post type in the jump menu.
+* Fixed a bug that was preventing heirarchical pagers from showing correctly in the menu.
 
 = 2.3.4 =
 * Fixed a bug that was causing a javascript error in WP versions 3.2.1 and lower.
