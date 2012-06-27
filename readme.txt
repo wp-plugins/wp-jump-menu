@@ -5,34 +5,37 @@ Plugin URI: http://krillwebdesign.com/2012/03/wp-jump-menu/
 Author URI: http://krillwebdesign.com
 Tags: posts, pages, admin, jump, menu, quick, links, custom post types
 Requires at least: 3.0
-Tested up to: 3.3.1
-Stable tag: 2.4
+Tested up to: 3.4
+Stable tag: 2.4.1
 
 Creates a drop-down menu in the admin area which makes it easy to jump to a page, post, custom post type or media file for editing. 
 
 == Description ==
 
-Creates a drop-down menu in the admin area which makes it easy to jump to a page, post, custom post type or media file for editing. One click and you're editing!  New options page for easy customization.
+<strong>Creates a drop-down menu in the admin area which makes it easy to jump to a page, post, custom post type or media file for editing. One click and you're editing!  New options page for easy customization.</strong>
 
-THIS PLUGIN IS A MUST HAVE FOR WORDPRESS DEVELOPERS!
+<h2>THIS PLUGIN IS A MUST HAVE FOR WORDPRESS DEVELOPERS!</h2>
 
-UPDATE: Now you can place the Jump Menu in the WordPress Admin Bar! 
+<em>UPDATE: Now you can place the Jump Menu in the WordPress Admin Bar! </em>
 
 Sick of having to go to your Posts list or Pages list to edit an entry?  Me too.
 
 The WP Jump Menu plugin is a useful plugin that adds a drop-down "jump" menu to the bottom or top of the WordPress admin area which allows you to select from a list of pages, posts or custom post types and jump right into editing that page.
 
-Why is this needed?
+<h3>Why is this needed?</h3>
 
 By adding this ability, you can save TONS OF TIME when editing a bunch of posts or pages.  No more do you have to click on Pages, and then search for the right page in the list, and then click on the title or on edit.   Simply find the page or post in the drop-down (which is neatly organized and indented) and it will jump to edit that page or post.
 
-Customizable
+<h3>Customizable</h3>
 
-The plugin comes with an options page where you can edit the position (top or bottom) of the jump bar, the background color, font color, link color, border color and the icon and message that optionally get displayed on the left hand side.
+The plugin comes with an options page where you can edit the position of the jump bar (top or bottom of the screen, or in the WordPress admin bar), the background color, font color, link color, border color and the icon and message that optionally get displayed on the left hand side (only when not in the WordPress admin bar).
 
-Great for theme developers to help clients navigate in the admin area of WordPress.  We use this plugin on all of our projects and decided it was time to release it to the world!
+Great for theme developers to help clients navigate in the admin area of WordPress.  
+We use this plugin on all of our projects and decided it was time to release it to the world!
 
 Enjoy!
+
+<em>Please provide feedback for this plugin to help improve it!  Having issues?!? Post in the support forum and I will fix it right away!</em>
 
 == Installation ==
 
@@ -64,6 +67,11 @@ You need to upload your logo icon, through WordPress maybe, and get the full URL
 3. The Jump Menu - Just a drop down, but one POWERFUL drop down!
 
 == Changelog ==
+
+= 2.4.1 =
+* Fixed typo (thanks johnw1965)
+* Fixed bug (content paths were wrong if plugins directory was outside of wp-content - thanks JiDaii)
+* Added responsive scaling to the jump menu when placed in the WordPress admin bar
 
 = 2.4 =
 * Added new option to show "Add New" link under each post type in the jump menu.

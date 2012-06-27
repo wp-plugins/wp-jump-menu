@@ -2,14 +2,14 @@
 /**
  * @package WP_Jump_Menu
  * @author Jim Krill
- * @version 2.4
+ * @version 2.4.1
  */
 /*
 Plugin Name: WP Jump Menu
 Plugin URI: http://www.synotac.com/wp-jump-menu/
 Description: Creates a drop-down menu (jump menu) in a bar across the top or bottom of the screen that makes it easy to jump right to a page, post, or custom post type in the admin area to edit.
 Author: Jim Krill
-Version: 2.4
+Version: 2.4.1
 Author URI: http://krillwebdesign.com
 */
 
@@ -43,7 +43,7 @@ Author URI: http://krillwebdesign.com
 
 require_once( WP_PLUGIN_DIR . '/wp-jump-menu/settings.php' );
 
-define('WPJM_VERSION','2.4');
+define('WPJM_VERSION','2.4.1');
 
 global $wp_version;
 
@@ -132,8 +132,7 @@ function wpjm_editpost_css() {
 	$options = get_option( 'wpjm_options' );
 
 	echo "
-	<link rel='stylesheet' href='".get_option('siteurl')."/wp-content/plugins/wp-jump-menu/assets/js/colorpicker/css/colorpicker.css' type='text/css' />
-   <!-- <link rel='stylesheet' media='screen' type='text/css' href='".get_option('siteurl')."/wp-content/plugins/wp-jump-menu/assets/js/colorpicker/css/layout.css' /> -->
+	<link rel='stylesheet' href='".plugins_url()."/wp-jump-menu/assets/js/colorpicker/css/colorpicker.css' type='text/css' />
 	<style type='text/css'>
 	#jump_menu { position: fixed; ".$options['position'].": ".($options['position']=='top'?(is_admin_bar_showing()?"28px":"0"):"0")."; left: 0; height: 40px; overflow: hidden; background: #".$options['backgroundColor']."; color: #".$options['fontColor']."; width: 100%; z-index: 1500; border-".($options['position']=='top'?'bottom':'top').": 2px solid #".$options['borderColor']."; }
 	#jump_menu p { padding: 5px 15px; font-size: 12px; margin: 0; }
@@ -149,6 +148,13 @@ function wpjm_editpost_css() {
 	#wp-pdd { max-width: 400px;  }
 	#wpadminbar #wp-pdd, #wpadminbar #wp-pdd * { color: #333 !important; text-shadow: none;}
 	#wpadminbar span.wpjm-logo-title { padding-right: 10px; }
+		@media only screen and (max-width: 960px) {
+			#wpadminbar span.wpjm-logo-title { display: none; }
+			
+		}
+		@media only screen and (max-width: 800px) {
+			#wpadminbar #wp-pdd { width: 150px; }
+		}
 	#wpadminbar #wp-jump-menu { padding: 0px 10px; }
 	</style>
 	<!--[if IE 6]>
@@ -166,11 +172,11 @@ function wpjm_js() {
 
 	// jquery ui - sortable
 	wp_enqueue_script( 'jquery-ui-sortable' );
-	wp_enqueue_script( 'jquery-ui-position', get_option( 'siteurl' ).'/wp-content/plugins/wp-jump-menu/assets/js/jquery.ui.position.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-widget' ) );
+	wp_enqueue_script( 'jquery-ui-position', plugins_url().'/wp-jump-menu/assets/js/jquery.ui.position.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-widget' ) );
 	// jqueryfunctions.js (general jquery scripts) & jquery
-	wp_enqueue_script( 'jquery-functions', get_option( 'siteurl' ).'/wp-content/plugins/wp-jump-menu/assets/js/jqueryfunctions.js', array( 'jquery' ) );
+	wp_enqueue_script( 'jquery-functions', plugins_url().'/wp-jump-menu/assets/js/jqueryfunctions.js', array( 'jquery' ) );
 	// colorpicker.js - used for the color picker
-	wp_enqueue_script( 'jquery-colorpicker', get_option( 'siteurl' ).'/wp-content/plugins/wp-jump-menu/assets/js/colorpicker/js/colorpicker.js', array( 'jquery' ) );
+	wp_enqueue_script( 'jquery-colorpicker', plugins_url().'/wp-jump-menu/assets/js/colorpicker/js/colorpicker.js', array( 'jquery' ) );
 
 
 	// Testing tooltip
@@ -404,7 +410,7 @@ function wpjm_page_dropdown(){
 						if ($options['showaddnew']) {
 							$wpjm_string .= '<option value="post-new.php?post_type=';
 							$wpjm_string .= $cpt_obj->name;
-							$wpjm_string .= '">--And New '.$cpt_labels->singular_name.'--</option>';
+							$wpjm_string .= '">--Add New '.$cpt_labels->singular_name.'--</option>';
 						}
 
 					}
@@ -460,7 +466,7 @@ function wpjm_page_dropdown(){
 					if ($options['showaddnew']) {
 						$wpjm_string .= '<option value="post-new.php?post_type=';
 						$wpjm_string .= $cpt_obj->name;
-						$wpjm_string .= '">--And New '.$cpt_labels->singular_name.'--</option>';
+						$wpjm_string .= '">--Add New '.$cpt_labels->singular_name.'--</option>';
 					}
 					
 					// Go through the non-published pages
