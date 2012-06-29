@@ -2,14 +2,14 @@
 /**
  * @package WP_Jump_Menu
  * @author Jim Krill
- * @version 2.4.2
+ * @version 2.4.3
  */
 /*
 Plugin Name: WP Jump Menu
 Plugin URI: http://www.synotac.com/wp-jump-menu/
 Description: Creates a drop-down menu (jump menu) in a bar across the top or bottom of the screen that makes it easy to jump right to a page, post, or custom post type in the admin area to edit.
 Author: Jim Krill
-Version: 2.4.2
+Version: 2.4.3
 Author URI: http://krillwebdesign.com
 */
 
@@ -43,7 +43,7 @@ Author URI: http://krillwebdesign.com
 
 require_once( WP_PLUGIN_DIR . '/wp-jump-menu/settings.php' );
 
-define('WPJM_VERSION','2.4.2');
+define('WPJM_VERSION','2.4.3');
 
 global $wp_version;
 
@@ -172,11 +172,11 @@ function wpjm_js() {
 
 	// jquery ui - sortable
 	wp_enqueue_script( 'jquery-ui-sortable' );
-	wp_enqueue_script( 'jquery-ui-position', plugins_url().'/wp-jump-menu/assets/js/jquery.ui.position.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-widget' ) );
+	wp_enqueue_script( 'wpjm-jquery-ui-position', plugins_url().'/wp-jump-menu/assets/js/jquery.ui.position.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-widget' ) );
 	// jqueryfunctions.js (general jquery scripts) & jquery
-	wp_enqueue_script( 'jquery-functions', plugins_url().'/wp-jump-menu/assets/js/jqueryfunctions.js', array( 'jquery' ) );
+	wp_enqueue_script( 'wpjm-jquery-functions', plugins_url().'/wp-jump-menu/assets/js/jqueryfunctions.js', array( 'jquery' ) );
 	// colorpicker.js - used for the color picker
-	wp_enqueue_script( 'jquery-colorpicker', plugins_url().'/wp-jump-menu/assets/js/colorpicker/js/colorpicker.js', array( 'jquery' ) );
+	wp_enqueue_script( 'wpjm-jquery-colorpicker', plugins_url().'/wp-jump-menu/assets/js/colorpicker/js/colorpicker.js', array( 'jquery' ) );
 
 
 	// Testing tooltip
