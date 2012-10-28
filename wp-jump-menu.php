@@ -2,14 +2,14 @@
 /**
  * @package WP_Jump_Menu
  * @author Jim Krill
- * @version 2.5
+ * @version 2.5.1
  */
 /*
 Plugin Name: WP Jump Menu
 Plugin URI: http://www.synotac.com/wp-jump-menu/
 Description: Creates a drop-down menu (jump menu) in a bar across the top or bottom of the screen that makes it easy to jump right to a page, post, or custom post type in the admin area to edit.
 Author: Jim Krill
-Version: 2.5
+Version: 2.5.1
 Author URI: http://krillwebdesign.com
 */
 
@@ -43,7 +43,7 @@ Author URI: http://krillwebdesign.com
 
 require_once( WP_PLUGIN_DIR . '/wp-jump-menu/settings.php' );
 
-define('WPJM_VERSION','2.5');
+define('WPJM_VERSION','2.5.1');
 
 global $wp_version;
 
@@ -75,6 +75,8 @@ register_activation_hook( __FILE__, 'wpjm_install' );
 
 // Call the plugin's main functions
 function beam_me_up_wpjm() {
+
+	$current_user = wp_get_current_user();
 
 	if ( ! current_user_can('edit_posts') ):
 		return false;
@@ -566,7 +568,7 @@ function wpjm_page_dropdown(){
 	// Print the options page link
 	if (current_user_can('activate_plugins')) {
 		$wpjm_string .= '<optgroup label="-- WP Jump Menu Options --">';
-		$wpjm_string .= '<option value="options-general.php?page=wpjm-options">Jump Menu Options Page</option>';
+		$wpjm_string .= '<option value="'.admin_url().'options-general.php?page=wpjm-options">Jump Menu Options Page</option>';
 		$wpjm_string .= '</optgroup>';
 	}
 
@@ -762,7 +764,7 @@ function wpjm_options() {
 }
 
 // Launch in 5... 4... 3... 2... 1...
+	
+		add_action('init', 'beam_me_up_wpjm');
 
-
-	add_action('admin_init', 'beam_me_up_wpjm');
 ?>
