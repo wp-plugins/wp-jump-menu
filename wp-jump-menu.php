@@ -196,7 +196,7 @@ function wpjm_tooltip(){
 	$options = get_option( 'wpjm_options' );
 
 	$pointer_content = '<h3>New in Wp Jump Menu '.WPJM_VERSION.'</h3>';
-	$pointer_content .= '<p>Now you can attach the jump menu to the WordPress admin bar! Goto <a href="options-general.php?page=wpjm-options">WPJM settings</a> and change location to WP Admin Bar</p>';
+	$pointer_content .= '<p>+ Updated capability support.</p>';
 	// $pointer_content .= '<p><a href="#" id="wpjm-tooltip-close">Dismiss</a></p>';
 	?>
 	<script>
