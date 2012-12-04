@@ -2,14 +2,14 @@
 /**
  * @package WP_Jump_Menu
  * @author Jim Krill
- * @version 2.5.1
+ * @version 2.5.2
  */
 /*
 Plugin Name: WP Jump Menu
 Plugin URI: http://krillwebdesign.com/2012/03/wp-jump-menu/
 Description: Creates a drop-down menu (jump menu) in a bar across the top or bottom of the screen that makes it easy to jump right to a page, post, or custom post type in the admin area to edit.
 Author: Jim Krill
-Version: 2.5.1
+Version: 2.5.2
 Author URI: http://krillwebdesign.com
 */
 
@@ -43,7 +43,7 @@ Author URI: http://krillwebdesign.com
 
 require_once( WP_PLUGIN_DIR . '/wp-jump-menu/settings.php' );
 
-define('WPJM_VERSION','2.5.1');
+define('WPJM_VERSION','2.5.2');
 
 global $wp_version;
 
@@ -146,7 +146,7 @@ function wpjm_editpost_css() {
 	#jump_menu p.wpjm_need_help { float: right; text-align: right; }
 	#jump_menu p.wpjm_need_help span.wpjm-logo-title { font-family: Georgia; font-style: italic; padding-right: 10px; }
 	#jump_menu p.jm_credits { font-style: italic; padding-top: 10px; line-height: 13px; }
-	#jump_menu p.jm_credits img.wpjm_logo { ".($options['logoWidth']?'width: '.$options['logoWidth'].'px;':'width: 35px;')." height: auto; max-height: 30px; vertical-align: middle; margin-right: 10px; }
+	#jump_menu p.jm_credits img.wpjm_logo { ".(isset($options['logoWidth'])?'width: '.$options['logoWidth'].'px;':'width: 35px;')." height: auto; max-height: 30px; vertical-align: middle; margin-right: 10px; }
 	#jump_menu_clear { height: 30px; }
 	body { ".($options['position']=='top'?'padding-top: 42px !important;':'padding-bottom: 42px !important;')." }
 	".($options['position']=='bottom'?'#footer { bottom: 42px !important; }':'')

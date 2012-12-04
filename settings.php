@@ -276,7 +276,7 @@ function wpjm_statusColors_checkbox() {
 	$options = get_option('wpjm_options');
 ?>
 <div>
-	<span class="description">Click on the input to select a color, or enter the hex value.</span>
+	<span class="description">Click on the input to select a color, or enter the hex value.<br/><em>This will only work in old browsers.</em></span>
 </div>
 <div>
 	<input class="colorPicker" type="text" name="wpjm_options[statusColors][publish]" id="wpjm_statusColors_publish" value="<?php echo $options['statusColors']['publish']; ?>" size="6" />
