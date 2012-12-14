@@ -1,9 +1,4 @@
 jQuery(document).ready(function() {
-
-	jQuery('#wp-pdd').on('change',function() {
-		window.location = this.value;
-	});
-		
 		
 		if (jQuery('#wpjm-options-form').length > 0) {
 

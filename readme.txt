@@ -6,7 +6,7 @@ Author URI: http://krillwebdesign.com
 Tags: posts, pages, admin, jump, menu, quick, links, custom post types
 Requires at least: 3.0
 Tested up to: 3.4.2
-Stable tag: 2.5.2
+Stable tag: 3.0
 
 Creates a drop-down menu in the admin area which makes it easy to jump to a page, post, custom post type or media file for editing. 
 
@@ -16,7 +16,7 @@ Creates a drop-down menu in the admin area which makes it easy to jump to a page
 
 <h2>THIS PLUGIN IS A MUST HAVE FOR WORDPRESS DEVELOPERS!</h2>
 
-<em>UPDATE: Now you can place the Jump Menu in the WordPress Admin Bar! </em>
+<em><strong>UPDATE:</strong> Now featuring <a href="http://harvesthq.github.com/chosen/" target="_blank">Chosen</a> JavaScript library for select menu styling and functionality. </em>
 
 Sick of having to go to your Posts list or Pages list to edit an entry?  Me too.
 
@@ -28,9 +28,9 @@ By adding this ability, you can save TONS OF TIME when editing a bunch of posts 
 
 <h3>Customizable</h3>
 
-The plugin comes with an options page where you can edit the position of the jump bar (top or bottom of the screen, or in the WordPress admin bar), the background color, font color, link color, border color and the icon and message that optionally get displayed on the left hand side (only when not in the WordPress admin bar).
+The plugin comes with an options page where you can edit the position of the jump bar (top or bottom of the screen, or in the WordPress admin bar), whether or not to use Chosen (which features searching through the drop down!), the background color, font color, link color, border color and the icon and message that optionally get displayed on the left hand side (only when not in the WordPress admin bar), status colors, and many more options.
 
-Great for theme developers to help clients navigate in the admin area of WordPress.  
+<h2>Great for theme developers to help clients navigate in the admin area of WordPress.</h2>  
 We use this plugin on all of our projects and decided it was time to release it to the world!
 
 Enjoy!
@@ -68,9 +68,13 @@ You need to upload your logo icon, through WordPress maybe, and get the full URL
 
 == Changelog ==
 
-= 2.5.2 =
-* Fixed a minor php error
-* Added a message that drop-down text colors will only work in older browsers.
+= 3.0 =
+* Speed Improvements
+* Completely reworked from the ground up (plugin put into it's own class)
+* Chosen JS library added for additional functionality
+* With Chosen, now you can search through the menu quickly
+* Add or remove the title (the text that appears just to the left of the menu)
+* Changed the output formatting of the jump menu item's text
 
 = 2.5.1 =
 * Fixed bug where jump menu was not showing up in the WP Admin Bar (Toolbar) on the front end of sites.

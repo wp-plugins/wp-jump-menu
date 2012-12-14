@@ -6,6 +6,8 @@
  *
  */
 
+$options = get_option('wpjm_options');
+
 function wpjm_admin_init() {
 	
 	// Register our setting
@@ -15,22 +17,34 @@ function wpjm_admin_init() {
 	add_settings_section( 'wpjm_post_types', 'Post Types', 'wpjm_post_type_section_text', 'wpjm' );
 	add_settings_section( 'wpjm_main', 'Styling Options', 'wpjm_section_text', 'wpjm-2' );
 	
+	// Post Types Fields
+	add_settings_field( 'wpjm_postTypes',
+			'Post Types to Include',
+			'wpjm_postTypes_checkbox',
+			'wpjm',
+			'wpjm_post_types' );
 
-	// Add the fields
+	// Add the other fields
 	add_settings_field( 'wpjm_position', 
 			'Position of Jump Menu Bar', 
 			'wpjm_position_radio', 
 			'wpjm-2', 
 			'wpjm_main' );
 
+	add_settings_field( 'wpjm_useChosen',
+			'Use Chosen Select Menu',
+			'wpjm_useChosen_checkbox',
+			'wpjm-2',
+			'wpjm_main' );
+
 	add_settings_field( 'wpjm_showID',
-			'Show ID next to post/page title',
+			'Show ID',
 			'wpjm_showID_checkbox',
 			'wpjm-2',
 			'wpjm_main' );
 
 	add_settings_field( 'wpjm_showaddnew',
-			'Show "Add New" link under each post type',
+			'Show "Add New" link',
 			'wpjm_showaddnew_checkbox',
 			'wpjm-2',
 			'wpjm_main' );
@@ -40,32 +54,6 @@ function wpjm_admin_init() {
 			'wpjm_barColors_checkbox',
 			'wpjm-2',
 			'wpjm_main' );
-
-	/*
-	add_settings_field( 'wpjm_backgroundColor',
-			'Background Color',
-			'wpjm_backgroundColor_text',
-			'wpjm-2',
-			'wpjm_main' );
-
-	add_settings_field( 'wpjm_fontColor',
-			'Font Color',
-			'wpjm_fontColor_text',
-			'wpjm-2',
-			'wpjm_main' );
-
-	add_settings_field( 'wpjm_borderColor',
-			'Border Color',
-			'wpjm_borderColor_text',
-			'wpjm-2',
-			'wpjm_main' );
-
-	add_settings_field( 'wpjm_linkColor',
-			'Link Color',
-			'wpjm_linkColor_text',
-			'wpjm-2',
-			'wpjm_main' );
-	*/
 
 	add_settings_field( 'wpjm_statusColors',
 			'Status Colors',
@@ -85,18 +73,12 @@ function wpjm_admin_init() {
 			'wpjm-2',
 			'wpjm_main' );
 
-	add_settings_field( 'wpjm_postTypes',
-			'Post Types to Include',
-			'wpjm_postTypes_checkbox',
-			'wpjm',
-			'wpjm_post_types' );
-/*
-	add_settings_field( 'id',
-			'Label',
-			'callback',
-			'wpjm',
+	add_settings_field( 'wpjm_title',
+			'WPJM Title',
+			'wpjm_title_text',
+			'wpjm-2',
 			'wpjm_main' );
-*/
+
 	
 
 } // wpjm_admin_init()
@@ -118,7 +100,7 @@ function wpjm_post_type_section_text() {
 
 // Position
 function wpjm_position_radio() {
-	$options = get_option('wpjm_options');
+global $options;
 ?>
 <div>
 	<input type="radio" value='top' name="wpjm_options[position]" id="wpjm_position" <?php checked($options['position'], 'top'); ?> />
@@ -132,121 +114,42 @@ function wpjm_position_radio() {
 <?php
 }
 
-// Show ID
-function wpjm_showID_checkbox() {
-	$options = get_option('wpjm_options');
+// Use Chosen
+//
+function wpjm_useChosen_checkbox() {
+	global $options;
 ?>
 <div>
-	<input type="checkbox" value="true" name="wpjm_options[showID]" id="wpjm_showID" <?php checked($options['showID'], 'true'); ?> />
+	<input type="checkbox" value="true" name="wpjm_options[useChosen]" id="wpjm_useChosen" <?php checked($options['useChosen'], 'true'); ?> />&nbsp;&nbsp;<span class="description">Use <a href="http://harvesthq.github.com/chosen/" target="_blank">Chosen</a> plugin to display jump menu.  Adds search functionality, status colors, a great UI, and more!</span>
+</div>
+<?php
+}
+
+// Show ID
+function wpjm_showID_checkbox() {
+global $options;
+?>
+<div>
+	<input type="checkbox" value="true" name="wpjm_options[showID]" id="wpjm_showID" <?php checked($options['showID'], 'true'); ?> />&nbsp;&nbsp;<span class="description">Display the post object's ID next to the item in the jump menu.</span>
 </div>
 <?php
 }
 
 // Show Add New
 function wpjm_showAddNew_checkbox() {
-	$options = get_option('wpjm_options');
+global $options;
 ?>
 <div>
-	<input type="checkbox" value="true" name="wpjm_options[showaddnew]" id="wpjm_showaddnew" <?php checked($options['showaddnew'], 'true'); ?> />
+	<input type="checkbox" value="true" name="wpjm_options[showaddnew]" id="wpjm_showaddnew" <?php checked($options['showaddnew'], 'true'); ?> />&nbsp;&nbsp;<span class="description">Display an "Add New" link under each post type in the jump menu.</span>
 </div>
 <?php
 }
 
-
-// Sort Pages by
-//
-function wpjm_sortpagesby_select() {
-	$options = get_option('wpjm_options');
-?>
-<div>
-	<select name="wpjm_options[sortpagesby]" id="wpjm_sortpagesby">
-		<option value="menu_order"<?php echo ($options['sortpagesby']=='menu_order'?' selected="selected"':''); ?>>Menu Order</option>
-		<option value="post_author"<?php echo ($options['sortpagesby']=='post_author'?' selected="selected"':''); ?>>Author</option>
-		<option value="post_date"<?php echo ($options['sortpagesby']=='post_date'?' selected="selected"':''); ?>>Date</option>
-		<option value="ID"<?php echo ($options['sortpagesby']=='ID'?' selected="selected"':''); ?>>ID</option>
-		<option value="post_modified"<?php echo ($options['sortpagesby']=='post_modified'?' selected="selected"':''); ?>>Modified</option>
-		<option value="post_name"<?php echo ($options['sortpagesby']=='post_name'?' selected="selected"':''); ?>>Name</option>
-		<option value="post_parent"<?php echo ($options['sortpagesby']=='post_parent'?' selected="selected"':''); ?>>Parent</option>
-		<option value="post_title"<?php echo ($options['sortpagesby']=='post_title'?' selected="selected"':''); ?>>Title</option>
-		
-	</select>
-	<span class="description">Pages default is "Menu Order" which maintains hierachy.</span>
-</div>
-<?php
-}
-
-// Sort Pages Order
-//
-function wpjm_sortpages_radio() {
-	$options = get_option('wpjm_options');
-?>
-<div>
-	<input type="radio" value="ASC" name="wpjm_options[sortpages]" id="wpjm_sortpages"<?php echo ($options['sortpages']=='ASC'?' checked="checked"':''); ?> /> Ascending<br/>
-	<input type="radio" value="DESC" name="wpjm_options[sortpages]" id="wpjm_sortpages"<?php echo ($options['sortpages']=='DESC'?' checked="checked"':''); ?> /> Descending
-</div>
-
-<?php
-}
-
-
-// Sort Posts by
-//
-function wpjm_sortpostsby_select() {
-	$options = get_option('wpjm_options');
-?>
-<div>
-	<select name="wpjm_options[sortpostsby]" id="wpjm_sortpostsby">
-		<option value="menu_order"<?php echo ($options['sortpostsby']=='menu_order'?' selected="selected"':''); ?>>Menu Order</option>
-		<option value="author"<?php echo ($options['sortpostsby']=='author'?' selected="selected"':''); ?>>Author</option>
-		<option value="category"<?php echo ($options['sortpostsby']=='category'?' selected="selected"':''); ?>>Category</option>
-		<option value="content"<?php echo ($options['sortpostsby']=='content'?' selected="selected"':''); ?>>Content</option>
-		<option value="date"<?php echo ($options['sortpostsby']=='date'?' selected="selected"':''); ?>>Date</option>
-		<option value="ID"<?php echo ($options['sortpostsby']=='ID'?' selected="selected"':''); ?>>ID</option>
-		<option value="mime_type"<?php echo ($options['sortpostsby']=='mime_type'?' selected="selected"':''); ?>>Mime Type</option>
-		<option value="modified"<?php echo ($options['sortpostsby']=='modified'?' selected="selected"':''); ?>>Modified</option>
-		<option value="name"<?php echo ($options['sortpostsby']=='name'?' selected="selected"':''); ?>>Name</option>
-		<option value="parent"<?php echo ($options['sortpostsby']=='parent'?' selected="selected"':''); ?>>Parent</option>
-		<option value="password"<?php echo ($options['sortpostsby']=='password'?' selected="selected"':''); ?>>Password</option>
-		<option value="rand"<?php echo ($options['sortpostsby']=='rand'?' selected="selected"':''); ?>>Random</option>
-		<option value="status"<?php echo ($options['sortpostsby']=='status'?' selected="selected"':''); ?>>Status</option>
-		<option value="title"<?php echo ($options['sortpostsby']=='title'?' selected="selected"':''); ?>>Title</option>
-		<option value="type"<?php echo ($options['sortpostsby']=='type'?' selected="selected"':''); ?>>Type</option>
-	</select>
-	<span class="description">Posts default is "Date" which orders by post date.</span>
-</div>
-<?php
-}
-
-
-// Sort Posts Order
-//
-function wpjm_sortposts_radio() {
-	$options = get_option('wpjm_options');
-?>
-<div>
-	<input type="radio" value="ASC" name="wpjm_options[sortposts]" id="wpjm_sortposts"<?php echo ($options['sortposts']=='ASC'?' checked="checked"':''); ?> /> Ascending<br/>
-	<input type="radio" value="DESC" name="wpjm_options[sortposts]" id="wpjm_sortposts"<?php echo ($options['sortposts']=='DESC'?' checked="checked"':''); ?> /> Descending
-</div>
-<?php
-}
-
-
-// Number of Posts
-//
-function wpjm_numberposts_text() {
-	$options = get_option('wpjm_options');
-?>
-<div>
-	<input type="text" name="wpjm_options[numberposts]" id="wpjm_numberposts" value="<?php echo $options['numberposts']; ?>" size="3" />
-	<span class="description">-1 to display all posts.</span>
-</div>
-<?php
-}
 
 // Jump Menu Bar Colors
 //
 function wpjm_barColors_checkbox() {
-	$options = get_option('wpjm_options');
+global $options;
 ?>
 <div>
 	<span class="description">Click on the input to select a color, or enter the hex value.<br/>When you are choosing a color, the jump menu (if top or bottom is selected) will give you a live preview of your color changes.<br/>Changes are NOT saved until you click the "Save Changes" button.</span>
@@ -273,10 +176,10 @@ function wpjm_barColors_checkbox() {
 // Status Colors
 //
 function wpjm_statusColors_checkbox() {
-	$options = get_option('wpjm_options');
+global $options;
 ?>
 <div>
-	<span class="description">Click on the input to select a color, or enter the hex value.<br/><em>This will only work in old browsers.</em></span>
+	<span class="description"><strong>Must be using Chosen plugin for status colors to appear.</strong><br/>Click on the input to select a color, or enter the hex value.</span>
 </div>
 <div>
 	<input class="colorPicker" type="text" name="wpjm_options[statusColors][publish]" id="wpjm_statusColors_publish" value="<?php echo $options['statusColors']['publish']; ?>" size="6" />
@@ -316,7 +219,7 @@ function wpjm_statusColors_checkbox() {
 // Background Color
 //
 function wpjm_backgroundColor_text() {
-	$options = get_option('wpjm_options');
+global $options;
 ?>
 <div>
 	<input class="colorPicker" type="text" name="wpjm_options[backgroundColor]" id="wpjm_backgroundColor" value="<?php echo $options['backgroundColor']; ?>" rel="#jump_menu|backgroundColor" size="6" />
@@ -329,7 +232,7 @@ function wpjm_backgroundColor_text() {
 // Font Color
 //
 function wpjm_fontColor_text() {
-	$options = get_option('wpjm_options');
+global $options;
 ?>
 <div>
 	<input class="colorPicker" type="text" name="wpjm_options[fontColor]" id="wpjm_fontColor" value="<?php echo $options['fontColor']; ?>" rel="#jump_menu|color" size="6" />
@@ -342,7 +245,7 @@ function wpjm_fontColor_text() {
 // Border Color
 //
 function wpjm_borderColor_text() {
-	$options = get_option('wpjm_options');
+global $options;
 ?>
 <div>
 	<input class="colorPicker" type="text" name="wpjm_options[borderColor]" id="wpjm_borderColor" value="<?php echo $options['borderColor']; ?>" rel="#jump_menu|borderColor" size="6" />
@@ -355,7 +258,7 @@ function wpjm_borderColor_text() {
 // Link Color
 //
 function wpjm_linkColor_text() {
-	$options = get_option('wpjm_options');
+global $options;
 ?>
 <div>
 	<input class="colorPicker" type="text" name="wpjm_options[linkColor]" id="wpjm_linkColor" value="<?php echo $options['linkColor']; ?>" rel="#jump_menu p a:link, #jump_menu p a:visited, #jump_menu p a:hover|color" size="6" />
@@ -368,10 +271,10 @@ function wpjm_linkColor_text() {
 // Logo Icon URL
 //
 function wpjm_logoIcon_text() {
-	$options = get_option('wpjm_options');
+global $options;
 ?>
 <div>
-	<input type="text" name="wpjm_options[logoIcon]" id="wpjm_logoIcon" value="<?php echo $options['logoIcon']; ?>" size="100" />
+	<input type="text" name="wpjm_options[logoIcon]" id="wpjm_logoIcon" value="<?php echo $options['logoIcon']; ?>" size="75" />
 </div>
 <span class="description">*Optional: The URL to the icon displayed next to the message in the jump bar.</span>
 <?php
@@ -381,12 +284,25 @@ function wpjm_logoIcon_text() {
 // Message
 //
 function wpjm_message_textarea() {
-	$options = get_option('wpjm_options');
+global $options;
 ?>
 <div>
 	<textarea name="wpjm_options[message]" id="wpjm_message" cols="60" rows="3" ><?php echo $options['message']; ?></textarea>
 </div>
-<span class="description">*Optional: Short message to include on left side of Jump bar.  HTML is ok.</span>
+<span class="description">*Optional: Short message to include on left side of Jump bar (Top and Bottom positions only, not WP Admin Toolbar).  HTML is ok.</span>
+<?php
+}
+
+
+// WP Jump Menu Title
+//
+function wpjm_title_text() {
+global $options;
+?>
+<div>
+	<input type="text" name="wpjm_options[title]" id="wpjm_title" value="<?php echo $options['title']; ?>" size="75" />
+</div>
+<span class="description">The title that appears to the left of the jump menu in all positions.</span>
 <?php
 }
 
@@ -394,10 +310,7 @@ function wpjm_message_textarea() {
 // Post Types
 //
 function wpjm_postTypes_checkbox() {
-
-	// Get the current options array
-	$options = get_option('wpjm_options');
-
+global $options;
 ?>
 	<script>
 	// Hide the left TH column next to the table of post types
@@ -413,9 +326,9 @@ function wpjm_postTypes_checkbox() {
 			<tr>
 				<th scope="col" id="cb" class="manage-column column-cb check-column"><input type="checkbox" /></th>
 				<th scope="col" class="wpjm-post-types-title-col">Post Types</th>
+				<th scope="col" class="wpjm-numberposts-col">Show</th>
 				<th scope="col" class="wpjm-order-by-col">Order By</th>
 				<th scope="col" class="wpjm-order-col">Order</th>
-				<th scope="col" class="wpjm-numberposts-col">Show</th>
 				<th scope="col" class="wpjm-showdrafts-col">Post Status</th>
 			</tr>
 			</thead>
@@ -423,9 +336,9 @@ function wpjm_postTypes_checkbox() {
 			<tr>
 				<th scope="col" id="cb" class="manage-column column-cb check-column"><input type="checkbox" /></th>
 				<th scope="col" class="wpjm-post-types-title-col">Post Types</th>
+				<th scope="col" class="wpjm-numberposts-col">Show</th>
 				<th scope="col" class="wpjm-order-by-col">Order By</th>
 				<th scope="col" class="wpjm-order-col">Order</th>
-				<th scope="col" class="wpjm-numberposts-col">Show</th>
 				<th scope="col" class="wpjm-showdrafts-col">Post Status</th>
 			</tr>
 			</tfoot>
@@ -468,7 +381,13 @@ function wpjm_postTypes_checkbox() {
 					<input type="checkbox" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][show]" id="wpjm_postType_<?php echo $pt->name; ?>" value="1" <?php checked($options['postTypes'][$pt->name]['show'], 1 ); ?> />
 				</td>
 				<td>
-					<?php echo $pt->labels->name; ?>
+					<strong><?php echo $pt->labels->name; ?></strong>
+				</td>
+				<td>
+					<div>
+						<input type="text" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][numberposts]" id="wpjm_number<?php echo $pt->name; ?>" value="<?php echo $options['postTypes'][$pt->name]['numberposts']; ?>" size="3" />
+						<br/><span class="description">How many posts/pages to show.<br/>-1 to display all.</span>
+					</div>
 				</td>
 				<td>
 					<select name="wpjm_options[postTypes][<?php echo $pt->name; ?>][sortby]" id="wpjm_sort<?php echo $pt->name; ?>by">
@@ -491,14 +410,70 @@ function wpjm_postTypes_checkbox() {
 					</div>
 				</td>
 				<td>
-					<div>
-						<input type="text" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][numberposts]" id="wpjm_number<?php echo $pt->name; ?>" value="<?php echo $options['postTypes'][$pt->name]['numberposts']; ?>" size="3" />
-						<br/><span class="description">How many posts/pages to show.<br/>-1 to display all.</span>
-					</div>
-				</td>
-				<td>
 					<div style="float: left; margin-right: 20px;">
 						<input type="checkbox" value="publish" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][poststatus][]" id="wpjm_poststatus<?php echo $pt->name; ?>" <?php if (is_array($options['postTypes'][$pt->name]['poststatus'])) echo (in_array('publish',$options['postTypes'][$pt->name]['poststatus'])?' checked="checked"':''); ?> /> Publish<br/>
+
+						<input type="checkbox" value="pending" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][poststatus][]" id="wpjm_poststatus<?php echo $pt->name; ?>" <?php if (is_array($options['postTypes'][$pt->name]['poststatus'])) echo (in_array('pending',$options['postTypes'][$pt->name]['poststatus'])?' checked="checked"':''); ?> /> Pending<br/>
+
+						<input type="checkbox" value="draft" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][poststatus][]" id="wpjm_poststatus<?php echo $pt->name; ?>" <?php if (is_array($options['postTypes'][$pt->name]['poststatus']))  echo (in_array('draft',$options['postTypes'][$pt->name]['poststatus'])?' checked="checked"':''); ?> /> Draft<br/>
+
+						<input type="checkbox" value="auto-draft" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][poststatus][]" id="wpjm_poststatus<?php echo $pt->name; ?>" <?php if (is_array($options['postTypes'][$pt->name]['poststatus'])) echo (in_array('auto-draft',$options['postTypes'][$pt->name]['poststatus'])?' checked="checked"':''); ?> /> Auto-Draft<br/>
+
+						<input type="checkbox" value="future" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][poststatus][]" id="wpjm_poststatus<?php echo $pt->name; ?>" <?php if (is_array($options['postTypes'][$pt->name]['poststatus'])) echo (in_array('future',$options['postTypes'][$pt->name]['poststatus'])?' checked="checked"':''); ?> /> Future<br/>
+
+						
+						
+					</div>
+					<div style="float: left;">
+					<input type="checkbox" value="private" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][poststatus][]" id="wpjm_poststatus<?php echo $pt->name; ?>" <?php if (is_array($options['postTypes'][$pt->name]['poststatus'])) echo (in_array('private',$options['postTypes'][$pt->name]['poststatus'])?' checked="checked"':''); ?> /> Private<br/>
+
+						<input type="checkbox" value="inherit" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][poststatus][]" id="wpjm_poststatus<?php echo $pt->name; ?>" <?php if (is_array($options['postTypes'][$pt->name]['poststatus'])) echo (in_array('inherit',$options['postTypes'][$pt->name]['poststatus'])?' checked="checked"':''); ?> /> Inherit<br/>
+
+						<input type="checkbox" value="trash" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][poststatus][]" id="wpjm_poststatus<?php echo $pt->name; ?>" <?php if (is_array($options['postTypes'][$pt->name]['poststatus'])) echo (in_array('trash',$options['postTypes'][$pt->name]['poststatus'])?' checked="checked"':''); ?> /> Trash<br/>
+
+						<input type="checkbox" value="any" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][poststatus][]" id="wpjm_poststatus<?php echo $pt->name; ?>" <?php if (is_array($options['postTypes'][$pt->name]['poststatus'])) echo (in_array('any',$options['postTypes'][$pt->name]['poststatus'])?' checked="checked"':''); ?> /> Any<br/>
+						</div>
+						<div style="clear: both;"><span class="description">NOTE: Trash items will only display if Any is NOT selected.<br/>NOTE: If your items are not showing up, try choosing "Inherit" or "Any".</span></div>
+				</td>
+			</tr>
+			<?php } ?>
+			</tbody>
+		</table>
+		<br>
+	</div>
+	
+<?php
+}
+
+
+// TODO: Continue adding the rest of the fields from over there ----->
+
+// validate our options
+
+function wpjm_options_validate( $input ) {
+	$newinput = $input;
+	foreach($newinput['postTypes'] as $key => $value) {
+		if (!isset($newinput['postTypes'][$key]['show'])) {
+			unset($newinput['postTypes'][$key]);
+		} else {
+			if (!isset($newinput['postTypes'][$key]['sort'])) {
+				$newinput['postTypes'][$key]['sort'] = 'ASC';
+			}
+			if (empty($newinput['postTypes'][$key]['numberposts'])) {
+				$newinput['postTypes'][$key]['numberposts'] = '-1';
+			}
+			if (!isset($newinput['postTypes'][$key]['poststatus'])) {
+				$newinput['postTypes'][$key]['poststatus'] = array('publish');
+			}
+			
+		}
+		
+	}
+	return $newinput;
+}
+
+
+?>[postTypes][<?php echo $pt->name; ?>][poststatus][]" id="wpjm_poststatus<?php echo $pt->name; ?>" <?php if (is_array($options['postTypes'][$pt->name]['poststatus'])) echo (in_array('publish',$options['postTypes'][$pt->name]['poststatus'])?' checked="checked"':''); ?> /> Publish<br/>
 
 						<input type="checkbox" value="pending" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][poststatus][]" id="wpjm_poststatus<?php echo $pt->name; ?>" <?php if (is_array($options['postTypes'][$pt->name]['poststatus'])) echo (in_array('pending',$options['postTypes'][$pt->name]['poststatus'])?' checked="checked"':''); ?> /> Pending<br/>
 
