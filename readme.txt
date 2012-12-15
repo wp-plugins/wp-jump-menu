@@ -5,8 +5,8 @@ Plugin URI: http://krillwebdesign.com/2012/03/wp-jump-menu/
 Author URI: http://krillwebdesign.com
 Tags: posts, pages, admin, jump, menu, quick, links, custom post types
 Requires at least: 3.0
-Tested up to: 3.4.2
-Stable tag: 3.0
+Tested up to: 3.5
+Stable tag: 3.0.1
 
 Creates a drop-down menu in the admin area which makes it easy to jump to a page, post, custom post type or media file for editing. 
 
@@ -67,6 +67,9 @@ You need to upload your logo icon, through WordPress maybe, and get the full URL
 3. The Jump Menu - Just a drop down, but one POWERFUL drop down!
 
 == Changelog ==
+
+= 3.0.1 =
+* Bug Fixes
 
 = 3.0 =
 * Speed Improvements
