@@ -37,6 +37,12 @@ function wpjm_admin_init() {
 			'wpjm-2',
 			'wpjm_main' );
 
+	add_settings_field( 'wpjm_chosenTextAlign',
+			'Chosen Text Alignment',
+			'wpjm_chosenTextAlign_radio',
+			'wpjm-2',
+			'wpjm_main' );
+
 	add_settings_field( 'wpjm_showID',
 			'Show ID',
 			'wpjm_showID_checkbox',
@@ -121,6 +127,19 @@ function wpjm_useChosen_checkbox() {
 ?>
 <div>
 	<input type="checkbox" value="true" name="wpjm_options[useChosen]" id="wpjm_useChosen" <?php checked($options['useChosen'], 'true'); ?> />&nbsp;&nbsp;<span class="description">Use <a href="http://harvesthq.github.com/chosen/" target="_blank">Chosen</a> plugin to display jump menu.  Adds search functionality, status colors, a great UI, and more!</span>
+</div>
+<?php
+}
+
+// Chosen Text Alignment
+//
+function wpjm_chosenTextAlign_radio() {
+	global $options;
+?>
+<div>
+	<input type="radio" value="left" name="wpjm_options[chosenTextAlign]" id="wpjm_chosenTextAlign" <?php checked($options['chosenTextAlign'], 'left'); ?> /> Left Aligned
+	<br/>
+	<input type="radio" value="right" name="wpjm_options[chosenTextAlign]" id="wpjm_chosenTextAlign" <?php checked($options['chosenTextAlign'], 'right'); ?> /> Right Aligned
 </div>
 <?php
 }

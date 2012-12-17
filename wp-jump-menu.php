@@ -2,13 +2,13 @@
 /**
  * @package WP_Jump_Menu
  * @author Jim Krill
- * @version 3.0.1
+ * @version 3.0.2
  */
 /*
 Plugin Name: WP Jump Menu
 Plugin URI: http://krillwebdesign.com/2012/03/wp-jump-menu/
 Description: Creates a drop-down menu (jump menu) in a bar across the top or bottom of the screen that makes it easy to jump right to a page, post, or custom post type in the admin area to edit.
-Version: 3.0.1
+Version: 3.0.2
 Author: Jim Krill
 Author URI: http://krillwebdesign.com
 License: GPL
@@ -45,7 +45,7 @@ class WpJumpMenu
 		// vars
 		$this->path = plugin_dir_path(__FILE__);
 		$this->dir = plugins_url('',__FILE__);
-		$this->version = '3.0.1';
+		$this->version = '3.0.2';
 		$this->upgrade_version = '';
 		$this->cache = array();
 		$this->options = get_option('wpjm_options');
@@ -53,8 +53,6 @@ class WpJumpMenu
 		// This versions tooltip html
 		$this->tooltip_html = '<p><strong>WP Jump Menu Make-Over!</strong></p><ul style="padding: 0 15px; margin: 1em; list-style: disc;"><li>Speed improvements</li><li>Added <a href="http://harvesthq.github.com/chosen/" target="_blank">Chosen</a> JavaScript plugin. Select it on the options page to use a much improved UI on the jump menu.</li><li>Added an option to change the title of the Jump Menu (the title appears just to the left of the menu)</li></ul><p><a href="'.get_admin_url('','options-general.php?page=wpjm-options').'">WP Jump Menu Options</a></p>';
 			
-
-
 		// set text domain
 		load_plugin_textdomain('wp-jump-menu', false, basename(dirname(__FILE__)).'/lang' );
 
@@ -152,7 +150,9 @@ class WpJumpMenu
 
 			// initiate install/update
 			$this->wpjm_install();
-			add_action( 'admin_print_footer_scripts', 'wpjm_tooltip' );
+			
+			// Tooltip temporarily disabled
+			/*add_action( 'admin_print_footer_scripts', 'wpjm_tooltip' );
 
 			$dismissed_tooltips = explode( ',', (string) get_user_meta( get_current_user_id(), 'dismissed_wp_pointers', true ) );
 			if ( in_array( 'wpjm_tooltip', $dismissed_tooltips)) {
@@ -162,7 +162,7 @@ class WpJumpMenu
 				if (is_array($dismissed_tooltips))
 					$dismissed_tooltips = implode( ',', $dismissed_tooltips );
 				update_user_meta( get_current_user_id(), 'dismissed_wp_pointers', $dismissed_tooltips );
-			}
+			}*/
 			
 		}
 
@@ -381,6 +381,9 @@ class WpJumpMenu
 		
 		echo "
 		#wp-pdd { max-width: 400px;  }
+		#wpadminbar #wp-admin-bar-top-secondary #wp-admin-bar-wp-jump-menu .chzn-container * {
+			text-align: " . (isset($this->options['chosenTextAlign']) ? $this->options['chosenTextAlign'] : 'right') . " !important;
+		}
 		.chzn-container .chzn-results li span.post-id {
 			font-size: 12px;
 			color: #aaa !important;
@@ -638,7 +641,7 @@ class WpJumpMenu
 							$wpjm_string .= '>';
 
 							// If the setting to show ID's is true, show the ID in ()
-							if ( ($this->options['showID'] == true) && ($this->options['useChosen'] == 'true') ) {
+							if ( ($this->options['showID'] == true) && ($this->options['useChosen'] == 'true') && ($this->options['chosenTextAlign'] == 'right') ) {
 								$wpjm_string .= '<span class="post-id">('.$pd_post->ID.')</span> ';
 							}
 
@@ -652,7 +655,7 @@ class WpJumpMenu
 								$wpjm_string .= ' - '.$pd_post->post_date;
 
 							// If the setting to show ID's is true, show the ID in ()
-							if ( ($this->options['showID'] == true) && (!$this->options['useChosen']) ) {
+							if ( ($this->options['showID'] == true) && ( (!$this->options['useChosen'] || $this->options['chosenTextAlign'] == 'left') ) ) {
 								$wpjm_string .= ' <span class="post-id">('.$pd_post->ID.')</span>';
 							}
 
@@ -726,7 +729,7 @@ class WpJumpMenu
 									$wpjm_string .= ' - '.$pd_post->post_date;
 
 								// If the setting to show ID's is true, show the ID in ()
-							if ( ($this->options['showID'] == true) && (!$this->options['useChosen']) ) {
+							if ( ($this->options['showID'] == true) && ( (!$this->options['useChosen'] || $this->options['chosenTextAlign'] == 'left') ) ) {
 								$wpjm_string .= ' <span class="post-id">('.$pd_post->ID.')</span>';
 							}
 
@@ -847,6 +850,7 @@ class WpJumpMenu
 			$arr = array(
 				'position' => get_option('wpjm_position'),
 				'useChosen' => 'true',
+				'chosenTextAlign' => 'right',
 				'showID' => 'false',
 				'showaddnew' => 'true',
 				'backgroundColor' => get_option('wpjm_backgroundColor'),
@@ -883,6 +887,7 @@ class WpJumpMenu
 				$arr = array(
 					'position' => 'wpAdminBar',
 					'useChosen' => 'true',
+					'chosenTextAlign' => 'right',
 					'showID' => 'false',
 					'showaddnew' => 'true',
 					'backgroundColor' => 'e0e0e0',
@@ -943,6 +948,7 @@ class WpJumpMenu
 
 	function wpjm_uninstall() {
 		delete_option('wpjm_options');
+		delete_option('wpjm_version');
 		return true;
 	}
 
