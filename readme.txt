@@ -70,6 +70,7 @@ You need to upload your logo icon, through WordPress maybe, and get the full URL
 
 = 3.0.4 =
 * More bug fixes.
+* Fixed sorting of pages (hierarchy post types)
 
 = 3.0.3 =
 * Bug Fix: Multi-Site, broke page when in Network Admin

@@ -759,12 +759,12 @@ class WpJumpMenu
 
 							if (in_array('publish',$post_status)) {
 							
-								$wpjm_string .= wp_list_pages(array('walker' => $orderedListWalker, 'post_type' => $wpjm_cpt, 'echo' => 0, 'depth' => 0));
+								$wpjm_string .= wp_list_pages(array('walker' => $orderedListWalker, 'post_type' => $wpjm_cpt, 'echo' => 0, 'depth' => 0, 'sort_column' => $sortby, 'sort_order' => $sort));
 
 							}
 
 						} else if ($post_status == 'publish') {
-							$wpjm_string .= wp_list_pages(array('walker' => $orderedListWalker, 'post_type' => $wpjm_cpt, 'echo' => 0, 'depth' => 0));
+							$wpjm_string .= wp_list_pages(array('walker' => $orderedListWalker, 'post_type' => $wpjm_cpt, 'echo' => 0, 'depth' => 0, 'sort_column' => $sortby, 'sort_order' => $sort));
 						}
 						
 
