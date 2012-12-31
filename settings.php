@@ -369,9 +369,6 @@ global $options;
 
 			// Get the array of selected post types
 			$selected_post_types_arr = $options['postTypes'];
-				
-				// Make an array of only the keys from the selected post types
-				$array2 = array_keys($selected_post_types_arr);
 
 				// A function to sort the $post_type array by the $selected array
 				function sortArrayByArray($array,$orderArray) {
@@ -385,9 +382,17 @@ global $options;
 				    return $ordered + $array;
 				}
 
-				// And... sort it, returning an organized array;
-				// with the unselected post types at the end
-				$custom_array_order = sortArrayByArray($post_types, $array2);
+				if (is_array($selected_post_types_arr)) {
+					// Make an array of only the keys from the selected post types
+					$array2 = array_keys($selected_post_types_arr);
+					// And... sort it, returning an organized array;
+					// with the unselected post types at the end
+					$custom_array_order = sortArrayByArray($post_types, $array2);
+				} else {
+					$custom_array_order = $post_types;
+				}
+
+				
 
 				 
 		?>
