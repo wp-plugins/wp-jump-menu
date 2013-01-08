@@ -2,13 +2,13 @@
 /**
  * @package WP_Jump_Menu
  * @author Jim Krill
- * @version 3.0.5
+ * @version 3.1.0
  */
 /*
 Plugin Name: WP Jump Menu
 Plugin URI: http://krillwebdesign.com/2012/03/wp-jump-menu/
 Description: Creates a drop-down menu (jump menu) in a bar across the top or bottom of the screen that makes it easy to jump right to a page, post, or custom post type in the admin area to edit.
-Version: 3.0.5
+Version: 3.1.0
 Author: Jim Krill
 Author URI: http://krillwebdesign.com
 License: GPL
@@ -54,7 +54,7 @@ class WpJumpMenu
 		// vars
 		$this->path = plugin_dir_path(__FILE__);
 		$this->dir = plugins_url('',__FILE__);
-		$this->version = '3.0.5';
+		$this->version = '3.1.0';
 		$this->upgrade_version = '';
 		$this->cache = array();
 		$this->options = get_option('wpjm_options');
@@ -368,6 +368,7 @@ class WpJumpMenu
 		if ($this->options['position'] == 'wpAdminBar')
 		{
 			echo "
+			#wp-admin-bar-wp-jump-menu { height: 28px !important; }
 			#wp-admin-bar-wp-jump-menu div.ab-item { float: left; }
 			#wpadminbar #wp-pdd, #wpadminbar #wp-pdd * { color: #333 !important; text-shadow: none;}
 			#wpadminbar span.wpjm-logo-title { padding-right: 10px; }
@@ -582,7 +583,46 @@ class WpJumpMenu
 					$numberposts = $value['numberposts'];	// number of posts to display
 					$showdrafts = $value['showdrafts'];		// show drafts, true or false
 					$post_status = $value['poststatus'];
+					$postmimetype = array();
+					if (is_array($value['postmimetypes'])) {
+						foreach($value['postmimetypes'] as $mime) {
+							switch ($mime) {
+								case 'images':
+									$postmimetype[] = 'image/jpeg';
+									$postmimetype[] = 'image/png';
+									$postmimetype[] = 'image/gif';
+									$postmimetype[] = 'image';
+								break;
 
+								case 'videos':
+									$postmimetype[] = 'video/mpeg';
+									$postmimetype[] = 'video/mp4';
+									$postmimetype[] = 'video/quicktime';
+									$postmimetype[] = 'video';
+								break;
+
+								case 'audio':
+									$postmimetype[] = 'audio/mpeg';
+									$postmimetype[] = 'audio/mp3';
+									$postmimetype[] = 'audio';
+
+								case 'documents':
+									$postmimetype[] = 'text/csv';
+									$postmimetype[] = 'text/plain';
+									$postmimetype[] = 'text/xml';
+									$postmimetype[] = 'text';
+								break;
+
+								default:
+									$postmimetype = 'all';
+								break;
+							}
+						}
+
+						if (!is_array($postmimetype)) {
+							$postmimetype = '';
+						}
+					}
 					
 					// Get Posts
 					// Attempting to use wp_cache
@@ -594,6 +634,7 @@ class WpJumpMenu
 							'order' => $sort,
 							'numberposts' => $numberposts,
 							'post_type' => $wpjm_cpt,
+							'post_mime_type' => $postmimetype,
 							'post_status' => (is_array($post_status)?(in_array('any',$post_status)?'any':$post_status):$post_status)
 							);
 						$pd_posts = get_posts($args);
@@ -626,6 +667,14 @@ class WpJumpMenu
 								$wpjm_string .= '">+ Add New '.$cpt_labels->singular_name.' +</option>';
 							}
 
+						}
+
+						// Order the posts by mime/type if this is attachments
+						if ( ($wpjm_cpt == 'attachment') && ($sortby == 'mime_type') ) {
+							function mime_sort($a, $b) {
+								return strcmp($a->post_mime_type, $b->post_mime_type);
+							}
+							usort($pd_posts, "mime_sort");
 						}
 
 						// Loop through posts
@@ -661,8 +710,11 @@ class WpJumpMenu
 							// Print the post title
 							$wpjm_string .= $this->wpjm_get_page_title($pd_post->post_title);
 							
-							if ($pd_post->post_status != 'publish')
+							if ($pd_post->post_status != 'publish' && $pd_post->post_status != 'inherit')
 								$wpjm_string .= ' - '.$pd_post->post_status;
+
+							if ($pd_post->post_type == 'attachment')
+								$wpjm_string .= ' (' . $pd_post->post_mime_type . ')';
 
 							if ($pd_post->post_status == 'future')
 								$wpjm_string .= ' - '.$pd_post->post_date;

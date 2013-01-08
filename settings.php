@@ -423,8 +423,33 @@ global $wpjm_options;
 						<option value="comment_count" <?php selected( $wpjm_options['postTypes'][$pt->name]['sortby'], 'comment_count'); ?>>Comment Count</option>
 						<option value="parent" <?php selected( $wpjm_options['postTypes'][$pt->name]['sortby'], 'parent'); ?>>Parent</option>
 						<option value="title" <?php selected( $wpjm_options['postTypes'][$pt->name]['sortby'], 'title'); ?>>Title</option>
+						<?php 
+						if ($pt->name == 'attachment') { ?>
+						<option value="mime_type" <?php selected( $wpjm_options['postTypes'][$pt->name]['sortby'], 'mime_type'); ?>>Mime Type</option>
+						<?php
+						}
+						?>
 					</select>
 					<br/><span class="description"><a href="http://codex.wordpress.org/Class_Reference/WP_Query#Order_.26_Orderby_Parameters" target="_blank">Documentation</a></span>
+					<?php if ($pt->name == 'attachment') { ?>
+					<div class="mime-types">
+						<br/>
+						<strong>Show Media Types:</strong><br/>
+						<input type="checkbox" value="all" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][postmimetypes][]" id="wpjm_postmimetypes<?php echo $pt->name; ?>" <?php if (is_array($wpjm_options['postTypes'][$pt->name]['postmimetypes'])) echo (in_array('all',$wpjm_options['postTypes'][$pt->name]['postmimetypes'])?' checked="checked"':''); ?> /> All 
+						<br/>
+						<input type="checkbox" value="images" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][postmimetypes][]" id="wpjm_postmimetypes<?php echo $pt->name; ?>" <?php if (is_array($wpjm_options['postTypes'][$pt->name]['postmimetypes'])) echo (in_array('images',$wpjm_options['postTypes'][$pt->name]['postmimetypes'])?' checked="checked"':''); ?> /> Images 
+						<br/>
+						<input type="checkbox" value="videos" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][postmimetypes][]" id="wpjm_postmimetypes<?php echo $pt->name; ?>" <?php if (is_array($wpjm_options['postTypes'][$pt->name]['postmimetypes'])) echo (in_array('videos',$wpjm_options['postTypes'][$pt->name]['postmimetypes'])?' checked="checked"':''); ?> /> Videos 
+						<br/>
+						<input type="checkbox" value="audio" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][postmimetypes][]" id="wpjm_postmimetypes<?php echo $pt->name; ?>" <?php if (is_array($wpjm_options['postTypes'][$pt->name]['postmimetypes'])) echo (in_array('audio',$wpjm_options['postTypes'][$pt->name]['postmimetypes'])?' checked="checked"':''); ?> /> Audio 
+						<br/>
+						<input type="checkbox" value="documents" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][postmimetypes][]" id="wpjm_postmimetypes<?php echo $pt->name; ?>" <?php if (is_array($wpjm_options['postTypes'][$pt->name]['postmimetypes'])) echo (in_array('documents',$wpjm_options['postTypes'][$pt->name]['postmimetypes'])?' checked="checked"':''); ?> /> Documents 
+						<br/>
+						
+					</div>
+					<?php
+					}
+					?>
 				</td>
 				<td>
 					<div>
@@ -488,6 +513,14 @@ function wpjm_options_validate( $input ) {
 			}
 			if (!isset($newinput['postTypes'][$key]['poststatus'])) {
 				$newinput['postTypes'][$key]['poststatus'] = array('publish');
+				if ($key == 'attachment') {
+					$newinput['postTypes'][$key]['poststatus'] = array('publish','inherit');
+				}
+			}
+			if ($key == 'attachment') {
+				if ( ( !isset($newinput['postTypes'][$key]['postmimetypes']) ) || ( in_array('all', $newinput['postTypes'][$key]['postmimetypes']) ) ) {
+					$newinput['postTypes'][$key]['postmimetypes'] = array('all');
+				}
 			}
 			
 		}
