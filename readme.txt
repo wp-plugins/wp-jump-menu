@@ -12,7 +12,9 @@ Creates a drop-down menu in the admin area which makes it easy to jump to a page
 
 == Description ==
 
-<strong>Creates a drop-down menu in the admin area which makes it easy to jump to a page, post, custom post type or media file for editing. One click and you're editing!  New options page for easy customization.</strong>
+<strong>Creates a drop-down menu in the admin area which makes it easy to jump to a page, post, custom post type or media file for editing. 
+
+<ul><li>One click and you're editing!</li><li>Shift+Click and you're viewing the page on the front end!</li></ul></strong>
 
 <h2>THIS PLUGIN IS A MUST HAVE FOR WORDPRESS DEVELOPERS!</h2>
 
@@ -69,7 +71,7 @@ You need to upload your logo icon, through WordPress maybe, and get the full URL
 == Changelog ==
 
 = 3.1.1 =
-* NEW! View and item on the front end by holding SHIFT and left clicking an item in the jump menu!
+* NEW! View an item on the front end by holding SHIFT and left clicking an item in the jump menu!
 * This only works when using the Chosen JavaScript plugin.  Goto WP-Jump-Menu settings and activate the Chosen plugin.  Then click the drop down, hover over an item, hold shift and click - and it will load the page on the front end!
 
 = 3.1.0 =
