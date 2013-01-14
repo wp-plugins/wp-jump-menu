@@ -2,13 +2,13 @@
 /**
  * @package WP_Jump_Menu
  * @author Jim Krill
- * @version 3.1.0
+ * @version 3.1.1
  */
 /*
 Plugin Name: WP Jump Menu
 Plugin URI: http://krillwebdesign.com/2012/03/wp-jump-menu/
 Description: Creates a drop-down menu (jump menu) in a bar across the top or bottom of the screen that makes it easy to jump right to a page, post, or custom post type in the admin area to edit.
-Version: 3.1.0
+Version: 3.1.1
 Author: Jim Krill
 Author URI: http://krillwebdesign.com
 License: GPL
@@ -54,7 +54,7 @@ class WpJumpMenu
 		// vars
 		$this->path = plugin_dir_path(__FILE__);
 		$this->dir = plugins_url('',__FILE__);
-		$this->version = '3.1.0';
+		$this->version = '3.1.1';
 		$this->upgrade_version = '';
 		$this->cache = array();
 		$this->options = get_option('wpjm_options');
@@ -116,10 +116,11 @@ class WpJumpMenu
 		if ( $this->options['position'] == 'wpAdminBar' )
 		{
 			add_action('admin_bar_menu', array($this, 'admin_bar_menu'), 25);
-			
 			add_action('wp_print_styles', array($this, 'wpjm_css'));
 		} else {
+			add_action('wp_footer', array($this, 'wpjm_footer'));
 			add_action('admin_footer', array($this, 'wpjm_footer'));
+			add_action('wp_print_styles', array($this, 'wpjm_css'));
 		}
 
 		// Options page settings form
@@ -455,15 +456,17 @@ class WpJumpMenu
 			//$html = '<span class="wpjm-logo-title">'.$this->options['title'].'</span>';
 			$html .= $this->wpjm_page_dropdown();
 			$html .= "<script>
-			jQuery(document).ready(function($){
-					jQuery('#wp-pdd').on('change',function() {
+			jQuery(document).ready(function($){";
+
+			$html .= "jQuery('#wp-pdd').on('change',function() {
 						window.location = this.value;
 					})";
 			if ($this->options['useChosen'] == 'true') {
 				$html .= ".chosen({position:'".$this->options['position']."'})";
 			}
-				$html .= ";
-			});
+				$html .= ";";
+
+			$html .= "});
 			</script>";
 
 			/*$wp_admin_bar->add_menu( array(
@@ -511,9 +514,20 @@ class WpJumpMenu
 			?>
 			<script>
 			jQuery(document).ready(function($){
+
+					<?php if ($this->options['useChosen']=='true') { ?>
+					jQuery('#wp-pdd').bind('liszt:ready',function(){
+						jQuery('ul.chzn-results li').prepend('<span class="front-end"></span>');
+					});
+
+					<?php } ?>
+
 					jQuery('#wp-pdd').on('change',function() {
 						window.location = this.value;
 					})<?php if ($this->options['useChosen']=='true') { ?>.chosen({position:"<?php echo $this->options['position']; ?>"})<?php } ?>;
+
+					
+
 			});
 			</script>
 			<?php
@@ -535,7 +549,7 @@ class WpJumpMenu
 		//require_once( ABSPATH . 'wp-load.php' );
 		require_once( 'assets/WpjmWalkerClass.php' );
 
-		global $current_user;
+		global $current_user, $post;
 
 		// Get Custom Post Types settings (will iterate through later)
 		$custom_post_types = $this->options['postTypes'];
@@ -684,14 +698,14 @@ class WpJumpMenu
 							$pd_i++;
 
 							// Open the <option> tag
-							$wpjm_string .= '<option value="';
+							$wpjm_string .= '<option data-permalink="'.get_permalink($pd_post->ID).'" value="';
 								// echo the edit link based on post ID
 								$wpjm_string .= get_edit_post_link($pd_post->ID);
 							$wpjm_string .= '"';
 
 							// Check to see if you are currently editing this post
 							// If so, make it the selected value
-							if (isset($_GET['post']) && ($pd_post->ID == $_GET['post']))
+							if ( (isset($_GET['post']) && ($pd_post->ID == $_GET['post'])) || (isset($post) && ($pd_post->ID == $post->ID)) )
 								$wpjm_string .= ' selected="selected"';
 
 							if (!current_user_can($post_type_object->cap->edit_post,$pd_post->ID))
@@ -762,14 +776,14 @@ class WpJumpMenu
 								$pd_i++;
 
 								// Open the <option> tag
-								$wpjm_string .= '<option value="';
+								$wpjm_string .= '<option data-permalink="'.get_permalink($pd_post->ID).'" value="';
 									// echo the edit link based on post ID
 									$wpjm_string .= get_edit_post_link($pd_post->ID);
 								$wpjm_string .= '"';
 
 								// Check to see if you are currently editing this post
 								// If so, make it the selected value
-								if (isset($_GET['post']) && ($pd_post->ID == $_GET['post']))
+								if ( (isset($_GET['post']) && ($pd_post->ID == $_GET['post'])) || (isset($post) && ($pd_post->ID == $post->ID)) )
 									$wpjm_string .= ' selected="selected"';
 
 								if (!current_user_can($post_type_object->cap->edit_post,$pd_post->ID))

@@ -203,7 +203,7 @@ Copyright (c) 2011 by Harvest
           classes.push(option.classes);
         }
         style = option.style.cssText !== "" ? " style=\"" + option.style + "\"" : "";
-        return '<li id="' + option.dom_id + '" class="' + classes.join(' ') + '"' + style + '>' + option.html + '</li>';
+        return '<li id="' + option.dom_id + '" class="' + classes.join(' ') + '"' + style + '><span class="bubble"></span>' + option.html + '</li>';
       } else {
         return "";
       }
@@ -596,6 +596,7 @@ Copyright (c) 2011 by Harvest
     };
 
     Chosen.prototype.result_do_highlight = function(el) {
+      console.log('result_do_highlight');
       var high_bottom, high_top, maxHeight, visible_bottom, visible_top;
       if (el.length) {
         this.result_clear_highlight();
@@ -786,6 +787,7 @@ Copyright (c) 2011 by Harvest
     };
 
     Chosen.prototype.result_select = function(evt) {
+
       var high, high_id, item, position;
       if (this.result_highlight) {
         high = this.result_highlight;
@@ -814,6 +816,11 @@ Copyright (c) 2011 by Harvest
         if (!((evt.metaKey || evt.ctrlKey) && this.is_multiple)) {
           this.results_hide();
         }
+        if (evt.originalEvent.shiftKey === true) {
+          // Added by Jim
+          window.location = this.form_field.options[item.options_index].getAttribute('data-permalink');
+          return this.search_field_scale();
+        } 
         this.search_field.val("");
         if (this.is_multiple || this.form_field_jq.val() !== this.current_value) {
           this.form_field_jq.trigger("change", {

@@ -270,6 +270,14 @@
   list-style: none;
   float: none;
 }
+#wpadminbar #wp-admin-bar-top-secondary #wp-admin-bar-wp-jump-menu .chzn-container .chzn-results li.group-option span.bubble {
+  display: block;
+  float: left;
+  width: 5px;
+  height: 5px;
+  background: #aaa;
+  border: 1px solid #333;
+}
 #wpadminbar #wp-admin-bar-top-secondary #wp-admin-bar-wp-jump-menu .chzn-container .chzn-results .active-result {
   cursor: pointer;
   display: list-item;
