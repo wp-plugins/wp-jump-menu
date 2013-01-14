@@ -31,6 +31,12 @@ function wpjm_admin_init() {
 			'wpjm-2', 
 			'wpjm_main' );
 
+	add_settings_field( 'wpjm_frontend',
+			'Show on Front-End',
+			'wpjm_frontend_checkbox',
+			'wpjm-2',
+			'wpjm_main' );
+
 	add_settings_field( 'wpjm_useChosen',
 			'Use Chosen Select Menu',
 			'wpjm_useChosen_checkbox',
@@ -116,6 +122,16 @@ global $wpjm_options;
 	<input type="radio" value="wpAdminBar" name="wpjm_options[position]" id="wpjm_position" <?php checked($wpjm_options['position'], 'wpAdminBar'); ?> />
 		WP Admin Bar
 	
+</div>
+<?php
+}
+
+// Show on Front-End
+function wpjm_frontend_checkbox() {
+	global $wpjm_options;
+?>
+<div>
+	<input type="checkbox" value="true" name="wpjm_options[frontend]" id="wpjm_frontend" <?php checked($wpjm_options['frontend'], 'true'); ?> />&nbsp;&nbsp;<span class="description">Show the jump menu on the front-end of the site (only applies when using position = bottom or top).</span>     
 </div>
 <?php
 }
