@@ -12,6 +12,8 @@ Creates a drop-down menu in the admin area which makes it easy to jump to a page
 
 == Description ==
 
+<a href="http://www.wpjumpmenu.com">WATCH A DEMONSTRATION</a> - it will take 30 seconds to realize you can not live without this plugin.</a>
+
 <strong>Creates a drop-down menu in the admin area which makes it easy to jump to a page, post, custom post type or media file for editing. 
 
 <ul><li>One click and you're editing!</li><li>Shift+Click and you're viewing the page on the front end!</li></ul></strong>
@@ -241,6 +243,4 @@ You need to upload your logo icon, through WordPress maybe, and get the full URL
 Stable working version.
 
 = 1.0 = 
-* Initial Release
-.0 = 
 * Initial Release
