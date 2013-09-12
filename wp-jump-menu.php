@@ -2,13 +2,13 @@
 /**
  * @package WP_Jump_Menu
  * @author Jim Krill
- * @version 3.1.3
+ * @version 3.1.4
  */
 /*
 Plugin Name: WP Jump Menu
 Plugin URI: http://krillwebdesign.com/2012/03/wp-jump-menu/
 Description: Creates a drop-down menu (jump menu) in a bar across the top or bottom of the screen that makes it easy to jump right to a page, post, or custom post type in the admin area to edit.
-Version: 3.1.3
+Version: 3.1.4
 Author: Jim Krill
 Author URI: http://krillwebdesign.com
 License: GPL
@@ -37,7 +37,8 @@ class WpJumpMenu
 		$tooltip_html,
 		$cache,
 		$options,
-		$current_user;
+		$current_user,
+		$transient_name;
 
 
 	/*
@@ -54,10 +55,11 @@ class WpJumpMenu
 		// vars
 		$this->path = plugin_dir_path(__FILE__);
 		$this->dir = plugins_url('',__FILE__);
-		$this->version = '3.1.3';
+		$this->version = '3.1.4';
 		$this->upgrade_version = '';
 		$this->cache = array();
 		$this->options = get_option('wpjm_options');
+		$this->transient_name = 'wpjm_transient';
 
 		// This versions tooltip html
 		$this->tooltip_html = '<p><strong>WP Jump Menu Make-Over!</strong></p><ul style="padding: 0 15px; margin: 1em; list-style: disc;"><li>Speed improvements</li><li>Added <a href="http://harvesthq.github.com/chosen/" target="_blank">Chosen</a> JavaScript plugin. Select it on the options page to use a much improved UI on the jump menu.</li><li>Added an option to change the title of the Jump Menu (the title appears just to the left of the menu)</li></ul><p><a href="'.get_admin_url('','options-general.php?page=wpjm-options').'">WP Jump Menu Options</a></p>';
@@ -107,6 +109,8 @@ class WpJumpMenu
 		add_action('admin_print_styles', array($this, 'wpjm_css'));
 		add_action('plugin_action_links', array($this,'plugin_action_links'), 10, 2);
 		add_action('wp_print_scripts', array($this, 'wpjm_js'));
+		add_action('save_post', array($this, 'wpjm_remove_transient'));
+		add_action('update_option_wpjm_options', array($this, 'wpjm_remove_transient'));
 
 		if ( version_compare($wp_version, '3.2.1', '>')) 
 		{
@@ -570,209 +574,136 @@ class WpJumpMenu
 
 		$wpjm_string = '';
 
-		// Start echoing the select menu
-		$wpjm_string .= '<select id="wp-pdd" data-placeholder="Select to Edit" style="width: 250px;">';
-		$wpjm_string .= '<option>Select to Edit</option>';
+		// Attempt to get transient
+		$wpjm_transient = get_transient( $this->transient_name );
 
-		// Loop through custom posts types, and echo them out
-		if ($custom_post_types) {
-		
-			//$wpjm_cpts = explode(',',$custom_post_types);
-			$wpjm_cpts = $custom_post_types; // should be array
-			if ($wpjm_cpts) {
+		if ( $wpjm_transient === false ) {
 
-				// Loop through each post type as $key, $value
-				// --------------------------------------------------------------------------------------
-				// The $key is the name of the post type: i.e. 'page', 'post', or 'custom_post_type_name'
-				// The $value is an array of options
-				//		$value['sortby']
-				//		$value['sort']
-				//		$value['numberposts']
-				// --------------------------------------------------------------------------------------
-				foreach($wpjm_cpts as $key => $value ) {
-					
-					// Set variables
-					$wpjm_cpt = $key;						// name of the post type
-					$post_type_object = get_post_type_object( $wpjm_cpt );
-					$sortby = $value['sortby'];				// orderby value
-					$sort = $value['sort'];					// order value
-					$numberposts = $value['numberposts'];	// number of posts to display
-					$showdrafts = $value['showdrafts'];		// show drafts, true or false
-					$post_status = $value['poststatus'];
-					$postmimetype = array();
-					if (is_array($value['postmimetypes'])) {
-						foreach($value['postmimetypes'] as $mime) {
-							switch ($mime) {
-								case 'images':
-									$postmimetype[] = 'image/jpeg';
-									$postmimetype[] = 'image/png';
-									$postmimetype[] = 'image/gif';
-									$postmimetype[] = 'image';
-								break;
+			// Start echoing the select menu
+			$wpjm_string .= '<select id="wp-pdd" data-placeholder="Select to Edit" style="width: 250px;">';
+			$wpjm_string .= '<option>Select to Edit</option>';
 
-								case 'videos':
-									$postmimetype[] = 'video/mpeg';
-									$postmimetype[] = 'video/mp4';
-									$postmimetype[] = 'video/quicktime';
-									$postmimetype[] = 'video';
-								break;
+			// Loop through custom posts types, and echo them out
+			if ($custom_post_types) {
+			
+				//$wpjm_cpts = explode(',',$custom_post_types);
+				$wpjm_cpts = $custom_post_types; // should be array
+				if ($wpjm_cpts) {
 
-								case 'audio':
-									$postmimetype[] = 'audio/mpeg';
-									$postmimetype[] = 'audio/mp3';
-									$postmimetype[] = 'audio';
-
-								case 'documents':
-									$postmimetype[] = 'text/csv';
-									$postmimetype[] = 'text/plain';
-									$postmimetype[] = 'text/xml';
-									$postmimetype[] = 'text';
-								break;
-
-								default:
-									$postmimetype = 'all';
-								break;
-							}
-						}
-
-						if (!is_array($postmimetype)) {
-							$postmimetype = '';
-						}
-					}
-					
-					// Get Posts
-					// Attempting to use wp_cache
-					$cache_name = "wpjm_{$wpjm_cpt}_post";
-					$pd_posts = wp_cache_get( $cache_name, "wpjm_cache" );
-					if ( false == $pd_posts ) {
-						$args = array(
-							'orderby' => $sortby,
-							'order' => $sort,
-							'numberposts' => $numberposts,
-							'post_type' => $wpjm_cpt,
-							'post_mime_type' => $postmimetype,
-							'post_status' => (is_array($post_status)?(in_array('any',$post_status)?'any':$post_status):$post_status)
-							);
-						$pd_posts = get_posts($args);
-
-						wp_cache_set( $cache_name, $pd_posts, "wpjm_cache" );
-					}
-
-					// Count the posts
-					$pd_total_posts = count($pd_posts);
-					
-					// Get the labels for this post type
-					$cpt_obj = get_post_type_object($wpjm_cpt);
-					$cpt_labels = $cpt_obj->labels;
-					
-					// Set the iterator to zero
-					$pd_i = 0;
-
-					
-
-					// If this is not hierarchical, get list of posts and display the <option>s
-					if (!is_post_type_hierarchical($wpjm_cpt)) {
+					// Loop through each post type as $key, $value
+					// --------------------------------------------------------------------------------------
+					// The $key is the name of the post type: i.e. 'page', 'post', or 'custom_post_type_name'
+					// The $value is an array of options
+					//		$value['sortby']
+					//		$value['sort']
+					//		$value['numberposts']
+					// --------------------------------------------------------------------------------------
+					foreach($wpjm_cpts as $key => $value ) {
 						
-						$wpjm_string .= '<optgroup label="'.$cpt_labels->name.'">';
+						// Set variables
+						$wpjm_cpt = $key;						// name of the post type
+						$post_type_object = get_post_type_object( $wpjm_cpt );
+						$sortby = $value['sortby'];				// orderby value
+						$sort = $value['sort'];					// order value
+						$numberposts = $value['numberposts'];	// number of posts to display
+						$showdrafts = $value['showdrafts'];		// show drafts, true or false
+						$post_status = $value['poststatus'];
+						$postmimetype = array();
+						if (is_array($value['postmimetypes'])) {
+							foreach($value['postmimetypes'] as $mime) {
+								switch ($mime) {
+									case 'images':
+										$postmimetype[] = 'image/jpeg';
+										$postmimetype[] = 'image/png';
+										$postmimetype[] = 'image/gif';
+										$postmimetype[] = 'image';
+									break;
 
-						if ($cpt_labels->name != 'Media') {
+									case 'videos':
+										$postmimetype[] = 'video/mpeg';
+										$postmimetype[] = 'video/mp4';
+										$postmimetype[] = 'video/quicktime';
+										$postmimetype[] = 'video';
+									break;
 
-							if ($this->options['showaddnew'] && current_user_can($post_type_object->cap->edit_posts)) {
-								$wpjm_string .= '<option value="post-new.php?post_type=';
-								$wpjm_string .= $cpt_obj->name;
-								$wpjm_string .= '">+ Add New '.$cpt_labels->singular_name.' +</option>';
+									case 'audio':
+										$postmimetype[] = 'audio/mpeg';
+										$postmimetype[] = 'audio/mp3';
+										$postmimetype[] = 'audio';
+
+									case 'documents':
+										$postmimetype[] = 'text/csv';
+										$postmimetype[] = 'text/plain';
+										$postmimetype[] = 'text/xml';
+										$postmimetype[] = 'text';
+									break;
+
+									default:
+										$postmimetype = 'all';
+									break;
+								}
 							}
 
-						}
-
-						// Order the posts by mime/type if this is attachments
-						if ( ($wpjm_cpt == 'attachment') && ($sortby == 'mime_type') ) {
-							function mime_sort($a, $b) {
-								return strcmp($a->post_mime_type, $b->post_mime_type);
+							if (!is_array($postmimetype)) {
+								$postmimetype = '';
 							}
-							usort($pd_posts, "mime_sort");
-						}
-
-						// Loop through posts
-						foreach ($pd_posts as $pd_post) {
-							
-							// Increase the interator by 1
-							$pd_i++;
-
-							// Open the <option> tag
-							$wpjm_string .= '<option data-permalink="'.get_permalink($pd_post->ID).'" value="';
-								// echo the edit link based on post ID
-								$wpjm_string .= get_edit_post_link($pd_post->ID);
-							$wpjm_string .= '"';
-
-							// Check to see if you are currently editing this post
-							// If so, make it the selected value
-							if ( (isset($_GET['post']) && ($pd_post->ID == $_GET['post'])) || (isset($post) && ($pd_post->ID == $post->ID)) )
-								$wpjm_string .= ' selected="selected"';
-
-							if (!current_user_can($post_type_object->cap->edit_post,$pd_post->ID))
-								$wpjm_string .= ' disabled="disabled"';
-
-							// Set the color
-							$wpjm_string .= ' style="color: '.$status_color[$pd_post->post_status].' !important;"';
-
-							$wpjm_string .= '>';
-
-							// If the setting to show ID's is true, show the ID in ()
-							if ( ($this->options['showID'] == true) && ($this->options['useChosen'] == 'true') && ($this->options['chosenTextAlign'] == 'right') ) {
-								$wpjm_string .= '<span class="post-id">('.$pd_post->ID.')</span> ';
-							}
-
-							// Print the post title
-							$wpjm_string .= $this->wpjm_get_page_title($pd_post->post_title);
-							
-							if ($pd_post->post_status != 'publish' && $pd_post->post_status != 'inherit')
-								$wpjm_string .= ' - '.$pd_post->post_status;
-
-							if ($pd_post->post_type == 'attachment')
-								$wpjm_string .= ' (' . $pd_post->post_mime_type . ')';
-
-							if ($pd_post->post_status == 'future')
-								$wpjm_string .= ' - '.$pd_post->post_date;
-
-							// If the setting to show ID's is true, show the ID in ()
-							if ( ($this->options['showID'] == true) && ( (!$this->options['useChosen'] || $this->options['chosenTextAlign'] == 'left') ) ) {
-								$wpjm_string .= ' <span class="post-id">('.$pd_post->ID.')</span>';
-							}
-
-							
-							
-							// close the <option> tag
-							$wpjm_string .= '</option>';
-						} // foreach ($pd_posts as $pd_post)
-
-						$wpjm_string .= '</optgroup>';
-
-					} else {
-											
-						// If this a hierarchical post type, use the custom Walker class to create the page tree
-						$orderedListWalker = new WPJM_Walker_PageDropDown();
-
-						$wpjm_string .= '<optgroup label="'.$cpt_labels->name.'">';
-
-						if ($this->options['showaddnew'] && ( current_user_can($post_type_object->cap->edit_posts) || current_user_can($post_type_object->cap->edit_pages) ) ) {
-							$wpjm_string .= '<option value="post-new.php?post_type=';
-							$wpjm_string .= $cpt_obj->name;
-							$wpjm_string .= '">+ Add New '.$cpt_labels->singular_name.' +</option>';
 						}
 						
-						// Go through the non-published pages
-						foreach ($post_status as $status) {
+						// Get Posts
+						// Attempting to use wp_cache
+						$cache_name = "wpjm_{$wpjm_cpt}_post";
+						$pd_posts = wp_cache_get( $cache_name, "wpjm_cache" );
+						if ( false == $pd_posts ) {
+							$args = array(
+								'orderby' => $sortby,
+								'order' => $sort,
+								'numberposts' => $numberposts,
+								'post_type' => $wpjm_cpt,
+								'post_mime_type' => $postmimetype,
+								'post_status' => (is_array($post_status)?(in_array('any',$post_status)?'any':$post_status):$post_status)
+								);
+							$pd_posts = get_posts($args);
 
-							if ($status == 'publish')
-								continue;
+							wp_cache_set( $cache_name, $pd_posts, "wpjm_cache" );
+						}
 
-							// Get pages
-							$pd_posts_drafts = get_posts('orderby='.$sortby.'&order='.$sort.'&numberposts='.$numberposts.'&post_type='.$wpjm_cpt.'&post_status='.$status);
+						// Count the posts
+						$pd_total_posts = count($pd_posts);
+						
+						// Get the labels for this post type
+						$cpt_obj = get_post_type_object($wpjm_cpt);
+						$cpt_labels = $cpt_obj->labels;
+						
+						// Set the iterator to zero
+						$pd_i = 0;
+
+						
+
+						// If this is not hierarchical, get list of posts and display the <option>s
+						if (!is_post_type_hierarchical($wpjm_cpt)) {
 							
-							
+							$wpjm_string .= '<optgroup label="'.$cpt_labels->name.'">';
+
+							if ($cpt_labels->name != 'Media') {
+
+								if ($this->options['showaddnew'] && current_user_can($post_type_object->cap->edit_posts)) {
+									$wpjm_string .= '<option value="post-new.php?post_type=';
+									$wpjm_string .= $cpt_obj->name;
+									$wpjm_string .= '">+ Add New '.$cpt_labels->singular_name.' +</option>';
+								}
+
+							}
+
+							// Order the posts by mime/type if this is attachments
+							if ( ($wpjm_cpt == 'attachment') && ($sortby == 'mime_type') ) {
+								function mime_sort($a, $b) {
+									return strcmp($a->post_mime_type, $b->post_mime_type);
+								}
+								usort($pd_posts, "mime_sort");
+							}
+
 							// Loop through posts
-							foreach ($pd_posts_drafts as $pd_post) {
+							foreach ($pd_posts as $pd_post) {
 								
 								// Increase the interator by 1
 								$pd_i++;
@@ -796,23 +727,27 @@ class WpJumpMenu
 
 								$wpjm_string .= '>';
 
-							// If the setting to show ID's is true, show the ID in ()
-							if ( ($this->options['showID'] == true) && ($this->options['useChosen'] == 'true') ) {
-								$wpjm_string .= '<span class="post-id">('.$pd_post->ID.')</span> ';
-							}
+								// If the setting to show ID's is true, show the ID in ()
+								if ( ($this->options['showID'] == true) && ($this->options['useChosen'] == 'true') && ($this->options['chosenTextAlign'] == 'right') ) {
+									$wpjm_string .= '<span class="post-id">('.$pd_post->ID.')</span> ';
+								}
+
 								// Print the post title
 								$wpjm_string .= $this->wpjm_get_page_title($pd_post->post_title);
 								
-								if ($pd_post->post_status != 'publish')
-									$wpjm_string .= ' - '.$status;
+								if ($pd_post->post_status != 'publish' && $pd_post->post_status != 'inherit')
+									$wpjm_string .= ' - '.$pd_post->post_status;
+
+								if ($pd_post->post_type == 'attachment')
+									$wpjm_string .= ' (' . $pd_post->post_mime_type . ')';
 
 								if ($pd_post->post_status == 'future')
 									$wpjm_string .= ' - '.$pd_post->post_date;
 
 								// If the setting to show ID's is true, show the ID in ()
-							if ( ($this->options['showID'] == true) && ( (!$this->options['useChosen'] || $this->options['chosenTextAlign'] == 'left') ) ) {
-								$wpjm_string .= ' <span class="post-id">('.$pd_post->ID.')</span>';
-							}
+								if ( ($this->options['showID'] == true) && ( (!$this->options['useChosen'] || $this->options['chosenTextAlign'] == 'left') ) ) {
+									$wpjm_string .= ' <span class="post-id">('.$pd_post->ID.')</span>';
+								}
 
 								
 								
@@ -820,44 +755,133 @@ class WpJumpMenu
 								$wpjm_string .= '</option>';
 							} // foreach ($pd_posts as $pd_post)
 
-							
-						} 
-						// Done with non-published pages
-						if (is_array($post_status)) {
+							$wpjm_string .= '</optgroup>';
 
-							if (in_array('publish',$post_status)) {
-							
-								$wpjm_string .= wp_list_pages(array('walker' => $orderedListWalker, 'post_type' => $wpjm_cpt, 'echo' => 0, 'depth' => 0, 'sort_column' => $sortby, 'sort_order' => $sort));
+						} else {
+												
+							// If this a hierarchical post type, use the custom Walker class to create the page tree
+							$orderedListWalker = new WPJM_Walker_PageDropDown();
 
+							$wpjm_string .= '<optgroup label="'.$cpt_labels->name.'">';
+
+							if ($this->options['showaddnew'] && ( current_user_can($post_type_object->cap->edit_posts) || current_user_can($post_type_object->cap->edit_pages) ) ) {
+								$wpjm_string .= '<option value="post-new.php?post_type=';
+								$wpjm_string .= $cpt_obj->name;
+								$wpjm_string .= '">+ Add New '.$cpt_labels->singular_name.' +</option>';
 							}
+							
+							// Go through the non-published pages
+							foreach ($post_status as $status) {
 
-						} else if ($post_status == 'publish') {
-							$wpjm_string .= wp_list_pages(array('walker' => $orderedListWalker, 'post_type' => $wpjm_cpt, 'echo' => 0, 'depth' => 0, 'sort_column' => $sortby, 'sort_order' => $sort));
-						}
-						
+								if ($status == 'publish')
+									continue;
 
-						$wpjm_string .= '</optgroup>';
-					} // end if (is_hierarchical)
-				
-				} // end foreach($wpjm_cpts)
+								// Get pages
+								$pd_posts_drafts = get_posts('orderby='.$sortby.'&order='.$sort.'&numberposts='.$numberposts.'&post_type='.$wpjm_cpt.'&post_status='.$status);
+								
+								
+								// Loop through posts
+								foreach ($pd_posts_drafts as $pd_post) {
+									
+									// Increase the interator by 1
+									$pd_i++;
 
-			} // end if ($wpjm_cpts)
-		
-		} // end if ($custom_post_types)
-		
-		// Print the options page link
-		if (current_user_can('activate_plugins')) {
-			$wpjm_string .= '<optgroup label="// Jump Menu Options //">';
-			$wpjm_string .= '<option value="'.admin_url().'options-general.php?page=wpjm-options">Jump Menu Options Page</option>';
-			$wpjm_string .= '</optgroup>';
+									// Open the <option> tag
+									$wpjm_string .= '<option data-permalink="'.get_permalink($pd_post->ID).'" value="';
+										// echo the edit link based on post ID
+										$wpjm_string .= get_edit_post_link($pd_post->ID);
+									$wpjm_string .= '"';
+
+									// Check to see if you are currently editing this post
+									// If so, make it the selected value
+									if ( (isset($_GET['post']) && ($pd_post->ID == $_GET['post'])) || (isset($post) && ($pd_post->ID == $post->ID)) )
+										$wpjm_string .= ' selected="selected"';
+
+									if (!current_user_can($post_type_object->cap->edit_post,$pd_post->ID))
+										$wpjm_string .= ' disabled="disabled"';
+
+									// Set the color
+									$wpjm_string .= ' style="color: '.$status_color[$pd_post->post_status].' !important;"';
+
+									$wpjm_string .= '>';
+
+								// If the setting to show ID's is true, show the ID in ()
+								if ( ($this->options['showID'] == true) && ($this->options['useChosen'] == 'true') ) {
+									$wpjm_string .= '<span class="post-id">('.$pd_post->ID.')</span> ';
+								}
+									// Print the post title
+									$wpjm_string .= $this->wpjm_get_page_title($pd_post->post_title);
+									
+									if ($pd_post->post_status != 'publish')
+										$wpjm_string .= ' - '.$status;
+
+									if ($pd_post->post_status == 'future')
+										$wpjm_string .= ' - '.$pd_post->post_date;
+
+									// If the setting to show ID's is true, show the ID in ()
+								if ( ($this->options['showID'] == true) && ( (!$this->options['useChosen'] || $this->options['chosenTextAlign'] == 'left') ) ) {
+									$wpjm_string .= ' <span class="post-id">('.$pd_post->ID.')</span>';
+								}
+
+									
+									
+									// close the <option> tag
+									$wpjm_string .= '</option>';
+								} // foreach ($pd_posts as $pd_post)
+
+								
+							} 
+							// Done with non-published pages
+							if (is_array($post_status)) {
+
+								if (in_array('publish',$post_status)) {
+								
+									$wpjm_string .= wp_list_pages(array('walker' => $orderedListWalker, 'post_type' => $wpjm_cpt, 'echo' => 0, 'depth' => 0, 'sort_column' => $sortby, 'sort_order' => $sort));
+
+								}
+
+							} else if ($post_status == 'publish') {
+								$wpjm_string .= wp_list_pages(array('walker' => $orderedListWalker, 'post_type' => $wpjm_cpt, 'echo' => 0, 'depth' => 0, 'sort_column' => $sortby, 'sort_order' => $sort));
+							}
+							
+
+							$wpjm_string .= '</optgroup>';
+						} // end if (is_hierarchical)
+					
+					} // end foreach($wpjm_cpts)
+
+				} // end if ($wpjm_cpts)
+			
+			} // end if ($custom_post_types)
+			
+			// Print the options page link
+			if (current_user_can('activate_plugins')) {
+				$wpjm_string .= '<optgroup label="// Jump Menu Options //">';
+				$wpjm_string .= '<option value="'.admin_url().'options-general.php?page=wpjm-options">Jump Menu Options Page</option>';
+				$wpjm_string .= '</optgroup>';
+			}
+
+			// Close the select drop down
+			$wpjm_string .= '</select>';
+
+			// set the transient
+			set_transient( $this->transient_name, $wpjm_string, 7*24*60*60 );
+
+		} else { // if there is a transient
+
+			$wpjm_string = $wpjm_transient;
+			$wpjm_string .= '<!-- This is using a transient -->';
+
 		}
-
-		// Close the select drop down
-		$wpjm_string .= '</select>';
 
 		return $wpjm_string;
 
 	} // end wpjm_page_dropdown() 
+
+	function wpjm_remove_transient() {
+		delete_transient( $this->transient_name );
+	}
+	
 
 
 	function wpjm_get_page_title( $pd_title ) 
@@ -1030,6 +1054,7 @@ class WpJumpMenu
 	function wpjm_uninstall() {
 		delete_option('wpjm_options');
 		delete_option('wpjm_version');
+		delete_transient( $this->transient_name );
 		return true;
 	}
 
