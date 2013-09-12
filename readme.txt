@@ -12,13 +12,14 @@ Creates a drop-down menu in the admin area which makes it easy to jump to a page
 
 == Description ==
 
-<a href="http://www.wpjumpmenu.com">WATCH A DEMONSTRATION</a> - it will take 30 seconds to realize you can not live without this plugin.</a>
+<h3><a href="http://www.wpjumpmenu.com">WATCH A DEMONSTRATION</a></h3>
+It will take 30 seconds to realize you can not live without this plugin.
 
 <strong>Creates a drop-down menu in the admin area which makes it easy to jump to a page, post, custom post type or media file for editing. 
 
 <ul><li>One click and you're editing!</li><li>Shift+Click and you're viewing the page on the front end!</li></ul></strong>
 
-<h2>THIS PLUGIN IS A MUST HAVE FOR WORDPRESS DEVELOPERS!</h2>
+<h3>THIS PLUGIN IS A MUST HAVE FOR WORDPRESS DEVELOPERS!</h3>
 
 <em><strong>UPDATE:</strong> Now featuring <a href="http://harvesthq.github.com/chosen/" target="_blank">Chosen</a> JavaScript library for select menu styling and functionality. </em>
 
