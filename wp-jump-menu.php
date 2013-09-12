@@ -2,13 +2,13 @@
 /**
  * @package WP_Jump_Menu
  * @author Jim Krill
- * @version 3.1.2
+ * @version 3.1.3
  */
 /*
 Plugin Name: WP Jump Menu
 Plugin URI: http://krillwebdesign.com/2012/03/wp-jump-menu/
 Description: Creates a drop-down menu (jump menu) in a bar across the top or bottom of the screen that makes it easy to jump right to a page, post, or custom post type in the admin area to edit.
-Version: 3.1.2
+Version: 3.1.3
 Author: Jim Krill
 Author URI: http://krillwebdesign.com
 License: GPL
@@ -54,7 +54,7 @@ class WpJumpMenu
 		// vars
 		$this->path = plugin_dir_path(__FILE__);
 		$this->dir = plugins_url('',__FILE__);
-		$this->version = '3.1.2';
+		$this->version = '3.1.3';
 		$this->upgrade_version = '';
 		$this->cache = array();
 		$this->options = get_option('wpjm_options');
@@ -293,7 +293,7 @@ class WpJumpMenu
 		$dismissed_tooltips = explode( ',', (string) get_user_meta( get_current_user_id(), 'dismissed_wp_pointers', true ) );
 		if ( !in_array('wpjm_tooltip',$dismissed_tooltips) )
 		{
-			add_action( 'admin_print_footer_scripts', array($this, 'wpjm_tooltip') );
+			//add_action( 'admin_print_footer_scripts', array($this, 'wpjm_tooltip') );
 		}
 	}
 	
