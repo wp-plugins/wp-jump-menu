@@ -1,7 +1,7 @@
 === Plugin Name ===
 Contributors: jkrill
 Donate link: http://www.krillwebdesign.com
-Plugin URI: http://krillwebdesign.com/2012/03/wp-jump-menu/
+Plugin URI: http://wpjumpmenu.com
 Author URI: http://krillwebdesign.com
 Tags: posts, pages, admin, jump, menu, quick, links, custom post types
 Requires at least: 3.2.1
@@ -241,4 +241,6 @@ You need to upload your logo icon, through WordPress maybe, and get the full URL
 Stable working version.
 
 = 1.0 = 
+* Initial Release
+.0 = 
 * Initial Release
