@@ -2,13 +2,13 @@
 /**
  * @package WP_Jump_Menu
  * @author Jim Krill
- * @version 3.1.5
+ * @version 3.1.6
  */
 /*
 Plugin Name: WP Jump Menu
 Plugin URI: http://wpjumpmenu.com
 Description: Creates a drop-down menu (jump menu) in a bar across the top or bottom of the screen that makes it easy to jump right to a page, post, or custom post type in the admin area to edit.
-Version: 3.1.5
+Version: 3.1.6
 Author: Jim Krill
 Author URI: http://krillwebdesign.com
 License: GPL
@@ -55,7 +55,7 @@ class WpJumpMenu
 		// vars
 		$this->path = plugin_dir_path(__FILE__);
 		$this->dir = plugins_url('',__FILE__);
-		$this->version = '3.1.5';
+		$this->version = '3.1.6';
 		$this->upgrade_version = '';
 		$this->cache = array();
 		$this->options = get_option('wpjm_options');
@@ -575,9 +575,9 @@ class WpJumpMenu
 		$wpjm_string = '';
 
 		// Attempt to get transient
-		$wpjm_transient = get_transient( $this->transient_name );
+		// $wpjm_transient = get_transient( $this->transient_name );
 
-		if ( $wpjm_transient === false ) {
+		// if ( $wpjm_transient === false ) {
 
 			// Start echoing the select menu
 			$wpjm_string .= '<select id="wp-pdd" data-placeholder="Select to Edit" style="width: 250px;">';
@@ -865,14 +865,14 @@ class WpJumpMenu
 			$wpjm_string .= '</select>';
 
 			// set the transient
-			set_transient( $this->transient_name, $wpjm_string, 7*24*60*60 );
+			// set_transient( $this->transient_name, $wpjm_string, 7*24*60*60 );
 
-		} else { // if there is a transient
+		// } else { // if there is a transient
 
-			$wpjm_string = $wpjm_transient;
-			$wpjm_string .= '<!-- This is using a transient -->';
+		// 	$wpjm_string = $wpjm_transient;
+		// 	$wpjm_string .= '<!-- This is using a transient -->';
 
-		}
+		// }
 
 		return $wpjm_string;
 
