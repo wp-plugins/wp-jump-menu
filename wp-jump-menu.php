@@ -2,13 +2,13 @@
 /**
  * @package WP_Jump_Menu
  * @author Jim Krill
- * @version 3.1.6
+ * @version 3.1.7
  */
 /*
 Plugin Name: WP Jump Menu
 Plugin URI: http://wpjumpmenu.com
 Description: Creates a drop-down menu (jump menu) in a bar across the top or bottom of the screen that makes it easy to jump right to a page, post, or custom post type in the admin area to edit.
-Version: 3.1.6
+Version: 3.1.7
 Author: Jim Krill
 Author URI: http://krillwebdesign.com
 License: GPL
@@ -58,6 +58,7 @@ class WpJumpMenu
 		$this->version = '3.1.6';
 		$this->upgrade_version = '';
 		$this->cache = array();
+		// Maybe I should set default options, then array_merge with what is in get_option('wpjm_options') in case it's not there?
 		$this->options = get_option('wpjm_options');
 		$this->transient_name = 'wpjm_transient';
 
@@ -396,6 +397,12 @@ class WpJumpMenu
 		#jump_menu p.jm_credits { font-style: italic; padding-top: 10px; line-height: 13px; }
 		#jump_menu p.jm_credits img.wpjm_logo { ".($this->options['logoWidth']?'width: '.$this->options['logoWidth'].'px;':'width: 35px;')." height: auto; max-height: 30px; vertical-align: middle; margin-right: 10px; }
 		#jump_menu_clear { height: 30px; }
+		@media only screen and (max-width: 768px) { 
+			#jump_menu .jm_credits { display: none; }
+		}
+		@media only screen and (max-width: 480px) {
+			#jump_menu span.wpjm-logo-title { display: none; }
+		}
 		body { ".($this->options['position']=='top'?'padding-top: 42px !important;':'padding-bottom: 42px !important;')." }
 		".($this->options['position']=='bottom'?'#footer { bottom: 42px !important; }':'');
 		}
@@ -405,6 +412,7 @@ class WpJumpMenu
 		#wpadminbar #wp-admin-bar-top-secondary #wp-admin-bar-wp-jump-menu .chzn-container * {
 			text-align: " . (isset($this->options['chosenTextAlign']) ? $this->options['chosenTextAlign'] : 'right') . " !important;
 		}
+		.chzn-container { vertical-align: middle; }
 		.chzn-container .chzn-results li span.post-id {
 			font-size: 12px;
 			color: #aaa !important;
@@ -580,7 +588,11 @@ class WpJumpMenu
 		// if ( $wpjm_transient === false ) {
 
 			// Start echoing the select menu
-			$wpjm_string .= '<select id="wp-pdd" data-placeholder="Select to Edit" style="width: 250px;">';
+			if ($this->options['useChosen']=='true') {
+				$wpjm_string .= '<select id="wp-pdd" data-placeholder="Select to Edit" style="width: 250px;">';
+			} else {
+				$wpjm_string .= '<select id="wp-pdd" data-placeholder="Select to Edit">';
+			}
 			$wpjm_string .= '<option>Select to Edit</option>';
 
 			// Loop through custom posts types, and echo them out
