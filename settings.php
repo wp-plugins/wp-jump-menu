@@ -456,6 +456,26 @@ global $wpjm_options;
 			$alt = "";
 			foreach ($custom_array_order as $pt) {
 				if ( ($pt->name == 'nav_menu_item') || ($pt->name == 'revision') ) continue;
+				// Check for existence of values
+				if (!isset($wpjm_options['postTypes'][$pt->name])) {
+					if (!is_post_type_hierarchical( $pt->name )) {
+						$wpjm_options['postTypes'][$pt->name] = array(
+							'show' => '0',
+							'sortby' => 'date',
+							'sort' => 'DESC',
+							'numberposts' => '-1',
+							'poststatus' => array('publish','draft')
+						);
+					} else {
+						$wpjm_options['postTypes'][$pt->name] = array(
+							'show' => '0',
+							'sortby' => 'menu_order',
+							'sort' => 'ASC',
+							'numberposts' => '0',
+							'poststatus' => array('publish','draft')
+						);
+					}
+				}
 				?>
 			<tr class="<?php if ($alt==""){ $alt = "alternate"; } else { echo $alt; $alt = ""; } ?>" valign="top">
 				<th class="check-column" scope="row">
@@ -492,7 +512,7 @@ global $wpjm_options;
 						?>
 					</select>
 					<br/><span class="description"><a href="http://codex.wordpress.org/Class_Reference/WP_Query#Order_.26_Orderby_Parameters" target="_blank">Documentation</a></span>
-					<?php if ($pt->name == 'attachment') { ?>
+					<?php if ($pt->name == 'attachment' && isset($wpjm_options['postTypes'][$pt->name]['postmimetypes'])) { ?>
 					<div class="mime-types">
 						<br/>
 						<strong>Show Media Types:</strong><br/>

@@ -2,13 +2,13 @@
 /**
  * @package WP_Jump_Menu
  * @author Jim Krill
- * @version 3.2
+ * @version 3.2.1
  */
 /*
 Plugin Name: WP Jump Menu
 Plugin URI: http://wpjumpmenu.com
 Description: Creates a drop-down menu (jump menu) in a bar across the top or bottom of the screen that makes it easy to jump right to a page, post, or custom post type in the admin area to edit.
-Version: 3.2
+Version: 3.2.1
 Author: Jim Krill
 Author URI: http://krillwebdesign.com
 License: GPL
@@ -55,7 +55,7 @@ class WpJumpMenu
 		// vars
 		$this->path = plugin_dir_path(__FILE__);
 		$this->dir = plugins_url('',__FILE__);
-		$this->version = '3.2';
+		$this->version = '3.2.1';
 		$this->upgrade_version = '';
 		$this->cache = array();
 		// Maybe I should set default options, then array_merge with what is in get_option('wpjm_options') in case it's not there?
@@ -73,7 +73,7 @@ class WpJumpMenu
 
 		// Install/Uninstall
 		register_activation_hook( __FILE__, array($this, 'wpjm_install') );
-		register_uninstall_hook( __FILE__, array($this, 'wpjm_uninstall') );
+		register_uninstall_hook( __FILE__, 'wpjm_uninstall' );
 
 
 		return true;
@@ -201,7 +201,7 @@ class WpJumpMenu
 
 	function admin_menu()
 	{
-		add_options_page('Jump Menu Options','Jump Menu Options', 8, 'wpjm-options', array($this, 'wpjm_options_page'));
+		add_options_page('Jump Menu Options','Jump Menu Options', 'edit_posts', 'wpjm-options', array($this, 'wpjm_options_page'));
 	}
 
 
@@ -272,7 +272,7 @@ class WpJumpMenu
 
 				<?php
 				// Clear the cache when viewing the options page //
-				wp_cache_delete('','wpjm_cache');
+				//wp_cache_delete('','wpjm_cache');
 				?>
 
 				<p class="submit">
@@ -468,7 +468,7 @@ class WpJumpMenu
 		{
 
 			//$html = '<span class="wpjm-logo-title">'.$this->options['title'].'</span>';
-			$html .= $this->wpjm_page_dropdown();
+			$html = $this->wpjm_page_dropdown();
 			$html .= "<script>
 			jQuery(document).ready(function($){";
 
@@ -618,10 +618,10 @@ class WpJumpMenu
 						$sortby = $value['sortby'];				// orderby value
 						$sort = $value['sort'];					// order value
 						$numberposts = $value['numberposts'];	// number of posts to display
-						$showdrafts = $value['showdrafts'];		// show drafts, true or false
+						$showdrafts = (isset($value['showdrafts'])?$value['showdrafts']:'');		// show drafts, true or false
 						$post_status = $value['poststatus'];
 						$postmimetype = array();
-						if (is_array($value['postmimetypes'])) {
+						if (isset($value['postmimetypes']) && is_array($value['postmimetypes'])) {
 							foreach($value['postmimetypes'] as $mime) {
 								switch ($mime) {
 									case 'images':
@@ -663,9 +663,9 @@ class WpJumpMenu
 
 						// Get Posts
 						// Attempting to use wp_cache
-						$cache_name = "wpjm_{$wpjm_cpt}_post";
-						$pd_posts = wp_cache_get( $cache_name, "wpjm_cache" );
-						if ( false == $pd_posts ) {
+						// $cache_name = "wpjm_{$wpjm_cpt}_post";
+						// $pd_posts = wp_cache_get( $cache_name, "wpjm_cache" );
+						// if ( false == $pd_posts ) {
 							$args = array(
 								'orderby' => $sortby,
 								'order' => $sort,
@@ -676,8 +676,8 @@ class WpJumpMenu
 								);
 							$pd_posts = get_posts($args);
 
-							wp_cache_set( $cache_name, $pd_posts, "wpjm_cache" );
-						}
+						// 	wp_cache_set( $cache_name, $pd_posts, "wpjm_cache" );
+						// }
 
 						// Count the posts
 						$pd_total_posts = count($pd_posts);
@@ -740,8 +740,10 @@ class WpJumpMenu
 								$wpjm_string .= '>';
 
 								// If the setting to show ID's is true, show the ID in ()
-								if ( ($this->options['showID'] == true) && ($this->options['useChosen'] == 'true') && ($this->options['chosenTextAlign'] == 'right') ) {
-									$wpjm_string .= '<span class="post-id">('.$pd_post->ID.')</span> ';
+								if (isset($this->options['showID'])) {
+									if ( ($this->options['showID'] == true) && ($this->options['useChosen'] == 'true') && ($this->options['chosenTextAlign'] == 'right') ) {
+										$wpjm_string .= '<span class="post-id">('.$pd_post->ID.')</span> ';
+									}
 								}
 
 								// Print the post title
@@ -757,8 +759,10 @@ class WpJumpMenu
 									$wpjm_string .= ' - '.$pd_post->post_date;
 
 								// If the setting to show ID's is true, show the ID in ()
-								if ( ($this->options['showID'] == true) && ( (!$this->options['useChosen'] || $this->options['chosenTextAlign'] == 'left') ) ) {
-									$wpjm_string .= ' <span class="post-id">('.$pd_post->ID.')</span>';
+								if (isset($this->options['showID'])) {
+									if ( ($this->options['showID'] == true) && ( (!$this->options['useChosen'] || $this->options['chosenTextAlign'] == 'left') ) ) {
+										$wpjm_string .= ' <span class="post-id">('.$pd_post->ID.')</span>';
+									}
 								}
 
 

@@ -4,10 +4,10 @@ class WPJM_Walker_PageDropDown extends Walker_PageDropDown {
 
 	var $tree_type = "page";
 
-	function start_el(&$output, $page, $depth, $args) {
+	function start_el(&$output, $page, $depth = 0, $args = array(), $id = 0) {
 
 		global $current_user, $post;
-		
+
 		// Get options to determine whether or not to show ID
 		$options = get_option( 'wpjm_options' );
 
@@ -40,9 +40,9 @@ class WPJM_Walker_PageDropDown extends Walker_PageDropDown {
 		if ($options['useChosen'] == 'true' && ($options['chosenTextAlign'] == 'right' || !isset($options['chosenTextAlign']) ) ) {
 			$output .= ( $options['showID'] == true ? "<span class='post-id'>(" .$page->ID . ")</span> " : '' ) . esc_html( $title ) . $pad;
 		} else {
-			$output .= $pad . ' ' . esc_html( $title ) . ( $options['showID'] == true ? " <span class='post-id'>(" .$page->ID . ")</span> " : '' );
+			$output .= $pad . ' ' . esc_html( $title ) . ( isset($options['showID']) && $options['showID'] == true ? " <span class='post-id'>(" .$page->ID . ")</span> " : '' );
 		}
-		
+
 		$output .= "</option>\n";
 	}
 }
