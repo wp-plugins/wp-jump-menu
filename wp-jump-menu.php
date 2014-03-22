@@ -2,13 +2,13 @@
 /**
  * @package WP_Jump_Menu
  * @author Jim Krill
- * @version 3.1.7
+ * @version 3.2
  */
 /*
 Plugin Name: WP Jump Menu
 Plugin URI: http://wpjumpmenu.com
 Description: Creates a drop-down menu (jump menu) in a bar across the top or bottom of the screen that makes it easy to jump right to a page, post, or custom post type in the admin area to edit.
-Version: 3.1.7
+Version: 3.2
 Author: Jim Krill
 Author URI: http://krillwebdesign.com
 License: GPL
@@ -44,7 +44,7 @@ class WpJumpMenu
 	/*
 	*  Constructor
 	*
-	*  @description: 
+	*  @description:
 	*  @since 3.0
 	*  @created: 12/12/12
 	*/
@@ -55,7 +55,7 @@ class WpJumpMenu
 		// vars
 		$this->path = plugin_dir_path(__FILE__);
 		$this->dir = plugins_url('',__FILE__);
-		$this->version = '3.1.6';
+		$this->version = '3.2';
 		$this->upgrade_version = '';
 		$this->cache = array();
 		// Maybe I should set default options, then array_merge with what is in get_option('wpjm_options') in case it's not there?
@@ -64,7 +64,7 @@ class WpJumpMenu
 
 		// This versions tooltip html
 		$this->tooltip_html = '<p><strong>WP Jump Menu Make-Over!</strong></p><ul style="padding: 0 15px; margin: 1em; list-style: disc;"><li>Speed improvements</li><li>Added <a href="http://harvesthq.github.com/chosen/" target="_blank">Chosen</a> JavaScript plugin. Select it on the options page to use a much improved UI on the jump menu.</li><li>Added an option to change the title of the Jump Menu (the title appears just to the left of the menu)</li></ul><p><a href="'.get_admin_url('','options-general.php?page=wpjm-options').'">WP Jump Menu Options</a></p>';
-			
+
 		// set text domain
 		load_plugin_textdomain('wp-jump-menu', false, basename(dirname(__FILE__)).'/lang' );
 
@@ -82,7 +82,7 @@ class WpJumpMenu
 
 	/*
 	*  Init
-	*  @description: 
+	*  @description:
 	*  @since 3.0
 	*  @created: 12/12/12
 	*/
@@ -113,7 +113,7 @@ class WpJumpMenu
 		add_action('save_post', array($this, 'wpjm_remove_transient'));
 		add_action('update_option_wpjm_options', array($this, 'wpjm_remove_transient'));
 
-		if ( version_compare($wp_version, '3.2.1', '>')) 
+		if ( version_compare($wp_version, '3.2.1', '>'))
 		{
 			add_action('admin_enqueue_scripts', array($this,'wpjm_enqueue_tooltips'));
 		}
@@ -171,7 +171,7 @@ class WpJumpMenu
 
 			// initiate install/update
 			$this->wpjm_install();
-			
+
 			// Tooltip temporarily disabled
 			/*add_action( 'admin_print_footer_scripts', 'wpjm_tooltip' );
 
@@ -184,7 +184,7 @@ class WpJumpMenu
 					$dismissed_tooltips = implode( ',', $dismissed_tooltips );
 				update_user_meta( get_current_user_id(), 'dismissed_wp_pointers', $dismissed_tooltips );
 			}*/
-			
+
 		}
 
 
@@ -241,10 +241,10 @@ class WpJumpMenu
 	*  @created: 12/12/12
 	*/
 
-	function wpjm_options_page() 
+	function wpjm_options_page()
 	{
 
-		// Update success message 
+		// Update success message
 		if ( isset( $_POST['save_post_page_values'] ) ) {
 			$message = "Options updated successfully!";
 		}
@@ -260,7 +260,7 @@ class WpJumpMenu
 				<div id="icon-options-general" class="icon32">
 					<br/>
 				</div>
-				<h2>WP Jump Menu <?php echo $this->version; ?></h2>	
+				<h2>WP Jump Menu <?php echo $this->version; ?></h2>
 
 				<form action="options.php" method="post" id="wpjm-options-form">
 				<?php settings_fields('wpjm_options'); ?>
@@ -301,7 +301,7 @@ class WpJumpMenu
 			//add_action( 'admin_print_footer_scripts', array($this, 'wpjm_tooltip') );
 		}
 	}
-	
+
 	function wpjm_tooltip()
 	{
 
@@ -336,7 +336,7 @@ class WpJumpMenu
 			}).pointer('open');
 		});
 		</script>
-		<?php	
+		<?php
 	}
 
 	/*
@@ -363,12 +363,12 @@ class WpJumpMenu
 	/*
 	*  wpjm_css
 	*
-	*  @description: 
+	*  @description:
 	*  @since: 3.0
 	*  @created: 12/12/12
 	*/
 
-	function wpjm_css() 
+	function wpjm_css()
 	{
 
 		echo "<style type='text/css'>";
@@ -382,7 +382,7 @@ class WpJumpMenu
 			#wpadminbar span.wpjm-logo-title { padding-right: 10px; }
 			@media only screen and (max-width: 1000px) {
 				#wpadminbar #wp-admin-bar-wp-jump-menu div.ab-item { display: none; }
-				
+
 			}
 			@media only screen and (max-width: 850px) {
 				#wpadminbar #wp-admin-bar-wp-jump-menu div.chzn-container { width: 100% !important; }
@@ -397,7 +397,7 @@ class WpJumpMenu
 		#jump_menu p.jm_credits { font-style: italic; padding-top: 10px; line-height: 13px; }
 		#jump_menu p.jm_credits img.wpjm_logo { ".($this->options['logoWidth']?'width: '.$this->options['logoWidth'].'px;':'width: 35px;')." height: auto; max-height: 30px; vertical-align: middle; margin-right: 10px; }
 		#jump_menu_clear { height: 30px; }
-		@media only screen and (max-width: 768px) { 
+		@media only screen and (max-width: 768px) {
 			#jump_menu .jm_credits { display: none; }
 		}
 		@media only screen and (max-width: 480px) {
@@ -406,7 +406,7 @@ class WpJumpMenu
 		body { ".($this->options['position']=='top'?'padding-top: 42px !important;':'padding-bottom: 42px !important;')." }
 		".($this->options['position']=='bottom'?'#footer { bottom: 42px !important; }':'');
 		}
-		
+
 		echo "
 		#wp-pdd { max-width: 400px;  }
 		#wpadminbar #wp-admin-bar-top-secondary #wp-admin-bar-wp-jump-menu .chzn-container * {
@@ -418,8 +418,8 @@ class WpJumpMenu
 			color: #aaa !important;
 		}
 		";
-		
-		
+
+
 		echo "</style>
 		<!--[if IE 6]>
 		<style type='text/css'>
@@ -435,7 +435,7 @@ class WpJumpMenu
 	/*
 	*  wpjm_js
 	*
-	*  @description: 
+	*  @description:
 	*  @since: 3.0
 	*  @created: 12/12/12
 	*/
@@ -460,11 +460,11 @@ class WpJumpMenu
 	*  @created: 12/12/12
 	*/
 
-	function admin_bar_menu() 
+	function admin_bar_menu()
 	{
 		global $wp_admin_bar;
 
-		if (is_admin_bar_showing()) 
+		if (is_admin_bar_showing())
 		{
 
 			//$html = '<span class="wpjm-logo-title">'.$this->options['title'].'</span>';
@@ -488,7 +488,7 @@ class WpJumpMenu
 	      'parent'    => 'top-secondary',
 	      'title' => $html
 	    ) );*/
-			
+
 			$wp_admin_bar->add_menu( array(
 				'id' 		 	=> 'wp-jump-menu',
 				'parent' 	=> 'top-secondary',
@@ -505,7 +505,7 @@ class WpJumpMenu
 	/*
 	*  wpjm_footer
 	*
-	*  @description: 
+	*  @description:
 	*  @since: 3.0
 	*  @created: 12/12/12
 	*/
@@ -514,7 +514,7 @@ class WpJumpMenu
 	{
 		echo '<div id="jump_menu">';
 			echo '<p class="wpjm_need_help">';
-			
+
 				echo '<span class="wpjm-logo-title">'.$this->options['title'].'</span>';
 				// Jump to page edit
 				echo $this->wpjm_page_dropdown();
@@ -540,7 +540,7 @@ class WpJumpMenu
 						window.location = this.value;
 					})<?php if ($this->options['useChosen']=='true') { ?>.chosen({position:"<?php echo $this->options['position']; ?>"})<?php } ?>;
 
-					
+
 
 			});
 			</script>
@@ -558,7 +558,7 @@ class WpJumpMenu
 
 	function wpjm_page_dropdown()
 	{
-	
+
 		// Is this needed?
 		//require_once( ABSPATH . 'wp-load.php' );
 		require_once( 'assets/WpjmWalkerClass.php' );
@@ -597,7 +597,7 @@ class WpJumpMenu
 
 			// Loop through custom posts types, and echo them out
 			if ($custom_post_types) {
-			
+
 				//$wpjm_cpts = explode(',',$custom_post_types);
 				$wpjm_cpts = $custom_post_types; // should be array
 				if ($wpjm_cpts) {
@@ -611,7 +611,7 @@ class WpJumpMenu
 					//		$value['numberposts']
 					// --------------------------------------------------------------------------------------
 					foreach($wpjm_cpts as $key => $value ) {
-						
+
 						// Set variables
 						$wpjm_cpt = $key;						// name of the post type
 						$post_type_object = get_post_type_object( $wpjm_cpt );
@@ -660,7 +660,7 @@ class WpJumpMenu
 								$postmimetype = '';
 							}
 						}
-						
+
 						// Get Posts
 						// Attempting to use wp_cache
 						$cache_name = "wpjm_{$wpjm_cpt}_post";
@@ -669,7 +669,7 @@ class WpJumpMenu
 							$args = array(
 								'orderby' => $sortby,
 								'order' => $sort,
-								'numberposts' => $numberposts,
+								'posts_per_page' => $numberposts,
 								'post_type' => $wpjm_cpt,
 								'post_mime_type' => $postmimetype,
 								'post_status' => (is_array($post_status)?(in_array('any',$post_status)?'any':$post_status):$post_status)
@@ -681,19 +681,19 @@ class WpJumpMenu
 
 						// Count the posts
 						$pd_total_posts = count($pd_posts);
-						
+
 						// Get the labels for this post type
 						$cpt_obj = get_post_type_object($wpjm_cpt);
 						$cpt_labels = $cpt_obj->labels;
-						
+
 						// Set the iterator to zero
 						$pd_i = 0;
 
-						
+
 
 						// If this is not hierarchical, get list of posts and display the <option>s
 						if (!is_post_type_hierarchical($wpjm_cpt)) {
-							
+
 							$wpjm_string .= '<optgroup label="'.$cpt_labels->name.'">';
 
 							if ($cpt_labels->name != 'Media') {
@@ -716,7 +716,7 @@ class WpJumpMenu
 
 							// Loop through posts
 							foreach ($pd_posts as $pd_post) {
-								
+
 								// Increase the interator by 1
 								$pd_i++;
 
@@ -746,7 +746,7 @@ class WpJumpMenu
 
 								// Print the post title
 								$wpjm_string .= $this->wpjm_get_page_title($pd_post->post_title);
-								
+
 								if ($pd_post->post_status != 'publish' && $pd_post->post_status != 'inherit')
 									$wpjm_string .= ' - '.$pd_post->post_status;
 
@@ -761,8 +761,8 @@ class WpJumpMenu
 									$wpjm_string .= ' <span class="post-id">('.$pd_post->ID.')</span>';
 								}
 
-								
-								
+
+
 								// close the <option> tag
 								$wpjm_string .= '</option>';
 							} // foreach ($pd_posts as $pd_post)
@@ -770,7 +770,7 @@ class WpJumpMenu
 							$wpjm_string .= '</optgroup>';
 
 						} else {
-												
+
 							// If this a hierarchical post type, use the custom Walker class to create the page tree
 							$orderedListWalker = new WPJM_Walker_PageDropDown();
 
@@ -781,7 +781,7 @@ class WpJumpMenu
 								$wpjm_string .= $cpt_obj->name;
 								$wpjm_string .= '">+ Add New '.$cpt_labels->singular_name.' +</option>';
 							}
-							
+
 							// Go through the non-published pages
 							foreach ($post_status as $status) {
 
@@ -789,12 +789,12 @@ class WpJumpMenu
 									continue;
 
 								// Get pages
-								$pd_posts_drafts = get_posts('orderby='.$sortby.'&order='.$sort.'&numberposts='.$numberposts.'&post_type='.$wpjm_cpt.'&post_status='.$status);
-								
-								
+								$pd_posts_drafts = get_posts('orderby='.$sortby.'&order='.$sort.'&posts_per_page='.$numberposts.'&post_type='.$wpjm_cpt.'&post_status='.$status);
+
+
 								// Loop through posts
 								foreach ($pd_posts_drafts as $pd_post) {
-									
+
 									// Increase the interator by 1
 									$pd_i++;
 
@@ -823,7 +823,7 @@ class WpJumpMenu
 								}
 									// Print the post title
 									$wpjm_string .= $this->wpjm_get_page_title($pd_post->post_title);
-									
+
 									if ($pd_post->post_status != 'publish')
 										$wpjm_string .= ' - '.$status;
 
@@ -835,37 +835,37 @@ class WpJumpMenu
 									$wpjm_string .= ' <span class="post-id">('.$pd_post->ID.')</span>';
 								}
 
-									
-									
+
+
 									// close the <option> tag
 									$wpjm_string .= '</option>';
 								} // foreach ($pd_posts as $pd_post)
 
-								
-							} 
+
+							}
 							// Done with non-published pages
 							if (is_array($post_status)) {
 
 								if (in_array('publish',$post_status)) {
-								
-									$wpjm_string .= wp_list_pages(array('walker' => $orderedListWalker, 'post_type' => $wpjm_cpt, 'echo' => 0, 'depth' => 0, 'sort_column' => $sortby, 'sort_order' => $sort));
+
+									$wpjm_string .= wp_list_pages(array('walker' => $orderedListWalker, 'post_type' => $wpjm_cpt, 'echo' => 0, 'depth' => $numberposts, 'sort_column' => $sortby, 'sort_order' => $sort));
 
 								}
 
 							} else if ($post_status == 'publish') {
-								$wpjm_string .= wp_list_pages(array('walker' => $orderedListWalker, 'post_type' => $wpjm_cpt, 'echo' => 0, 'depth' => 0, 'sort_column' => $sortby, 'sort_order' => $sort));
+								$wpjm_string .= wp_list_pages(array('walker' => $orderedListWalker, 'post_type' => $wpjm_cpt, 'echo' => 0, 'depth' => $numberposts, 'sort_column' => $sortby, 'sort_order' => $sort));
 							}
-							
+
 
 							$wpjm_string .= '</optgroup>';
 						} // end if (is_hierarchical)
-					
+
 					} // end foreach($wpjm_cpts)
 
 				} // end if ($wpjm_cpts)
-			
+
 			} // end if ($custom_post_types)
-			
+
 			// Print the options page link
 			if (current_user_can('activate_plugins')) {
 				$wpjm_string .= '<optgroup label="// Jump Menu Options //">';
@@ -888,21 +888,21 @@ class WpJumpMenu
 
 		return $wpjm_string;
 
-	} // end wpjm_page_dropdown() 
+	} // end wpjm_page_dropdown()
 
 	function wpjm_remove_transient() {
 		delete_transient( $this->transient_name );
 	}
-	
 
 
-	function wpjm_get_page_title( $pd_title ) 
+
+	function wpjm_get_page_title( $pd_title )
 	{
-		if ( strlen($pd_title) > 50 ) 
+		if ( strlen($pd_title) > 50 )
 		{
 			return substr( $pd_title, 0, 50)."...";
-		} 
-		else 
+		}
+		else
 		{
 			return $pd_title;
 		}
@@ -917,11 +917,11 @@ class WpJumpMenu
 	*  @created: 12/12/12
 	*/
 
-	function wpjm_install() 
+	function wpjm_install()
 	{
 
 		// Populate with default values
-		if (get_option('wpjm_position')) 
+		if (get_option('wpjm_position'))
 		{
 
 			$newPostTypes = array(
@@ -963,11 +963,11 @@ class WpJumpMenu
 					);
 				}
 			}
-			
+
 			$arr = array(
 				'position' => get_option('wpjm_position'),
 				'useChosen' => 'true',
-				'chosenTextAlign' => 'right',
+				'chosenTextAlign' => 'left',
 				'showID' => 'false',
 				'showaddnew' => 'true',
 				'backgroundColor' => get_option('wpjm_backgroundColor'),
@@ -977,7 +977,7 @@ class WpJumpMenu
 				'logoIcon' => get_option('wpjm_logoIcon'),
 				'linkColor' => get_option('wpjm_linkColor'),
 				'message' => get_option('wpjm_message'),
-				'title' => "WP Jump Menu &raquo;" 
+				'title' => "WP Jump Menu &raquo;"
 			);
 
 			update_option('wpjm_options',$arr);
@@ -996,7 +996,7 @@ class WpJumpMenu
 			delete_option('wpjm_logoWidth');
 			delete_option('wpjm_linkColor');
 			delete_option('wpjm_message');
-		
+
 		} else {
 
 			// If this is a new install, set the default options
@@ -1004,7 +1004,7 @@ class WpJumpMenu
 				$arr = array(
 					'position' => 'wpAdminBar',
 					'useChosen' => 'true',
-					'chosenTextAlign' => 'right',
+					'chosenTextAlign' => 'left',
 					'showID' => 'false',
 					'showaddnew' => 'true',
 					'backgroundColor' => 'e0e0e0',
@@ -1015,7 +1015,7 @@ class WpJumpMenu
 							'show' => '1',
 							'sortby' => 'menu_order',
 							'sort' => 'ASC',
-							'numberposts' => '-1',
+							'numberposts' => '0',
 							'poststatus' => array('publish','draft')
 						),
 						'post' => array(

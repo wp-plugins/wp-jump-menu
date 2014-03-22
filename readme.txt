@@ -6,16 +6,16 @@ Author URI: http://krillwebdesign.com
 Tags: posts, pages, admin, jump, menu, quick, links, custom post types
 Requires at least: 3.2.1
 Tested up to: 3.6.1
-Stable tag: 3.1.7
+Stable tag: 3.2
 
-Creates a drop-down menu in the admin area which makes it easy to jump to a page, post, custom post type or media file for editing. 
+Creates a drop-down menu in the admin area which makes it easy to jump to a page, post, custom post type or media file for editing.
 
 == Description ==
 
 <h3><a href="http://www.wpjumpmenu.com">WATCH A DEMONSTRATION</a></h3>
 It will take 30 seconds to realize you can not live without this plugin.
 
-<strong>Creates a drop-down menu in the admin area which makes it easy to jump to a page, post, custom post type or media file for editing. 
+<strong>Creates a drop-down menu in the admin area which makes it easy to jump to a page, post, custom post type or media file for editing.
 
 <ul><li>One click and you're editing!</li><li>Shift+Click and you're viewing the page on the front end!</li></ul></strong>
 
@@ -35,7 +35,7 @@ By adding this ability, you can save TONS OF TIME when editing a bunch of posts 
 
 The plugin comes with an options page where you can edit the position of the jump bar (top or bottom of the screen, or in the WordPress admin bar), whether or not to use Chosen (which features searching through the drop down!), the background color, font color, link color, border color and the icon and message that optionally get displayed on the left hand side (only when not in the WordPress admin bar), status colors, and many more options.
 
-<h2>Great for theme developers to help clients navigate in the admin area of WordPress.</h2>  
+<h2>Great for theme developers to help clients navigate in the admin area of WordPress.</h2>
 We use this plugin on all of our projects and decided it was time to release it to the world!
 
 Enjoy!
@@ -57,7 +57,7 @@ Enjoy!
 
 If the jump menu isn't working, please submit a forum post and I will respond asap. <a href="http://wordpress.org/tags/wp-jump-menu?forum_id=10#postform">Click here to start a forum thread</a>.
 
-Make sure you have the latest version of WordPress and the latest version of WP-Jump-Menu.  
+Make sure you have the latest version of WordPress and the latest version of WP-Jump-Menu.
 
 = How do I put my logo in? =
 
@@ -73,6 +73,12 @@ You need to upload your logo icon, through WordPress maybe, and get the full URL
 
 == Changelog ==
 
+= 3.2 =
+* Cleaned up and updated for WordPress 3.8+
+* Improved Settings page
+* Changed pages (or post types that act like pages) number of pages to be "depth" instead.
+* Updated default install values to use chosen and left aligned.
+
 = 3.1.7 =
 * Subtle styling changes to non-chosen select menu.
 * Added responsive hiding for non-wpadmin bar jump menu bar text.
@@ -86,7 +92,7 @@ You need to upload your logo icon, through WordPress maybe, and get the full URL
 = 3.1.4 =
 * Now using transients to increase performance.  PLEASE LET ME KNOW IF THE MENU DOES NOT SHOW UPDATED CONTENT AFTER CERTAIN EVENTS.  It should reset transients after posts/pages are saved/updated - and when wpjm settings are changed.
 
-= 3.1.3 = 
+= 3.1.3 =
 * Removing the tooltips completely (was causing errors for some people)
 
 = 3.1.2 =
@@ -136,7 +142,7 @@ You need to upload your logo icon, through WordPress maybe, and get the full URL
 = 2.4.3 =
 * Fixed a javascript bug if a theme was enqueueing a javascript file with the target "jquery-functions".
 
-= 2.4.2 = 
+= 2.4.2 =
 * Fixed an error if wp-config.php is moved out of it's default location
 
 = 2.4.1 =
@@ -190,9 +196,9 @@ You need to upload your logo icon, through WordPress maybe, and get the full URL
 * Bug fixed: Order By was not working because the orderby value names had not been updated to exclude "post-".  Thanks Tim for the bug report.
 
 = 2.2.2 =
-* Minor fix to jqueryfunctions.js 
+* Minor fix to jqueryfunctions.js
 
-= 2.2.1 = 
+= 2.2.1 =
 * Forgot to add default value for "number of posts" to show when updating or installing for the first time.  Post types had to be saved the first time to get the list to show up correctly.
 
 = 2.2 =
@@ -224,7 +230,7 @@ You need to upload your logo icon, through WordPress maybe, and get the full URL
 * Got rid of Logo Width (automatically determines the width of the logo based on the logo URL)
 * Changed the custom post type selector from manual (you had to type in a comma separated list) to showing checkboxes for each custom post type that exists, allowing you to simply select each one you want to show in the drop-down.
 
-= 1.4 = 
+= 1.4 =
 * Cleaned up a little bit, and updated the readme.txt
 
 = 1.3 =
@@ -253,5 +259,5 @@ You need to upload your logo icon, through WordPress maybe, and get the full URL
 = 1.1 =
 Stable working version.
 
-= 1.0 = 
+= 1.0 =
 * Initial Release

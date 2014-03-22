@@ -9,14 +9,14 @@
 $wpjm_options = get_option('wpjm_options');
 
 function wpjm_admin_init() {
-	
+
 	// Register our setting
 	register_setting( 'wpjm_options', 'wpjm_options', 'wpjm_options_validate' );
 
 	// Add the main section
 	add_settings_section( 'wpjm_post_types', 'Post Types', 'wpjm_post_type_section_text', 'wpjm' );
 	add_settings_section( 'wpjm_main', 'Styling Options', 'wpjm_section_text', 'wpjm-2' );
-	
+
 	// Post Types Fields
 	add_settings_field( 'wpjm_postTypes',
 			'Post Types to Include',
@@ -25,10 +25,10 @@ function wpjm_admin_init() {
 			'wpjm_post_types' );
 
 	// Add the other fields
-	add_settings_field( 'wpjm_position', 
-			'Position of Jump Menu Bar', 
-			'wpjm_position_radio', 
-			'wpjm-2', 
+	add_settings_field( 'wpjm_position',
+			'Position of Jump Menu Bar',
+			'wpjm_position_radio',
+			'wpjm-2',
 			'wpjm_main' );
 
 	add_settings_field( 'wpjm_frontend',
@@ -91,7 +91,7 @@ function wpjm_admin_init() {
 			'wpjm-2',
 			'wpjm_main' );
 
-	
+
 
 } // wpjm_admin_init()
 
@@ -115,14 +115,40 @@ function wpjm_position_radio() {
 global $wpjm_options;
 ?>
 <div>
-	<input type="radio" value='top' name="wpjm_options[position]" id="wpjm_position" <?php checked($wpjm_options['position'], 'top'); ?> />
+	<input type="radio" value='top' name="wpjm_options[position]" id="wpjm_position" class="wpjm_position" <?php checked($wpjm_options['position'], 'top'); ?> />
 		 Top of screen<br/>
-	<input type="radio" value="bottom" name="wpjm_options[position]" id="wpjm_position" <?php checked($wpjm_options['position'], 'bottom'); ?> />
+	<input type="radio" value="bottom" name="wpjm_options[position]" id="wpjm_position" class="wpjm_position" <?php checked($wpjm_options['position'], 'bottom'); ?> />
 		 Bottom of screen<br/>
-	<input type="radio" value="wpAdminBar" name="wpjm_options[position]" id="wpjm_position" <?php checked($wpjm_options['position'], 'wpAdminBar'); ?> />
+	<input type="radio" value="wpAdminBar" name="wpjm_options[position]" id="wpjm_position" class="wpjm_position" <?php checked($wpjm_options['position'], 'wpAdminBar'); ?> />
 		WP Admin Bar
-	
+
 </div>
+<script>
+jQuery(function($){
+	$('.wpjm_position').on('change',function(e){
+		var value = this.value;
+		console.log('wpjm_position change',value);
+		if (value === "wpAdminBar") {
+			// Hide Top/Bottom only fields
+			$('#wpjm_frontend').closest('tr').hide();
+			$('#wpjm_backgroundColor').closest('tr').hide();
+			$('#wpjm_logoIcon').closest('tr').hide();
+			$('#wpjm_message').closest('tr').hide();
+			// Show wpAdminBar only fields
+			$('#wpjm_statusColors_publish').closest('tr').show();
+		} else {
+			// Show Top/Bottom only fields
+			$('#wpjm_frontend').closest('tr').show();
+			$('#wpjm_backgroundColor').closest('tr').show();
+			$('#wpjm_logoIcon').closest('tr').show();
+			$('#wpjm_message').closest('tr').show();
+			// Hide wpAdminBar only fields
+			$('#wpjm_statusColors_publish').closest('tr').hide();
+		}
+	});
+	$('.wpjm_position:checked').trigger('change');
+});
+</script>
 <?php
 }
 
@@ -131,7 +157,7 @@ function wpjm_frontend_checkbox() {
 	global $wpjm_options;
 ?>
 <div>
-	<input type="checkbox" value="true" name="wpjm_options[frontend]" id="wpjm_frontend" <?php checked($wpjm_options['frontend'], 'true'); ?> />&nbsp;&nbsp;<span class="description">Show the jump menu on the front-end of the site (only applies when using position = bottom or top).</span>     
+	<input type="checkbox" value="true" name="wpjm_options[frontend]" id="wpjm_frontend" class="wpjm_frontend" <?php checked($wpjm_options['frontend'], 'true'); ?> />&nbsp;&nbsp;<span class="description">Show the jump menu on the front-end of the site.</span>
 </div>
 <?php
 }
@@ -142,8 +168,24 @@ function wpjm_useChosen_checkbox() {
 	global $wpjm_options;
 ?>
 <div>
-	<input type="checkbox" value="true" name="wpjm_options[useChosen]" id="wpjm_useChosen" <?php checked($wpjm_options['useChosen'], 'true'); ?> />&nbsp;&nbsp;<span class="description">Use <a href="http://harvesthq.github.com/chosen/" target="_blank">Chosen</a> plugin to display jump menu.  Adds search functionality, status colors, a great UI, and more!</span>
+	<input type="checkbox" value="true" name="wpjm_options[useChosen]" id="wpjm_useChosen" <?php checked($wpjm_options['useChosen'], 'true'); ?> />&nbsp;&nbsp;<span class="description">Use <a href="http://harvesthq.github.com/chosen/" target="_blank">Chosen</a> plugin to display jump menu.  Adds search functionality and status colors.</span>
 </div>
+<script>
+jQuery(function($){
+	$('#wpjm_useChosen').on('change',function(e){
+		console.log('wpjm_useChosen change');
+		var checked = $(this).attr('checked');
+		if (checked) {
+			$('#wpjm_chosenTextAlign').closest('tr').show();
+			$('#wpjm_statusColors_publish').closest('tr').show();
+		} else {
+			$('#wpjm_chosenTextAlign').closest('tr').hide();
+			$('#wpjm_statusColors_publish').closest('tr').hide();
+		}
+	});
+	$('#wpjm_useChosen').trigger('change');
+});
+</script>
 <?php
 }
 
@@ -347,16 +389,13 @@ global $wpjm_options;
 function wpjm_postTypes_checkbox() {
 global $wpjm_options;
 ?>
-	<script>
-	// Hide the left TH column next to the table of post types
-	jQuery(function($){
-		$('#wpjm-post-types-table').parent().parent().prev().hide();
-	});
-	</script>
 
+<style>
+.widefat td { vertical-align: top; }
+</style>
 	<div>
-		
-		<table id="wpjm-post-types-table" class="wp-list-table widefat ">
+
+		<table id="wpjm-post-types-table" class="wp-list-table widefat fixed pages" cellspacing="0">
 			<thead>
 			<tr>
 				<th scope="col" id="cb" class="manage-column column-cb check-column"><input type="checkbox" /></th>
@@ -369,7 +408,7 @@ global $wpjm_options;
 			</thead>
 			<tfoot>
 			<tr>
-				<th scope="col" id="cb" class="manage-column column-cb check-column"><input type="checkbox" /></th>
+				<th scope="col" class="manage-column column-cb check-column"><input type="checkbox" /></th>
 				<th scope="col" class="wpjm-post-types-title-col">Post Types</th>
 				<th scope="col" class="wpjm-numberposts-col">Show</th>
 				<th scope="col" class="wpjm-order-by-col">Order By</th>
@@ -378,10 +417,10 @@ global $wpjm_options;
 			</tr>
 			</tfoot>
 			<tbody>
-		<?php 
-			
+		<?php
+
 			// Get the array of registered post types (array of objects)
-			$post_types = get_post_types('','objects'); 
+			$post_types = get_post_types('','objects');
 
 			// Get the array of selected post types
 			$selected_post_types_arr = $wpjm_options['postTypes'];
@@ -408,15 +447,17 @@ global $wpjm_options;
 					$custom_array_order = $post_types;
 				}
 
-				
 
-				 
+
+
 		?>
-		
-			<?php foreach ($custom_array_order as $pt) { 
+
+			<?php
+			$alt = "";
+			foreach ($custom_array_order as $pt) {
 				if ( ($pt->name == 'nav_menu_item') || ($pt->name == 'revision') ) continue;
 				?>
-			<tr>
+			<tr class="<?php if ($alt==""){ $alt = "alternate"; } else { echo $alt; $alt = ""; } ?>" valign="top">
 				<th class="check-column" scope="row">
 					<input type="checkbox" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][show]" id="wpjm_postType_<?php echo $pt->name; ?>" value="1" <?php checked($wpjm_options['postTypes'][$pt->name]['show'], 1 ); ?> />
 				</td>
@@ -426,7 +467,11 @@ global $wpjm_options;
 				<td>
 					<div>
 						<input type="text" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][numberposts]" id="wpjm_number<?php echo $pt->name; ?>" value="<?php echo $wpjm_options['postTypes'][$pt->name]['numberposts']; ?>" size="3" />
-						<br/><span class="description">How many posts/pages to show.<br/>-1 to display all.</span>
+						<?php if (!is_post_type_hierarchical($pt->name)) { ?>
+						<br/><span class="description">How many posts to show.<br/>-1 to display all.</span>
+						<?php } else { ?>
+						<br/><span class="description">Depth Level<br/>0 to show all.</span>
+						<?php } ?>
 					</div>
 				</td>
 				<td>
@@ -439,7 +484,7 @@ global $wpjm_options;
 						<option value="comment_count" <?php selected( $wpjm_options['postTypes'][$pt->name]['sortby'], 'comment_count'); ?>>Comment Count</option>
 						<option value="parent" <?php selected( $wpjm_options['postTypes'][$pt->name]['sortby'], 'parent'); ?>>Parent</option>
 						<option value="title" <?php selected( $wpjm_options['postTypes'][$pt->name]['sortby'], 'title'); ?>>Title</option>
-						<?php 
+						<?php
 						if ($pt->name == 'attachment') { ?>
 						<option value="mime_type" <?php selected( $wpjm_options['postTypes'][$pt->name]['sortby'], 'mime_type'); ?>>Mime Type</option>
 						<?php
@@ -451,17 +496,17 @@ global $wpjm_options;
 					<div class="mime-types">
 						<br/>
 						<strong>Show Media Types:</strong><br/>
-						<input type="checkbox" value="all" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][postmimetypes][]" id="wpjm_postmimetypes<?php echo $pt->name; ?>" <?php if (is_array($wpjm_options['postTypes'][$pt->name]['postmimetypes'])) echo (in_array('all',$wpjm_options['postTypes'][$pt->name]['postmimetypes'])?' checked="checked"':''); ?> /> All 
+						<input type="checkbox" value="all" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][postmimetypes][]" id="wpjm_postmimetypes<?php echo $pt->name; ?>" <?php if (is_array($wpjm_options['postTypes'][$pt->name]['postmimetypes'])) echo (in_array('all',$wpjm_options['postTypes'][$pt->name]['postmimetypes'])?' checked="checked"':''); ?> /> All
 						<br/>
-						<input type="checkbox" value="images" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][postmimetypes][]" id="wpjm_postmimetypes<?php echo $pt->name; ?>" <?php if (is_array($wpjm_options['postTypes'][$pt->name]['postmimetypes'])) echo (in_array('images',$wpjm_options['postTypes'][$pt->name]['postmimetypes'])?' checked="checked"':''); ?> /> Images 
+						<input type="checkbox" value="images" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][postmimetypes][]" id="wpjm_postmimetypes<?php echo $pt->name; ?>" <?php if (is_array($wpjm_options['postTypes'][$pt->name]['postmimetypes'])) echo (in_array('images',$wpjm_options['postTypes'][$pt->name]['postmimetypes'])?' checked="checked"':''); ?> /> Images
 						<br/>
-						<input type="checkbox" value="videos" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][postmimetypes][]" id="wpjm_postmimetypes<?php echo $pt->name; ?>" <?php if (is_array($wpjm_options['postTypes'][$pt->name]['postmimetypes'])) echo (in_array('videos',$wpjm_options['postTypes'][$pt->name]['postmimetypes'])?' checked="checked"':''); ?> /> Videos 
+						<input type="checkbox" value="videos" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][postmimetypes][]" id="wpjm_postmimetypes<?php echo $pt->name; ?>" <?php if (is_array($wpjm_options['postTypes'][$pt->name]['postmimetypes'])) echo (in_array('videos',$wpjm_options['postTypes'][$pt->name]['postmimetypes'])?' checked="checked"':''); ?> /> Videos
 						<br/>
-						<input type="checkbox" value="audio" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][postmimetypes][]" id="wpjm_postmimetypes<?php echo $pt->name; ?>" <?php if (is_array($wpjm_options['postTypes'][$pt->name]['postmimetypes'])) echo (in_array('audio',$wpjm_options['postTypes'][$pt->name]['postmimetypes'])?' checked="checked"':''); ?> /> Audio 
+						<input type="checkbox" value="audio" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][postmimetypes][]" id="wpjm_postmimetypes<?php echo $pt->name; ?>" <?php if (is_array($wpjm_options['postTypes'][$pt->name]['postmimetypes'])) echo (in_array('audio',$wpjm_options['postTypes'][$pt->name]['postmimetypes'])?' checked="checked"':''); ?> /> Audio
 						<br/>
-						<input type="checkbox" value="documents" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][postmimetypes][]" id="wpjm_postmimetypes<?php echo $pt->name; ?>" <?php if (is_array($wpjm_options['postTypes'][$pt->name]['postmimetypes'])) echo (in_array('documents',$wpjm_options['postTypes'][$pt->name]['postmimetypes'])?' checked="checked"':''); ?> /> Documents 
+						<input type="checkbox" value="documents" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][postmimetypes][]" id="wpjm_postmimetypes<?php echo $pt->name; ?>" <?php if (is_array($wpjm_options['postTypes'][$pt->name]['postmimetypes'])) echo (in_array('documents',$wpjm_options['postTypes'][$pt->name]['postmimetypes'])?' checked="checked"':''); ?> /> Documents
 						<br/>
-						
+
 					</div>
 					<?php
 					}
@@ -486,8 +531,8 @@ global $wpjm_options;
 
 						<input type="checkbox" value="future" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][poststatus][]" id="wpjm_poststatus<?php echo $pt->name; ?>" <?php if (is_array($wpjm_options['postTypes'][$pt->name]['poststatus'])) echo (in_array('future',$wpjm_options['postTypes'][$pt->name]['poststatus'])?' checked="checked"':''); ?> /> Future<br/>
 
-						
-						
+
+
 					</div>
 					<div style="float: left;">
 					<input type="checkbox" value="private" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][poststatus][]" id="wpjm_poststatus<?php echo $pt->name; ?>" <?php if (is_array($wpjm_options['postTypes'][$pt->name]['poststatus'])) echo (in_array('private',$wpjm_options['postTypes'][$pt->name]['poststatus'])?' checked="checked"':''); ?> /> Private<br/>
@@ -498,7 +543,7 @@ global $wpjm_options;
 
 						<input type="checkbox" value="any" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][poststatus][]" id="wpjm_poststatus<?php echo $pt->name; ?>" <?php if (is_array($wpjm_options['postTypes'][$pt->name]['poststatus'])) echo (in_array('any',$wpjm_options['postTypes'][$pt->name]['poststatus'])?' checked="checked"':''); ?> /> Any<br/>
 						</div>
-						<div style="clear: both;"><span class="description">NOTE: Trash items will only display if Any is NOT selected.<br/>NOTE: If your items are not showing up, try choosing "Inherit" or "Any".</span></div>
+						<div style="clear: both;"><span class="description"><small><strong>NOTE:</strong> Trash items will only display if Any is NOT selected.<br/><strong>NOTE:</strong> If your items are not showing up, try choosing "Inherit" or "Any".</small></span></div>
 				</td>
 			</tr>
 			<?php } ?>
@@ -506,7 +551,12 @@ global $wpjm_options;
 		</table>
 		<br>
 	</div>
-	
+<script>
+	// Hide the left TH column next to the table of post types
+	;(function($){
+		$('#wpjm-post-types-table').parent().parent().prev().hide();
+	})(jQuery);
+	</script>
 <?php
 }
 
@@ -524,7 +574,7 @@ function wpjm_options_validate( $input ) {
 			if (!isset($newinput['postTypes'][$key]['sort'])) {
 				$newinput['postTypes'][$key]['sort'] = 'ASC';
 			}
-			if (empty($newinput['postTypes'][$key]['numberposts'])) {
+			if ($newinput['postTypes'][$key]['numberposts'] == "" || $newinput['postTypes'][$key]['numberposts'] < -1) {
 				$newinput['postTypes'][$key]['numberposts'] = '-1';
 			}
 			if (!isset($newinput['postTypes'][$key]['poststatus'])) {
@@ -538,9 +588,9 @@ function wpjm_options_validate( $input ) {
 					$newinput['postTypes'][$key]['postmimetypes'] = array('all');
 				}
 			}
-			
+
 		}
-		
+
 	}
 	return $newinput;
 }
