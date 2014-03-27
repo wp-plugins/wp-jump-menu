@@ -824,7 +824,7 @@ class WpJumpMenu
 									$wpjm_string .= '>';
 
 								// If the setting to show ID's is true, show the ID in ()
-								if ( ($this->options['showID'] == true) && ($this->options['useChosen'] == 'true') ) {
+								if ( (isset($this->options['showID']) && $this->options['showID'] == true) && (isset($this->options['useChosen']) && $this->options['useChosen'] == 'true') ) {
 									$wpjm_string .= '<span class="post-id">('.$pd_post->ID.')</span> ';
 								}
 									// Print the post title
@@ -837,7 +837,7 @@ class WpJumpMenu
 										$wpjm_string .= ' - '.$pd_post->post_date;
 
 									// If the setting to show ID's is true, show the ID in ()
-								if ( ($this->options['showID'] == true) && ( (!$this->options['useChosen'] || $this->options['chosenTextAlign'] == 'left') ) ) {
+								if ( (isset($this->options['showID']) && $this->options['showID'] == true) && (isset($this->options['useChosen']) && isset($this->options['chosenTextAlign']) &&  (!$this->options['useChosen'] || $this->options['chosenTextAlign'] == 'left') ) ) {
 									$wpjm_string .= ' <span class="post-id">('.$pd_post->ID.')</span>';
 								}
 
