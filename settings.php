@@ -37,6 +37,12 @@ function wpjm_admin_init() {
 			'wpjm-2',
 			'wpjm_main' );
 
+	add_settings_field( 'wpjm_frontendjump',
+			'Use Front-End Jump',
+			'wpjm_frontendjump_checkbox',
+			'wpjm-2',
+			'wpjm_main' );
+
 	add_settings_field( 'wpjm_useChosen',
 			'Use Chosen Select Menu',
 			'wpjm_useChosen_checkbox',
@@ -157,7 +163,17 @@ function wpjm_frontend_checkbox() {
 	global $wpjm_options;
 ?>
 <div>
-	<input type="checkbox" value="true" name="wpjm_options[frontend]" id="wpjm_frontend" class="wpjm_frontend" <?php checked($wpjm_options['frontend'], 'true'); ?> />&nbsp;&nbsp;<span class="description">Show the jump menu on the front-end of the site.</span>
+	<input type="checkbox" value="true" name="wpjm_options[frontend]" id="wpjm_frontend" class="wpjm_frontend" <?php if(isset($wpjm_options['frontend'])) { checked($wpjm_options['frontend'], 'true'); } ?> />&nbsp;&nbsp;<span class="description">Show the jump menu on the front-end of the site.</span>
+</div>
+<?php
+}
+
+// Front-End Jump
+function wpjm_frontendjump_checkbox() {
+	global $wpjm_options;
+?>
+<div>
+	<input type="checkbox" value="true" name="wpjm_options[frontEndJump]" id="wpjm_frontEndJump" class="wpjm_frontEndJump" <?php if(isset($wpjm_options['frontEndJump'])) { checked($wpjm_options['frontEndJump'], 'true'); } ?> />&nbsp;&nbsp;<span class="description">Clicking on items in the Jump Menu on the front-end of the site jumps to the pages on the front-end (not backend).</span>
 </div>
 <?php
 }
@@ -168,7 +184,7 @@ function wpjm_useChosen_checkbox() {
 	global $wpjm_options;
 ?>
 <div>
-	<input type="checkbox" value="true" name="wpjm_options[useChosen]" id="wpjm_useChosen" <?php checked($wpjm_options['useChosen'], 'true'); ?> />&nbsp;&nbsp;<span class="description">Use <a href="http://harvesthq.github.com/chosen/" target="_blank">Chosen</a> plugin to display jump menu.  Adds search functionality and status colors.</span>
+	<input type="checkbox" value="true" name="wpjm_options[useChosen]" id="wpjm_useChosen" <?php if(isset($wpjm_options['useChosen'])) { checked($wpjm_options['useChosen'], 'true'); } ?> />&nbsp;&nbsp;<span class="description">Use <a href="http://harvesthq.github.com/chosen/" target="_blank">Chosen</a> plugin to display jump menu.  Adds search functionality and status colors.</span>
 </div>
 <script>
 jQuery(function($){
@@ -207,7 +223,7 @@ function wpjm_showID_checkbox() {
 global $wpjm_options;
 ?>
 <div>
-	<input type="checkbox" value="true" name="wpjm_options[showID]" id="wpjm_showID" <?php checked($wpjm_options['showID'], 'true'); ?> />&nbsp;&nbsp;<span class="description">Display the post object's ID next to the item in the jump menu.</span>
+	<input type="checkbox" value="true" name="wpjm_options[showID]" id="wpjm_showID" <?php if(isset($wpjm_options['showID'])) { checked($wpjm_options['showID'], 'true'); } ?> />&nbsp;&nbsp;<span class="description">Display the post object's ID next to the item in the jump menu.</span>
 </div>
 <?php
 }
@@ -217,7 +233,7 @@ function wpjm_showAddNew_checkbox() {
 global $wpjm_options;
 ?>
 <div>
-	<input type="checkbox" value="true" name="wpjm_options[showaddnew]" id="wpjm_showaddnew" <?php checked($wpjm_options['showaddnew'], 'true'); ?> />&nbsp;&nbsp;<span class="description">Display an "Add New" link under each post type in the jump menu.</span>
+	<input type="checkbox" value="true" name="wpjm_options[showaddnew]" id="wpjm_showaddnew" <?php if(isset($wpjm_options['showaddnew'])) { checked($wpjm_options['showaddnew'], 'true'); } ?> />&nbsp;&nbsp;<span class="description">Display an "Add New" link under each post type in the jump menu.</span>
 </div>
 <?php
 }
@@ -232,19 +248,19 @@ global $wpjm_options;
 	<span class="description">Click on the input to select a color, or enter the hex value.<br/>When you are choosing a color, the jump menu (if top or bottom is selected) will give you a live preview of your color changes.<br/>Changes are NOT saved until you click the "Save Changes" button.</span>
 </div>
 <div>
-	<input class="colorPicker" type="text" name="wpjm_options[backgroundColor]" id="wpjm_backgroundColor" value="<?php echo $wpjm_options['backgroundColor']; ?>" rel="#jump_menu|backgroundColor" size="6" />
+	<input class="colorPicker" type="text" name="wpjm_options[backgroundColor]" id="wpjm_backgroundColor" value="<?php if(isset($wpjm_options['backgroundColor'])) { echo $wpjm_options['backgroundColor']; } ?>" rel="#jump_menu|backgroundColor" size="6" />
 	<span class="description">Background Color</span>
 </div>
 <div>
-	<input class="colorPicker" type="text" name="wpjm_options[borderColor]" id="wpjm_borderColor" value="<?php echo $wpjm_options['borderColor']; ?>" rel="#jump_menu|borderColor" size="6" />
+	<input class="colorPicker" type="text" name="wpjm_options[borderColor]" id="wpjm_borderColor" value="<?php if(isset($wpjm_options['borderColor'])) { echo $wpjm_options['borderColor']; } ?>" rel="#jump_menu|borderColor" size="6" />
 	<span class="description">Border Color</span>
 </div>
 <div>
-	<input class="colorPicker" type="text" name="wpjm_options[fontColor]" id="wpjm_fontColor" value="<?php echo $wpjm_options['fontColor']; ?>" rel="#jump_menu|color" size="6" />
+	<input class="colorPicker" type="text" name="wpjm_options[fontColor]" id="wpjm_fontColor" value="<?php if(isset($wpjm_options['fontColor'])) { echo $wpjm_options['fontColor']; } ?>" rel="#jump_menu|color" size="6" />
 	<span class="description">Font Color</span>
 </div>
 <div>
-	<input class="colorPicker" type="text" name="wpjm_options[linkColor]" id="wpjm_linkColor" value="<?php echo $wpjm_options['linkColor']; ?>" rel="#jump_menu p a:link, #jump_menu p a:visited, #jump_menu p a:hover|color" size="6" />
+	<input class="colorPicker" type="text" name="wpjm_options[linkColor]" id="wpjm_linkColor" value="<?php if(isset($wpjm_options['linkColor'])) { echo $wpjm_options['linkColor']; } ?>" rel="#jump_menu p a:link, #jump_menu p a:visited, #jump_menu p a:hover|color" size="6" />
 	<span class="description">Link Color</span>
 <div>
 <?php

@@ -2,13 +2,13 @@
 /**
  * @package WP_Jump_Menu
  * @author Jim Krill
- * @version 3.2.1
+ * @version 3.2.2
  */
 /*
 Plugin Name: WP Jump Menu
 Plugin URI: http://wpjumpmenu.com
 Description: Creates a drop-down menu (jump menu) in a bar across the top or bottom of the screen that makes it easy to jump right to a page, post, or custom post type in the admin area to edit.
-Version: 3.2.1
+Version: 3.2.2
 Author: Jim Krill
 Author URI: http://krillwebdesign.com
 License: GPL
@@ -55,7 +55,7 @@ class WpJumpMenu
 		// vars
 		$this->path = plugin_dir_path(__FILE__);
 		$this->dir = plugins_url('',__FILE__);
-		$this->version = '3.2.1';
+		$this->version = '3.2.2';
 		$this->upgrade_version = '';
 		$this->cache = array();
 		// Maybe I should set default options, then array_merge with what is in get_option('wpjm_options') in case it's not there?
@@ -123,7 +123,7 @@ class WpJumpMenu
 			add_action('admin_bar_menu', array($this, 'admin_bar_menu'), 25);
 			add_action('wp_print_styles', array($this, 'wpjm_css'));
 		} else {
-			if ( $this->options['frontend'] == 'true' ) {
+			if ( isset($this->options['frontend']) && $this->options['frontend'] == 'true' ) {
 				add_action('wp_footer', array($this, 'wpjm_footer'));
 			}
 			add_action('admin_footer', array($this, 'wpjm_footer'));
@@ -385,7 +385,7 @@ class WpJumpMenu
 
 			}
 			@media only screen and (max-width: 850px) {
-				#wpadminbar #wp-admin-bar-wp-jump-menu div.chzn-container { width: 100% !important; }
+				#wpadminbar #wp-admin-bar-wp-jump-menu div.chosen-container { width: 100% !important; }
 			}
 			#wpadminbar #wp-jump-menu { padding: 0px 10px; }";
 		} else {
@@ -395,7 +395,7 @@ class WpJumpMenu
 		#jump_menu p.wpjm_need_help { float: right; text-align: right; }
 		#jump_menu p.wpjm_need_help span.wpjm-logo-title { font-family: Georgia; font-style: italic; padding-right: 10px; }
 		#jump_menu p.jm_credits { font-style: italic; padding-top: 10px; line-height: 13px; }
-		#jump_menu p.jm_credits img.wpjm_logo { ".($this->options['logoWidth']?'width: '.$this->options['logoWidth'].'px;':'width: 35px;')." height: auto; max-height: 30px; vertical-align: middle; margin-right: 10px; }
+		#jump_menu p.jm_credits img.wpjm_logo { ".(isset($this->options['logoWidth'])?'width: '.$this->options['logoWidth'].'px;':'width: 35px;')." height: auto; max-height: 30px; vertical-align: middle; margin-right: 10px; }
 		#jump_menu_clear { height: 30px; }
 		@media only screen and (max-width: 768px) {
 			#jump_menu .jm_credits { display: none; }
@@ -409,11 +409,11 @@ class WpJumpMenu
 
 		echo "
 		#wp-pdd { max-width: 400px;  }
-		#wpadminbar #wp-admin-bar-top-secondary #wp-admin-bar-wp-jump-menu .chzn-container * {
+		#wpadminbar #wp-admin-bar-top-secondary #wp-admin-bar-wp-jump-menu .chosen-container * {
 			text-align: " . (isset($this->options['chosenTextAlign']) ? $this->options['chosenTextAlign'] : 'right') . " !important;
 		}
-		.chzn-container { vertical-align: middle; }
-		.chzn-container .chzn-results li span.post-id {
+		.chosen-container { vertical-align: middle; }
+		.chosen-container .chosen-results li span.post-id {
 			font-size: 12px;
 			color: #aaa !important;
 		}
@@ -531,7 +531,7 @@ class WpJumpMenu
 
 					<?php if ($this->options['useChosen']=='true') { ?>
 					jQuery('#wp-pdd').bind('liszt:ready',function(){
-						jQuery('ul.chzn-results li').prepend('<span class="front-end"></span>');
+						jQuery('ul.chosen-results li').prepend('<span class="front-end"></span>');
 					});
 
 					<?php } ?>
@@ -588,7 +588,7 @@ class WpJumpMenu
 		// if ( $wpjm_transient === false ) {
 
 			// Start echoing the select menu
-			if ($this->options['useChosen']=='true') {
+			if (isset($this->option['useChosen']) && $this->options['useChosen']=='true') {
 				$wpjm_string .= '<select id="wp-pdd" data-placeholder="Select to Edit" style="width: 250px;">';
 			} else {
 				$wpjm_string .= '<select id="wp-pdd" data-placeholder="Select to Edit">';
@@ -698,7 +698,7 @@ class WpJumpMenu
 
 							if ($cpt_labels->name != 'Media') {
 
-								if ($this->options['showaddnew'] && current_user_can($post_type_object->cap->edit_posts)) {
+								if (isset($this->options['showaddnew']) && $this->options['showaddnew'] && current_user_can($post_type_object->cap->edit_posts)) {
 									$wpjm_string .= '<option value="post-new.php?post_type=';
 									$wpjm_string .= $cpt_obj->name;
 									$wpjm_string .= '">+ Add New '.$cpt_labels->singular_name.' +</option>';
@@ -723,7 +723,8 @@ class WpJumpMenu
 								// Open the <option> tag
 								$wpjm_string .= '<option data-permalink="'.get_permalink($pd_post->ID).'" value="';
 									// echo the edit link based on post ID
-									$wpjm_string .= get_edit_post_link($pd_post->ID);
+									$editLink = (is_admin() || (!isset($this->options['frontEndJump']) || !$this->options['frontEndJump']) ? get_edit_post_link($pd_post->ID) : get_permalink($pd_post->ID));
+									$wpjm_string .= $editLink;
 								$wpjm_string .= '"';
 
 								// Check to see if you are currently editing this post
@@ -780,7 +781,7 @@ class WpJumpMenu
 
 							$wpjm_string .= '<optgroup label="'.$cpt_labels->name.'">';
 
-							if ($this->options['showaddnew'] && ( current_user_can($post_type_object->cap->edit_posts) || current_user_can($post_type_object->cap->edit_pages) ) ) {
+							if (isset($this->options['showaddnew']) && $this->options['showaddnew'] && ( current_user_can($post_type_object->cap->edit_posts) || current_user_can($post_type_object->cap->edit_pages) ) ) {
 								$wpjm_string .= '<option value="post-new.php?post_type=';
 								$wpjm_string .= $cpt_obj->name;
 								$wpjm_string .= '">+ Add New '.$cpt_labels->singular_name.' +</option>';
@@ -805,7 +806,8 @@ class WpJumpMenu
 									// Open the <option> tag
 									$wpjm_string .= '<option data-permalink="'.get_permalink($pd_post->ID).'" value="';
 										// echo the edit link based on post ID
-										$wpjm_string .= get_edit_post_link($pd_post->ID);
+										$editLink = (is_admin() || (!isset($this->options['frontEndJump']) || !$this->options['frontEndJump']) ? get_edit_post_link($pd_post->ID) : get_permalink($pd_post->ID));
+										$wpjm_string .= $editLink;
 									$wpjm_string .= '"';
 
 									// Check to see if you are currently editing this post
@@ -974,6 +976,8 @@ class WpJumpMenu
 				'chosenTextAlign' => 'left',
 				'showID' => 'false',
 				'showaddnew' => 'true',
+				'frontend' => 'true',
+				'frontEndJump' => 'true',
 				'backgroundColor' => get_option('wpjm_backgroundColor'),
 				'fontColor' => get_option('wpjm_fontColor'),
 				'borderColor' => get_option('wpjm_borderColor'),
@@ -981,7 +985,17 @@ class WpJumpMenu
 				'logoIcon' => get_option('wpjm_logoIcon'),
 				'linkColor' => get_option('wpjm_linkColor'),
 				'message' => get_option('wpjm_message'),
-				'title' => "WP Jump Menu &raquo;"
+				'title' => "WP Jump Menu &raquo;",
+				'statusColors' => array(
+					'publish' => '',
+					'pending' => '',
+					'draft' => '',
+					'auto-draft' => '',
+					'future' => '',
+					'private' => '',
+					'inherit' => '',
+					'trash' => ''
+				)
 			);
 
 			update_option('wpjm_options',$arr);
@@ -1011,6 +1025,8 @@ class WpJumpMenu
 					'chosenTextAlign' => 'left',
 					'showID' => 'false',
 					'showaddnew' => 'true',
+					'frontend' => 'true',
+					'frontEndJump' => 'true',
 					'backgroundColor' => 'e0e0e0',
 					'fontColor' => '787878',
 					'borderColor' => '666666',
@@ -1033,7 +1049,17 @@ class WpJumpMenu
 					'logoIcon' => 'http://www.krillwebdesign.com/wp-content/uploads/2011/06/logo-small-no-tag1.png',
 					'linkColor' => '1cd0d6',
 					'message' => "Brought to you by <a href='http://www.krillwebdesign.com/' target='_blank'>Krill Web Design</a>.",
-					'title' => "WP Jump Menu &raquo;"
+					'title' => "WP Jump Menu &raquo;",
+					'statusColors' => array(
+						'publish' => '',
+						'pending' => '',
+						'draft' => '',
+						'auto-draft' => '',
+						'future' => '',
+						'private' => '',
+						'inherit' => '',
+						'trash' => ''
+					)
 				);
 				update_option('wpjm_options',$arr);
 			} else {

@@ -24,8 +24,8 @@ class WPJM_Walker_PageDropDown extends Walker_PageDropDown {
 
 		$pad = str_repeat(' &#8212;', $depth * 1);
 
-
-		$output .= "\t<option data-permalink=\"".get_permalink($page->ID)."\" class=\"level-$depth\" value=\"".get_edit_post_link($page->ID)."\"";
+		$editLink = (is_admin() || (!isset($options['frontEndJump']) || !$options['frontEndJump']) ? get_edit_post_link($page->ID) : get_permalink($page->ID));
+		$output .= "\t<option data-permalink=\"".get_permalink($page->ID)."\" class=\"level-$depth\" value=\"".$editLink."\"";
 		if ( (isset($_GET['post']) && ($page->ID == $_GET['post'])) || (isset($post) && ($page->ID == $post->ID)) )
 			$output .= ' selected="selected"';
 
@@ -37,7 +37,7 @@ class WPJM_Walker_PageDropDown extends Walker_PageDropDown {
 			$output .= ' style="color: '.$status_color['publish'].' !important;"';
 		$output .= '>';
 		$title = apply_filters( 'list_pages', $page->post_title );
-		if ($options['useChosen'] == 'true' && ($options['chosenTextAlign'] == 'right' || !isset($options['chosenTextAlign']) ) ) {
+		if (isset($options['useChosen']) && $options['useChosen'] == 'true' && (isset($options['chosenTextAlign']) && ($options['chosenTextAlign'] == 'right' || !isset($options['chosenTextAlign']) ) ) ) {
 			$output .= ( $options['showID'] == true ? "<span class='post-id'>(" .$page->ID . ")</span> " : '' ) . esc_html( $title ) . $pad;
 		} else {
 			$output .= $pad . ' ' . esc_html( $title ) . ( isset($options['showID']) && $options['showID'] == true ? " <span class='post-id'>(" .$page->ID . ")</span> " : '' );
