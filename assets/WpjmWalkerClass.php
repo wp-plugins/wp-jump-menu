@@ -38,7 +38,7 @@ class WPJM_Walker_PageDropDown extends Walker_PageDropDown {
 		$output .= '>';
 		$title = apply_filters( 'list_pages', $page->post_title );
 		if (isset($options['useChosen']) && $options['useChosen'] == 'true' && (isset($options['chosenTextAlign']) && ($options['chosenTextAlign'] == 'right' || !isset($options['chosenTextAlign']) ) ) ) {
-			$output .= ( $options['showID'] == true ? "<span class='post-id'>(" .$page->ID . ")</span> " : '' ) . esc_html( $title ) . $pad;
+			$output .= ( isset($options['showID']) && $options['showID'] == true ? "<span class='post-id'>(" .$page->ID . ")</span> " : '' ) . esc_html( $title ) . $pad;
 		} else {
 			$output .= $pad . ' ' . esc_html( $title ) . ( isset($options['showID']) && $options['showID'] == true ? " <span class='post-id'>(" .$page->ID . ")</span> " : '' );
 		}

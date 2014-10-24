@@ -133,7 +133,6 @@ global $wpjm_options;
 jQuery(function($){
 	$('.wpjm_position').on('change',function(e){
 		var value = this.value;
-		console.log('wpjm_position change',value);
 		if (value === "wpAdminBar") {
 			// Hide Top/Bottom only fields
 			$('#wpjm_frontend').closest('tr').hide();
@@ -189,7 +188,6 @@ function wpjm_useChosen_checkbox() {
 <script>
 jQuery(function($){
 	$('#wpjm_useChosen').on('change',function(e){
-		console.log('wpjm_useChosen change');
 		var checked = $(this).attr('checked');
 		if (checked) {
 			$('#wpjm_chosenTextAlign').closest('tr').show();
@@ -527,7 +525,7 @@ global $wpjm_options;
 						}
 						?>
 					</select>
-					<br/><span class="description"><a href="http://codex.wordpress.org/Class_Reference/WP_Query#Order_.26_Orderby_Parameters" target="_blank">Documentation</a></span>
+					<br/><span class="description"><a href="http://codex.wordpress.org/Class_Reference/WP_Query#Order_.26_Orderby_Parameters" target="_blank"><?php _e('Documentation', 'wp-jump-menu'); ?></a></span>
 					<?php if ($pt->name == 'attachment' && isset($wpjm_options['postTypes'][$pt->name]['postmimetypes'])) { ?>
 					<div class="mime-types">
 						<br/>
