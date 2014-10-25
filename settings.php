@@ -412,25 +412,29 @@ global $wpjm_options;
 		<table id="wpjm-post-types-table" class="wp-list-table widefat fixed pages" cellspacing="0">
 			<thead>
 			<tr>
-				<th scope="col" id="cb" class="manage-column column-cb check-column"><input type="checkbox" /></th>
-				<th scope="col" class="wpjm-post-types-title-col">Post Types</th>
-				<th scope="col" class="wpjm-numberposts-col">Show</th>
-				<th scope="col" class="wpjm-order-by-col">Order By</th>
-				<th scope="col" class="wpjm-order-col">Order</th>
-				<th scope="col" class="wpjm-showdrafts-col">Post Status</th>
+				<th scope="col" id="cb" class="manage-column column-cb check-column">
+					<label class="screen-reader-text" for="cb-select-all-1">Select All</label>
+					<input id="cb-select-all-1" type="checkbox" /></th>
+				<th scope="col" class="manage-column wpjm-post-types-title-col">Post Types</th>
+				<th scope="col" class="manage-column wpjm-numberposts-col">Show</th>
+				<th scope="col" class="manage-column wpjm-order-by-col">Order By</th>
+				<th scope="col" class="manage-column wpjm-order-col">Order</th>
+				<th scope="col" class="manage-column wpjm-showdrafts-col">Post Status</th>
 			</tr>
 			</thead>
 			<tfoot>
 			<tr>
-				<th scope="col" class="manage-column column-cb check-column"><input type="checkbox" /></th>
-				<th scope="col" class="wpjm-post-types-title-col">Post Types</th>
-				<th scope="col" class="wpjm-numberposts-col">Show</th>
-				<th scope="col" class="wpjm-order-by-col">Order By</th>
-				<th scope="col" class="wpjm-order-col">Order</th>
-				<th scope="col" class="wpjm-showdrafts-col">Post Status</th>
+				<th scope="col" class="manage-column column-cb check-column">
+					<label class="screen-reader-text" for="cb-select-all-2">Select All</label>
+					<input id="cb-select-all-2" type="checkbox" /></th>
+				<th scope="col" class="manage-column wpjm-post-types-title-col">Post Types</th>
+				<th scope="col" class="manage-column wpjm-numberposts-col">Show</th>
+				<th scope="col" class="manage-column wpjm-order-by-col">Order By</th>
+				<th scope="col" class="manage-column wpjm-order-col">Order</th>
+				<th scope="col" class="manage-column wpjm-showdrafts-col">Post Status</th>
 			</tr>
 			</tfoot>
-			<tbody>
+			<tbody id="the-list">
 		<?php
 
 			// Get the array of registered post types (array of objects)
@@ -491,7 +495,7 @@ global $wpjm_options;
 					}
 				}
 				?>
-			<tr class="<?php if ($alt==""){ $alt = "alternate"; } else { echo $alt; $alt = ""; } ?>" valign="top">
+			<tr class="<?php if ($alt==""){ $alt = "alternate"; echo $alt; } else { $alt = ""; echo $alt;  } ?>" valign="top">
 				<th class="check-column" scope="row">
 					<input type="checkbox" name="wpjm_options[postTypes][<?php echo $pt->name; ?>][show]" id="wpjm_postType_<?php echo $pt->name; ?>" value="1" <?php checked($wpjm_options['postTypes'][$pt->name]['show'], 1 ); ?> />
 				</td>
@@ -585,12 +589,6 @@ global $wpjm_options;
 		</table>
 		<br>
 	</div>
-<script>
-	// Hide the left TH column next to the table of post types
-	;(function($){
-		$('#wpjm-post-types-table').parent().parent().prev().hide();
-	})(jQuery);
-	</script>
 <?php
 }
 

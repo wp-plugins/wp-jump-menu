@@ -6,7 +6,7 @@ Author URI: http://krillwebdesign.com
 Tags: posts, pages, admin, jump, menu, quick, links, custom post types
 Requires at least: 3.2.1
 Tested up to: 4.0
-Stable tag: 3.3
+Stable tag: 3.3.1
 
 Creates a drop-down menu in the admin area which makes it easy to jump to a page, post, custom post type or media file for editing.
 
@@ -53,6 +53,40 @@ Enjoy!
 
 == Frequently Asked Questions ==
 
+= Is there any way to add additional content to the jump menu? =
+
+Yes.
+
+There are two filters that run at the beginning of the menu and at the end.
+
+The first is:
+
+`wpjm-filter-beginning-of-list`
+
+which happens after the first <option> which is "Select to Edit"
+
+and the second is:
+
+`wpjm-filter-end-of-list`
+
+which happens just before the last <optgroup> which is for the Jump Menu Settings page.
+
+Your filter function would look something like this:
+
+    function wpjm_filter( $wpjm_string ) {
+
+        $wpjm_string .= '<optgroup label="Global Content Blocks">';
+        $wpjm_string .= '<option value="url-on-select">Option Name</option>';
+        $wpjm_string .= '</optgroup>';
+
+        return $wpjm_string;
+
+    }
+
+And your apply_filters would look like this:
+
+`apply_filters( 'wpjm-beginning-of-list', 'wpjm-filter' )`
+
 = The jump menu isn't working. =
 
 If the jump menu isn't working, please submit a forum post and I will respond asap. <a href="http://wordpress.org/tags/wp-jump-menu?forum_id=10#postform">Click here to start a forum thread</a>.
@@ -61,7 +95,7 @@ Make sure you have the latest version of WordPress and the latest version of WP-
 
 = How do I put my logo in? =
 
-You need to upload your logo icon, through WordPress maybe, and get the full URL to the image.  This you will put into the Logo Icon field in the options.
+The branding options are only accessible when the position of the jump menu is set to top or bottom, and not WP Admin Bar. You need to upload your logo icon, through WordPress maybe, and get the full URL to the image.  This you will put into the Logo Icon field in the options.
 
 == Screenshots ==
 
@@ -72,6 +106,11 @@ You need to upload your logo icon, through WordPress maybe, and get the full URL
 3. The Jump Menu - Just a drop down, but one POWERFUL drop down!
 
 == Changelog ==
+
+= 3.3.1 =
+* Resolved conflict with SOLA Newsletters plugin (and other plugins that used the same colorpicker javascript)
+* Added filters for adding items at the beginning or end of menu (see FAQ for more instructions)
+* Fixed some styling issues on the settings page
 
 = 3.3 =
 * Internal clean-up and bug-fixes.

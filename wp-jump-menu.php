@@ -2,13 +2,13 @@
 /**
  * @package WP_Jump_Menu
  * @author Jim Krill
- * @version 3.3
+ * @version 3.3.1
  */
 /*
 Plugin Name: WP Jump Menu
 Plugin URI: http://wpjumpmenu.com
 Description: Creates a drop-down menu (jump menu) in a bar across the top or bottom of the screen that makes it easy to jump right to a page, post, or custom post type in the admin area to edit.
-Version: 3.3
+Version: 3.3.1
 Author: Jim Krill
 Author URI: http://krillwebdesign.com
 License: GPL
@@ -39,7 +39,7 @@ class WpJumpMenu
 		// vars
 		$this->path = plugin_dir_path( __FILE__ );
 		$this->dir = plugins_url( '', __FILE__ );
-		$this->version = '3.3';
+		$this->version = '3.3.1';
 		$this->upgrade_version = '';
 		$this->options = get_option( 'wpjm_options' );
 
@@ -80,11 +80,12 @@ class WpJumpMenu
 		}
 
 		// actions
-		add_action('admin_menu', array( $this,'admin_menu'));
-		add_action('admin_print_scripts', array( $this,'admin_head'));
-		add_action('admin_print_styles', array( $this, 'wpjm_css'));
-		add_action('plugin_action_links', array( $this,'plugin_action_links'), 10, 2);
-		add_action('wp_print_scripts', array( $this, 'wpjm_js'));
+		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
+		add_action( 'admin_print_scripts', array( $this, 'admin_head' ) );
+		add_action( 'admin_print_scripts-settings_page_wpjm-options', array( $this, 'wpjm_settings_scripts' ) );
+		add_action( 'admin_print_styles', array( $this, 'wpjm_css') );
+		add_action( 'plugin_action_links', array( $this,'plugin_action_links'), 10, 2 );
+		add_action( 'wp_print_scripts', array( $this, 'wpjm_js') );
 
 		if ( $this->options['position'] == 'wpAdminBar' )
 		{
@@ -123,7 +124,8 @@ class WpJumpMenu
 		$styles = array(
 			'wpjm-colorpicker-css' => $this->dir . '/assets/js/colorpicker/css/colorpicker.css',
 			'chosencss' => $this->dir . '/assets/js/chosen/chosen.css',
-			'chosencss-wpadminbar' => $this->dir . '/assets/js/chosen/chosen-wpadmin.css'
+			'chosencss-wpadminbar' => $this->dir . '/assets/js/chosen/chosen-wpadmin.css',
+			'wpjm-settings-css' => $this->dir . '/assets/css/wpjm-settings.css'
 		);
 
 		foreach( $styles as $k => $v )
@@ -156,6 +158,7 @@ class WpJumpMenu
 	function admin_menu()
 	{
 		$this->options_page = add_options_page('Jump Menu Options','Jump Menu Options', 'edit_posts', 'wpjm-options', array( $this, 'wpjm_options_page'));
+		error_log(print_r($this->options_page,true));
 	}
 
 
@@ -175,11 +178,17 @@ class WpJumpMenu
 		wp_enqueue_script( 'jquery-ui-widget' );
 		wp_enqueue_script( 'wpjm-jquery-ui-position' );
 		wp_enqueue_script( 'wpjm-jquery-functions' );
-		wp_enqueue_script( 'wpjm-jquery-colorpicker' );
 
+	}
+
+	function wpjm_settings_scripts()
+	{
 		// Colorpicker
+		wp_enqueue_script( 'wpjm-jquery-colorpicker' );
 		wp_enqueue_style( 'wpjm-colorpicker-css' );
 
+		// Settings page CSS
+		wp_enqueue_style( 'wpjm-settings-css' );
 	}
 
 
@@ -214,11 +223,15 @@ class WpJumpMenu
 
 				<form action="options.php" method="post" id="wpjm-options-form">
 				<?php settings_fields('wpjm_options'); ?>
-				<?php do_settings_sections('wpjm'); ?>
+				<div class="wpjm-post-types-wrapper">
+					<?php do_settings_sections('wpjm'); ?>
+				</div>
 				<p class="submit">
 					<input type="Submit" type="submit" value="<?php esc_attr_e('Save Changes'); ?>" class="button button-primary" />
 				</p>
-				<?php do_settings_sections('wpjm-2'); ?>
+				<div class="wpjm-additional-settings-wrapper">
+					<?php do_settings_sections('wpjm-2'); ?>
+				</div>
 
 				<p class="submit">
 					<input type="Submit" type="submit" value="<?php esc_attr_e('Save Changes'); ?>" class="button button-primary" />
@@ -472,6 +485,8 @@ class WpJumpMenu
 			$wpjm_string .= '<select id="wp-pdd" data-placeholder="Select to Edit">';
 		}
 		$wpjm_string .= '<option>Select to Edit</option>';
+
+		$wpjm_string = apply_filters( 'wpjm-filter-beginning-of-list', $wpjm_string );
 
 		// Loop through custom posts types, and echo them out
 		if ($custom_post_types) {
@@ -737,6 +752,8 @@ class WpJumpMenu
 
 		} // end if ($custom_post_types)
 
+		$wpjm_string = apply_filters( 'wpjm-filter-end-of-list', $wpjm_string );
+
 		// Print the options page link
 		if ( current_user_can( 'activate_plugins' ) ) {
 
@@ -745,6 +762,8 @@ class WpJumpMenu
 			$wpjm_string .= '</optgroup>';
 
 		}
+
+
 
 		// Close the select drop down
 		$wpjm_string .= '</select>';
@@ -944,6 +963,8 @@ class WpJumpMenu
 		return true;
 
 	}
+
+
 
 }
 

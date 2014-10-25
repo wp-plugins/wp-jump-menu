@@ -1,5 +1,5 @@
 jQuery(document).ready(function() {
-		
+
 		if (jQuery('#wpjm-options-form').length > 0) {
 
 			jQuery('table#wpjm-post-types-table tbody th, table#wpjm-post-types-table td').css('cursor','move');
@@ -52,6 +52,6 @@ jQuery(document).ready(function() {
 				});*/
 		}
 
-	
+
 
 });
