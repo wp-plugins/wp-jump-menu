@@ -122,12 +122,12 @@ global $wpjm_options;
 ?>
 <div>
 	<input type="radio" value='top' name="wpjm_options[position]" id="wpjm_position" class="wpjm_position" <?php checked($wpjm_options['position'], 'top'); ?> />
-		 Top of screen<br/>
+		 Top of screen*<br/>
 	<input type="radio" value="bottom" name="wpjm_options[position]" id="wpjm_position" class="wpjm_position" <?php checked($wpjm_options['position'], 'bottom'); ?> />
-		 Bottom of screen<br/>
+		 Bottom of screen*<br/>
 	<input type="radio" value="wpAdminBar" name="wpjm_options[position]" id="wpjm_position" class="wpjm_position" <?php checked($wpjm_options['position'], 'wpAdminBar'); ?> />
 		WP Admin Bar
-
+	<p><em><small>* - Top and Bottom were original placements of the WPJM. It may not display properly if you choose these positions.  WP Admin Bar is recommended.</small></em></p>
 </div>
 <script>
 jQuery(function($){
@@ -298,7 +298,7 @@ global $wpjm_options;
 </div>
 <div>
 	<input class="colorPicker" type="text" name="wpjm_options[statusColors][inherit]" id="wpjm_statusColors_inherit" value="<?php echo $wpjm_options['statusColors']['inherit']; ?>" size="6" />
-	<span class="description">Inherit</span>
+	<span class="description">Inherit (media)</span>
 </div>
 <div>
 	<input class="colorPicker" type="text" name="wpjm_options[statusColors][trash]" id="wpjm_statusColors_trash" value="<?php echo $wpjm_options['statusColors']['trash']; ?>" size="6" />

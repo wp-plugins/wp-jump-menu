@@ -106,6 +106,11 @@ The branding options are only accessible when the position of the jump menu is s
 3. The Jump Menu - Just a drop down, but one POWERFUL drop down!
 
 == Changelog ==
+= 3.4.0 =
+* Please report all bugs!  If you get Javascript errors, please report what other plugins you have installed and activated. Thanks!
+* Style adjustments, bug fixes, code cleanup, added labels, etc.
+* Removed jQuery.ui.position script as it was not needed anymore and was causing some JS errors.
+* Changed Chosen settings: Search by ID, search contains (search parts of page names). Best way to search ids is to start with "id: " and then the id.  You must have show ID turned on and be using Chosen.
 
 = 3.3.1 =
 * Resolved conflict with SOLA Newsletters plugin (and other plugins that used the same colorpicker javascript)

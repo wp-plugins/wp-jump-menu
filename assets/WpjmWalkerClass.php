@@ -34,13 +34,17 @@ class WPJM_Walker_PageDropDown extends Walker_PageDropDown {
 		if (!current_user_can($post_type_object->cap->edit_post,$page->ID))
 			$output .= ' disabled="disabled"';
 
-			$output .= ' style="color: '.$status_color['publish'].' !important;"';
+			$output .= ' style="color: '.$status_color['publish'].';"';
+			// If the setting to show ID's is true, show the ID in ()
+			if ( (isset($options['showID']) && $options['showID'] == true) ) {
+				$output .= ' data-post-id="'.$page->ID.'"';
+			}
 		$output .= '>';
 		$title = apply_filters( 'list_pages', $page->post_title );
 		if (isset($options['useChosen']) && $options['useChosen'] == 'true' && (isset($options['chosenTextAlign']) && ($options['chosenTextAlign'] == 'right' || !isset($options['chosenTextAlign']) ) ) ) {
-			$output .= ( isset($options['showID']) && $options['showID'] == true ? "<span class='post-id'>(" .$page->ID . ")</span> " : '' ) . esc_html( $title ) . $pad;
+			$output .= esc_html( $title ) . $pad;
 		} else {
-			$output .= $pad . ' ' . esc_html( $title ) . ( isset($options['showID']) && $options['showID'] == true ? " <span class='post-id'>(" .$page->ID . ")</span> " : '' );
+			$output .= $pad . ' ' . esc_html( $title );
 		}
 
 		$output .= "</option>\n";

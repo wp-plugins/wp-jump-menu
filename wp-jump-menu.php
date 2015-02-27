@@ -2,13 +2,13 @@
 /**
  * @package WP_Jump_Menu
  * @author Jim Krill
- * @version 3.3.1
+ * @version 3.4.0
  */
 /*
 Plugin Name: WP Jump Menu
 Plugin URI: http://wpjumpmenu.com
 Description: Creates a drop-down menu (jump menu) in a bar across the top or bottom of the screen that makes it easy to jump right to a page, post, or custom post type in the admin area to edit.
-Version: 3.3.1
+Version: 3.4.0
 Author: Jim Krill
 Author URI: http://krillwebdesign.com
 License: GPL
@@ -39,7 +39,7 @@ class WpJumpMenu
 		// vars
 		$this->path = plugin_dir_path( __FILE__ );
 		$this->dir = plugins_url( '', __FILE__ );
-		$this->version = '3.3.1';
+		$this->version = '3.4.0';
 		$this->upgrade_version = '';
 		$this->options = get_option( 'wpjm_options' );
 
@@ -108,7 +108,6 @@ class WpJumpMenu
 
 		// register scripts
 		$scripts = array(
-			'wpjm-jquery-ui-position' => $this->dir . '/assets/js/jquery.ui.position.js',
 			'wpjm-jquery-functions' => $this->dir . '/assets/js/jqueryfunctions.js',
 			'wpjm-jquery-colorpicker' => $this->dir . '/assets/js/colorpicker/js/colorpicker.js',
 			'chosenjs' => $this->dir . '/assets/js/chosen/chosen.jquery.js'
@@ -176,7 +175,6 @@ class WpJumpMenu
 		wp_enqueue_script( 'jquery-ui-sortable' );
 		wp_enqueue_script( 'jquery-ui-core' );
 		wp_enqueue_script( 'jquery-ui-widget' );
-		wp_enqueue_script( 'wpjm-jquery-ui-position' );
 		wp_enqueue_script( 'wpjm-jquery-functions' );
 
 	}
@@ -316,6 +314,9 @@ class WpJumpMenu
 		#wpadminbar #wp-admin-bar-top-secondary #wp-admin-bar-wp-jump-menu .chosen-container * {
 			text-align: " . (isset($this->options['chosenTextAlign']) ? $this->options['chosenTextAlign'] : 'right') . " !important;
 		}
+		#wpadminbar #wp-admin-bar-top-secondary #wp-admin-bar-wp-jump-menu .chosen-container .post-id {
+			float: " . (isset($this->options['chosenTextAlign']) && $this->options['chosenTextAlign'] != "right" ? "right" : 'none') . " !important;
+		}
 		#wp-admin-bar-wp-jump-menu .chosen-container { vertical-align: middle; }
 		#wp-admin-bar-wp-jump-menu .chosen-container .chosen-results li span.post-id {
 			font-size: 12px;
@@ -378,16 +379,34 @@ class WpJumpMenu
 			$html .= "<script>
 			jQuery(document).ready(function($){";
 
+			if ( isset( $this->options['showID']) && $this->options['showID'] == "true" ) {
+				if ( isset( $this->options['useChosen'] ) && $this->options['useChosen'] == 'true') {
+					// $html .= "jQuery('#wp-pdd').on('chosen:showing_dropdown', function(){
+					// 	console.log('ready');
+					// 	console.log(jQuery('#wp_pdd_chosen'));
+					// 	jQuery('#wp_pdd_chosen').find('[data-post-id]').each(function(i){
+					// 		jQuery(this).append(' <span class=\"post-id\" style=\"float: right;\">' + this.dataset.postId + '</span>');
+					// 	});
+					// });";
+				} else {
+					$html .= "jQuery('#wp-pdd').find('option').each(function(i){
+						if (this.dataset.postId) {
+							jQuery(this).append(' (' + this.dataset.postId + ') ');
+						}
+					});";
+				}
+			}
+
 			$html .= "jQuery('#wp-pdd').on('change',function() {
 						window.location = this.value;
 					})";
 			if ( isset( $this->options['useChosen'] ) && $this->options['useChosen'] == 'true') {
-				$html .= ".chosen({position:'".esc_js($this->options['position'])."'})";
+				$html .= ".chosen({position:'".esc_js($this->options['position'])."', search_contains: true})";
 			}
 				$html .= ";";
+			$html .= "});";
 
-			$html .= "});
-			</script>";
+			$html .= "</script>";
 
 			$wp_admin_bar->add_menu( array(
 				'id' 		 	=> 'wp-jump-menu',
@@ -466,14 +485,14 @@ class WpJumpMenu
 
 		// Set post status colors
 		$status_color = array(
-			'publish' => (!empty($this->options['statusColors']['publish'])?'#'.$this->options['statusColors']['publish']:'#000000'),
-			'pending' => (!empty($this->options['statusColors']['pending'])?'#'.$this->options['statusColors']['pending']:'#999999'),
-			'draft' => (!empty($this->options['statusColors']['draft'])?'#'.$this->options['statusColors']['draft']:'#999999'),
-			'auto-draft' => (!empty($this->options['statusColors']['auto-draft'])?'#'.$this->options['statusColors']['auto-draft']:'#999999'),
-			'future' => (!empty($this->options['statusColors']['future'])?'#'.$this->options['statusColors']['future']:'#398f2c'),
-			'private' => (!empty($this->options['statusColors']['private'])?'#'.$this->options['statusColors']['private']:'#999999'),
-			'inherit' => (!empty($this->options['statusColors']['inherit'])?'#'.$this->options['statusColors']['inherit']:'#333333'),
-			'trash' => (!empty($this->options['statusColors']['trash'])?'#'.$this->options['statusColors']['trash']:'#ff0000')
+			'publish' => (!empty($this->options['statusColors']['publish'])?'#'.$this->options['statusColors']['publish']:''),
+			'pending' => (!empty($this->options['statusColors']['pending'])?'#'.$this->options['statusColors']['pending']:''),
+			'draft' => (!empty($this->options['statusColors']['draft'])?'#'.$this->options['statusColors']['draft']:''),
+			'auto-draft' => (!empty($this->options['statusColors']['auto-draft'])?'#'.$this->options['statusColors']['auto-draft']:''),
+			'future' => (!empty($this->options['statusColors']['future'])?'#'.$this->options['statusColors']['future']:''),
+			'private' => (!empty($this->options['statusColors']['private'])?'#'.$this->options['statusColors']['private']:''),
+			'inherit' => (!empty($this->options['statusColors']['inherit'])?'#'.$this->options['statusColors']['inherit']:''),
+			'trash' => (!empty($this->options['statusColors']['trash'])?'#'.$this->options['statusColors']['trash']:'')
 		);
 
 		$wpjm_string = '';
@@ -619,16 +638,16 @@ class WpJumpMenu
 								$wpjm_string .= ' disabled="disabled"';
 
 							// Set the color
-							$wpjm_string .= ' style="color: '.$status_color[$pd_post->post_status].' !important;"';
-
-							$wpjm_string .= '>';
+							if (isset($status_color[$pd_post->post_status])) {
+								$wpjm_string .= ' style="color: '.$status_color[$pd_post->post_status].';"';
+							}
 
 							// If the setting to show ID's is true, show the ID in ()
-							if (isset($this->options['showID'])) {
-								if ( ($this->options['showID'] == true) && ( isset($this->options['useChosen']) && $this->options['useChosen'] == 'true') && ($this->options['chosenTextAlign'] == 'right') ) {
-									$wpjm_string .= '<span class="post-id">('.$pd_post->ID.')</span> ';
+								if ( (isset($this->options['showID']) && $this->options['showID'] == true) ) {
+									$wpjm_string .= ' data-post-id="'.$pd_post->ID.'"';
 								}
-							}
+
+							$wpjm_string .= '>';
 
 							// Print the post title
 							$wpjm_string .= $this->wpjm_get_page_title($pd_post->post_title);
@@ -641,15 +660,6 @@ class WpJumpMenu
 
 							if ($pd_post->post_status == 'future')
 								$wpjm_string .= ' - '.$pd_post->post_date;
-
-							// If the setting to show ID's is true, show the ID in ()
-							if ( isset( $this->options['showID'] ) ) {
-
-								if ( ( $this->options['showID'] == true ) && ( ( ( !isset($this->options['useChosen'] ) || !$this->options['useChosen'] ) || $this->options['chosenTextAlign'] == 'left' ) ) ) {
-									$wpjm_string .= ' <span class="post-id">('.$pd_post->ID.')</span>';
-								}
-
-							}
 
 							// close the <option> tag
 							$wpjm_string .= '</option>';
@@ -701,14 +711,16 @@ class WpJumpMenu
 									$wpjm_string .= ' disabled="disabled"';
 
 								// Set the color
-								$wpjm_string .= ' style="color: '.$status_color[$pd_post->post_status].' !important;"';
-
-								$wpjm_string .= '>';
+								if (isset($status_color[$pd_post->post_status])) {
+									$wpjm_string .= ' style="color: '.$status_color[$pd_post->post_status].';"';
+								}
 
 								// If the setting to show ID's is true, show the ID in ()
-								if ( (isset($this->options['showID']) && $this->options['showID'] == true) && (isset($this->options['useChosen']) && $this->options['useChosen'] == 'true') ) {
-									$wpjm_string .= '<span class="post-id">('.$pd_post->ID.')</span> ';
+								if ( (isset($this->options['showID']) && $this->options['showID'] == true) ) {
+									$wpjm_string .= ' data-post-id="'.$pd_post->ID.'"';
 								}
+
+								$wpjm_string .= '>';
 
 								// Print the post title
 								$wpjm_string .= $this->wpjm_get_page_title($pd_post->post_title);
@@ -718,11 +730,6 @@ class WpJumpMenu
 
 								if ($pd_post->post_status == 'future')
 									$wpjm_string .= ' - '.$pd_post->post_date;
-
-								// If the setting to show ID's is true, show the ID in ()
-								if ( (isset($this->options['showID']) && $this->options['showID'] == true) && (isset($this->options['useChosen']) && isset($this->options['chosenTextAlign']) &&  (!$this->options['useChosen'] || $this->options['chosenTextAlign'] == 'left') ) ) {
-									$wpjm_string .= ' <span class="post-id">('.$pd_post->ID.')</span>';
-								}
 
 								// close the <option> tag
 								$wpjm_string .= '</option>';
