@@ -12,7 +12,7 @@ Creates a drop-down menu in the admin area which makes it easy to jump to a page
 
 == Description ==
 
-<iframe src="//player.vimeo.com/video/120853682" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+<h3><a href="http://www.wpjumpmenu.com">WATCH A DEMONSTRATION</a></h3>
 
 It will take 30 seconds to realize you can not live without this plugin.
 
