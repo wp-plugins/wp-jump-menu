@@ -12,7 +12,8 @@ Creates a drop-down menu in the admin area which makes it easy to jump to a page
 
 == Description ==
 
-<h3><a href="http://www.wpjumpmenu.com">WATCH A DEMONSTRATION</a></h3>
+<iframe src="//player.vimeo.com/video/120853682" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
 It will take 30 seconds to realize you can not live without this plugin.
 
 <strong>Creates a drop-down menu in the admin area which makes it easy to jump to a page, post, custom post type or media file for editing.
