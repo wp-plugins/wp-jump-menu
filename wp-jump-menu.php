@@ -2,13 +2,13 @@
 /**
  * @package WP_Jump_Menu
  * @author Jim Krill
- * @version 3.4.1
+ * @version 3.4.2
  */
 /*
 Plugin Name: WP Jump Menu
 Plugin URI: http://wpjumpmenu.com
 Description: Creates a drop-down menu (jump menu) in a bar across the top or bottom of the screen that makes it easy to jump right to a page, post, or custom post type in the admin area to edit.
-Version: 3.4.1
+Version: 3.4.2
 Author: Jim Krill
 Author URI: http://krillwebdesign.com
 License: GPL
@@ -39,7 +39,7 @@ class WpJumpMenu
 		// vars
 		$this->path = plugin_dir_path( __FILE__ );
 		$this->dir = plugins_url( '', __FILE__ );
-		$this->version = '3.4.1';
+		$this->version = '3.4.2';
 		$this->upgrade_version = '';
 		$this->options = get_option( 'wpjm_options' );
 
@@ -110,7 +110,7 @@ class WpJumpMenu
 		$scripts = array(
 			'wpjm-jquery-functions' => $this->dir . '/assets/js/jqueryfunctions.js',
 			'wpjm-jquery-colorpicker' => $this->dir . '/assets/js/colorpicker/js/colorpicker.js',
-			'chosenjs' => $this->dir . '/assets/js/chosen/chosen.jquery.js'
+			'chosenjs' => $this->dir . '/assets/js/chosen/custom.chosen.jquery.js'
 		);
 
 		foreach( $scripts as $k => $v )
@@ -287,7 +287,17 @@ class WpJumpMenu
 
 			}
 			@media only screen and (max-width: 850px) {
-				#wpadminbar #wp-admin-bar-wp-jump-menu div.chosen-container { width: 100% !important; }
+				/*#wpadminbar #wp-admin-bar-wp-jump-menu div.chosen-container { width: 100% !important; }*/
+			}
+			@media only screen and (max-width: 782px) {
+				#wpadminbar #wp-admin-bar-wp-jump-menu { display: block; line-height: 46px; }
+			}
+			@media only screen and (max-width: 640px) {
+				#wpadminbar #wp-admin-bar-wp-jump-menu .chosen-single { width: 16px; }
+				#wpadminbar #wp-admin-bar-wp-jump-menu .chosen-single span { display: none; }
+			}
+			@media only screen and (max-width: 320px) {
+				#wpadminbar #wp-admin-bar-wp-jump-menu { display: none; }
 			}
 			#wpadminbar #wp-jump-menu { padding: 0px 10px; }";
 		} else {
@@ -318,10 +328,6 @@ class WpJumpMenu
 			float: " . (isset($this->options['chosenTextAlign']) && $this->options['chosenTextAlign'] != "right" ? "right" : 'none') . " !important;
 		}
 		#wp-admin-bar-wp-jump-menu .chosen-container { vertical-align: middle; }
-		#wp-admin-bar-wp-jump-menu .chosen-container .chosen-results li span.post-id {
-			font-size: 12px;
-			color: #aaa !important;
-		}
 		";
 
 
@@ -401,7 +407,7 @@ class WpJumpMenu
 						window.location = this.value;
 					})";
 			if ( isset( $this->options['useChosen'] ) && $this->options['useChosen'] == 'true') {
-				$html .= ".chosen({position:'".esc_js($this->options['position'])."', search_contains: true})";
+				$html .= ".customChosen({position:'".esc_js($this->options['position'])."', search_contains: true})";
 			}
 				$html .= ";";
 			$html .= "});";
@@ -457,7 +463,7 @@ class WpJumpMenu
 
 					jQuery('#wp-pdd').on('change',function() {
 						window.location = this.value;
-					})<?php if ( isset($this->options['useChosen']) && $this->options['useChosen'] == 'true' ) { ?>.chosen({position:"<?php echo esc_js($this->options['position']); ?>"})<?php } ?>;
+					})<?php if ( isset($this->options['useChosen']) && $this->options['useChosen'] == 'true' ) { ?>.customChosen({position:"<?php echo esc_js($this->options['position']); ?>"})<?php } ?>;
 			});
 			</script>
 			<?php
@@ -498,12 +504,14 @@ class WpJumpMenu
 		$wpjm_string = '';
 
 		// Start echoing the select menu
-		if ( isset( $this->option['useChosen'] ) && $this->options['useChosen'] == 'true' ) {
-			$wpjm_string .= '<select id="wp-pdd" data-placeholder="Select to Edit" style="width: 250px;">';
+		if ( isset( $this->options['useChosen'] ) && $this->options['useChosen'] == 'true' ) {
+			$wpjm_string .= '<select id="wp-pdd" data-placeholder="- Select to Edit -" class="chosen-select">';
+			$wpjm_string .= '<option></option>';
 		} else {
-			$wpjm_string .= '<select id="wp-pdd" data-placeholder="Select to Edit">';
+			$wpjm_string .= '<select id="wp-pdd">';
+			$wpjm_string .= '<option>-- Select to Edit --</option>';
 		}
-		$wpjm_string .= '<option>Select to Edit</option>';
+
 
 		$wpjm_string = apply_filters( 'wpjm-filter-beginning-of-list', $wpjm_string );
 

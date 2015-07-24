@@ -9,6 +9,7 @@
   -webkit-user-select: none;
   -moz-user-select: none;
   user-select: none;
+  width: auto !important;
 }
 #wpadminbar #wp-admin-bar-top-secondary #wp-admin-bar-wp-jump-menu .chosen-container .chosen-drop {
   position: absolute;
@@ -25,7 +26,12 @@
   box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
 }
 #wpadminbar #wp-admin-bar-top-secondary #wp-admin-bar-wp-jump-menu .chosen-container.chosen-with-drop .chosen-drop {
-  left: 0;
+  /*left: 0;*/
+  left: auto;
+  right: 0;
+  width: 100%;
+  min-width: 320px;
+  max-width: 500px;
 }
 #wpadminbar #wp-admin-bar-top-secondary #wp-admin-bar-wp-jump-menu .chosen-container a {
   cursor: pointer;
@@ -53,6 +59,7 @@
   text-decoration: none;
   white-space: nowrap;
   line-height: 24px;
+  max-width: 150px;
 }
 #wpadminbar #wp-admin-bar-top-secondary #wp-admin-bar-wp-jump-menu .chosen-container-single .chosen-default {
   color: #999;
@@ -66,6 +73,9 @@
 }
 #wpadminbar #wp-admin-bar-top-secondary #wp-admin-bar-wp-jump-menu .chosen-container-single .chosen-single-with-deselect span {
   margin-right: 38px;
+}
+#wpadminbar #wp-admin-bar-top-secondary #wp-admin-bar-wp-jump-menu .chosen-container-single .chosen-single span.post-id {
+  display: none;
 }
 #wpadminbar #wp-admin-bar-top-secondary #wp-admin-bar-wp-jump-menu .chosen-container-single .chosen-single abbr {
   position: absolute;
@@ -160,12 +170,13 @@
   cursor: default;
 }
 #wpadminbar #wp-admin-bar-top-secondary #wp-admin-bar-wp-jump-menu .chosen-container .chosen-results li.highlighted {
-  background-color: #3875d7;
+  /*background-color: #3875d7;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(20%, #3875d7), color-stop(90%, #2a62bc));
   background-image: -webkit-linear-gradient(#3875d7 20%, #2a62bc 90%);
   background-image: -moz-linear-gradient(#3875d7 20%, #2a62bc 90%);
   background-image: -o-linear-gradient(#3875d7 20%, #2a62bc 90%);
-  background-image: linear-gradient(#3875d7 20%, #2a62bc 90%);
+  background-image: linear-gradient(#3875d7 20%, #2a62bc 90%);*/
+  background: #0073AA !important;
   color: #fff;
 }
 #wpadminbar #wp-admin-bar-top-secondary #wp-admin-bar-wp-jump-menu .chosen-container .chosen-results li.no-results {
@@ -183,6 +194,18 @@
 #wpadminbar #wp-admin-bar-top-secondary #wp-admin-bar-wp-jump-menu .chosen-container .chosen-results li em {
   font-style: normal;
   text-decoration: underline;
+  color: inherit;
+}
+#wpadminbar #wp-admin-bar-top-secondary #wp-admin-bar-wp-jump-menu .chosen-container .chosen-results li span.post-id {
+  font-size: 12px;
+  line-height: 15px;
+  color: #aaa !important;
+}
+#wpadminbar #wp-admin-bar-top-secondary #wp-admin-bar-wp-jump-menu .chosen-container .chosen-results li.highlighted em {
+  color: #fff;
+}
+#wpadminbar #wp-admin-bar-top-secondary #wp-admin-bar-wp-jump-menu .chosen-container .chosen-results li.highlighted span.post-id {
+  color: #fff !important;
 }
 
 /* @end */
