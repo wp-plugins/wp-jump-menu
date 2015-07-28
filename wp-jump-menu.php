@@ -2,13 +2,13 @@
 /**
  * @package WP_Jump_Menu
  * @author Jim Krill
- * @version 3.4.2
+ * @version 3.4.3
  */
 /*
 Plugin Name: WP Jump Menu
 Plugin URI: http://wpjumpmenu.com
 Description: Creates a drop-down menu (jump menu) in a bar across the top or bottom of the screen that makes it easy to jump right to a page, post, or custom post type in the admin area to edit.
-Version: 3.4.2
+Version: 3.4.3
 Author: Jim Krill
 Author URI: http://krillwebdesign.com
 License: GPL
@@ -39,7 +39,7 @@ class WpJumpMenu
 		// vars
 		$this->path = plugin_dir_path( __FILE__ );
 		$this->dir = plugins_url( '', __FILE__ );
-		$this->version = '3.4.2';
+		$this->version = '3.4.3';
 		$this->upgrade_version = '';
 		$this->options = get_option( 'wpjm_options' );
 
@@ -80,7 +80,10 @@ class WpJumpMenu
 		}
 
 		// actions
-		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
+		if ( current_user_can('manage_options')) {
+			add_action( 'admin_menu', array( $this, 'admin_menu' ) );
+		}
+
 		add_action( 'admin_print_scripts', array( $this, 'admin_head' ) );
 		add_action( 'admin_print_scripts-settings_page_wpjm-options', array( $this, 'wpjm_settings_scripts' ) );
 		add_action( 'admin_print_styles', array( $this, 'wpjm_css') );
@@ -301,14 +304,17 @@ class WpJumpMenu
 			}
 			#wpadminbar #wp-jump-menu { padding: 0px 10px; }";
 		} else {
-			echo "#jump_menu { position: fixed; ".$this->options['position'].": ".($this->options['position']=='top'?(is_admin_bar_showing()?"28px":"0"):"0")."; left: 0; height: 40px; background: #".$this->options['backgroundColor']."; color: #".$this->options['fontColor']."; width: 100%; z-index: 1500; border-".($this->options['position']=='top'?'bottom':'top').": 2px solid #".$this->options['borderColor']."; }
+			echo "#jump_menu { position: fixed; ".$this->options['position'].": ".($this->options['position']=='top'?(is_admin_bar_showing()?"28px":"0"):"0")."; right: 0; height: 40px; background: #".$this->options['backgroundColor']."; color: #".$this->options['fontColor']."; width: 100%; z-index: 1500; border-".($this->options['position']=='top'?'bottom':'top').": 2px solid #".$this->options['borderColor']."; }
 		#jump_menu p { padding: 5px 15px; font-size: 12px; margin: 0; }
 		#jump_menu p a:link, #jump_menu p a:visited, #jump_menu p a:hover { color: #".$this->options['linkColor']."; text-decoration: none; }
-		#jump_menu p.wpjm_need_help { float: right; text-align: right; }
+		#jump_menu p.wpjm_need_help { float: right; }
 		#jump_menu p.wpjm_need_help span.wpjm-logo-title { font-family: Georgia; font-style: italic; padding-right: 10px; }
 		#jump_menu p.jm_credits { font-style: italic; padding-top: 10px; line-height: 13px; }
-		#jump_menu p.jm_credits img.wpjm_logo { ".(isset($this->options['logoWidth'])?'width: '.$this->options['logoWidth'].'px;':'width: 35px;')." height: auto; max-height: 30px; vertical-align: middle; margin-right: 10px; }
+		#jump_menu p.jm_credits img.wpjm_logo { ".(isset($this->options['logoWidth'])?'width: '.$this->options['logoWidth'].'px;':'width: auto;')." height: auto; max-height: 25px; vertical-align: middle; margin-right: 10px; }
 		#jump_menu_clear { height: 30px; }
+		#jump_menu .chosen-container .post-id {
+			float: " . (isset($this->options['chosenTextAlign']) && $this->options['chosenTextAlign'] != "right" ? "right" : 'none') . " !important;
+		}
 		@media only screen and (max-width: 768px) {
 			#jump_menu .jm_credits { display: none; }
 		}
@@ -359,6 +365,7 @@ class WpJumpMenu
 				wp_enqueue_style( 'chosencss-wpadminbar' );
 			} else {
 				wp_enqueue_style( 'chosencss' );
+				wp_enqueue_style( 'chosencss-wpadminbar' );
 			}
 		}
 
@@ -454,6 +461,27 @@ class WpJumpMenu
 			<script>
 			jQuery(document).ready(function($){
 
+				<?php
+				if ( isset( $this->options['showID']) && $this->options['showID'] == "true" ) {
+					if ( isset( $this->options['useChosen'] ) && $this->options['useChosen'] == 'true') {
+						// $html .= "jQuery('#wp-pdd').on('chosen:showing_dropdown', function(){
+						// 	console.log('ready');
+						// 	console.log(jQuery('#wp_pdd_chosen'));
+						// 	jQuery('#wp_pdd_chosen').find('[data-post-id]').each(function(i){
+						// 		jQuery(this).append(' <span class=\"post-id\" style=\"float: right;\">' + this.dataset.postId + '</span>');
+						// 	});
+						// });";
+					} else { ?>
+						jQuery('#wp-pdd').find('option').each(function(i){
+							if (jQuery(this).attr('data-post-id')) {
+								jQuery(this).append(' (' + jQuery(this).attr('data-post-id') + ') ');
+							}
+						});
+						<?php
+					}
+				}
+                ?>
+
 					<?php if ( isset($this->options['useChosen']) && $this->options['useChosen'] == 'true' ) { ?>
 					jQuery('#wp-pdd').bind('liszt:ready',function(){
 						jQuery('ul.chosen-results li').prepend('<span class="front-end"></span>');
@@ -463,7 +491,7 @@ class WpJumpMenu
 
 					jQuery('#wp-pdd').on('change',function() {
 						window.location = this.value;
-					})<?php if ( isset($this->options['useChosen']) && $this->options['useChosen'] == 'true' ) { ?>.customChosen({position:"<?php echo esc_js($this->options['position']); ?>"})<?php } ?>;
+					})<?php if ( isset($this->options['useChosen']) && $this->options['useChosen'] == 'true' ) { ?>.customChosen({position:"<?php echo esc_js($this->options['position']); ?>", search_contains: true})<?php } ?>;
 			});
 			</script>
 			<?php

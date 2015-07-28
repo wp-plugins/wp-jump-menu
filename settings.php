@@ -121,13 +121,13 @@ function wpjm_position_radio() {
 global $wpjm_options;
 ?>
 <div>
+	<input type="radio" value="wpAdminBar" name="wpjm_options[position]" id="wpjm_position" class="wpjm_position" <?php checked($wpjm_options['position'], 'wpAdminBar'); ?> />
+	WP Admin Bar<br/>
 	<input type="radio" value='top' name="wpjm_options[position]" id="wpjm_position" class="wpjm_position" <?php checked($wpjm_options['position'], 'top'); ?> />
 		 Top of screen*<br/>
 	<input type="radio" value="bottom" name="wpjm_options[position]" id="wpjm_position" class="wpjm_position" <?php checked($wpjm_options['position'], 'bottom'); ?> />
 		 Bottom of screen*<br/>
-	<input type="radio" value="wpAdminBar" name="wpjm_options[position]" id="wpjm_position" class="wpjm_position" <?php checked($wpjm_options['position'], 'wpAdminBar'); ?> />
-		WP Admin Bar
-	<p><em><small>* - Top and Bottom were original placements of the WPJM. It may not display properly if you choose these positions.  WP Admin Bar is recommended.</small></em></p>
+	<p><em><small>* - As of WPJM 3.4.3 Top and Bottom positions are not officially supported. Top and Bottom were original placements of the WPJM. It may not display properly if you choose these positions.  WP Admin Bar is recommended.</small></em></p>
 </div>
 <script>
 jQuery(function($){
